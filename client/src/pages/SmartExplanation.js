@@ -1,112 +1,91 @@
 import React, { useState } from "react";
 import {
   Code,
-  Send,
   Copy,
   Download,
   Sparkles,
   Loader2,
   Lock,
+  AlertCircle,
 } from "lucide-react";
 import { useUser } from "../context/UserContext";
 import { API_ENDPOINTS } from "../config/api";
 
 const SmartExplanation = () => {
   const [code, setCode] = useState("");
+  const [language, setLanguage] = useState("python");
   const [explanation, setExplanation] = useState("");
   const [loading, setLoading] = useState(false);
   const [showExplanation, setShowExplanation] = useState(false);
+  const [explanationSource, setExplanationSource] = useState("");
+  const [apiUsed, setApiUsed] = useState("");
+  const [error, setError] = useState("");
   const { isAuthenticated } = useUser();
 
   const handleExplain = async () => {
-    if (!code.trim()) return;
+    if (!code.trim()) {
+      setError("Please enter some code to explain");
+      return;
+    }
+
+    // Validate language selection - strict validation to match backend
+    const normalizedLanguage = language.toLowerCase().trim();
+    const isValidLanguage =
+      normalizedLanguage === "c" ||
+      normalizedLanguage === "python" ||
+      normalizedLanguage === "javascript" ||
+      normalizedLanguage === "react" ||
+      normalizedLanguage.startsWith("c ") ||
+      normalizedLanguage.startsWith("python ") ||
+      normalizedLanguage.startsWith("javascript ") ||
+      normalizedLanguage.startsWith("react ");
+
+    if (!language || !isValidLanguage) {
+      setError(
+        "Please select C, Python, JavaScript, or React from the dropdown."
+      );
+      return;
+    }
 
     setLoading(true);
     setShowExplanation(true);
+    setError("");
 
     try {
-      // Call the actual API endpoint
+      // Call the AI explanation API endpoint
       const response = await fetch(API_ENDPOINTS.EXPLAIN_CODE, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ code }),
+        body: JSON.stringify({ code, language }),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to get explanation");
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to get explanation");
       }
 
       const data = await response.json();
       setExplanation(data.explanation || "No explanation available");
+      setExplanationSource(data.source || "Unknown");
+      setApiUsed(data.apiUsed || "Unknown");
     } catch (error) {
       console.error("Error generating explanation:", error);
 
-      // Fallback to mock explanation if API fails
-      const mockExplanation = generateMockExplanation(code);
-      setExplanation(mockExplanation);
+      // Show error message - NO FALLBACK
+      const errorMessage =
+        error.message.includes("Only") && error.message.includes("supported")
+          ? error.message
+          : "AI APIs are currently unavailable. Please try again later.";
+
+      setError(errorMessage);
+      setExplanation("");
+      setExplanationSource("");
+      setApiUsed("");
     } finally {
       setLoading(false);
     }
-  };
-
-  const generateMockExplanation = (codeInput) => {
-    // Enhanced mock explanation based on common patterns
-    let explanation = "🤖 **Smart Code Analysis:**\n\n";
-
-    if (codeInput.includes("function") || codeInput.includes("def")) {
-      explanation += `**Function Definition:** This code defines a reusable function that performs a specific task.\n\n`;
-      explanation += `**Key Concepts:**\n`;
-      explanation += `• Functions help organize code and avoid repetition\n`;
-      explanation += `• They take input parameters and can return results\n`;
-      explanation += `• Makes code more modular and maintainable\n\n`;
-      explanation += `**Learning Tip:** Functions are building blocks of programming - master them to write cleaner, more efficient code!`;
-    } else if (codeInput.includes("for") || codeInput.includes("while")) {
-      explanation += `**Loop Structure:** This code uses iteration to repeat operations multiple times.\n\n`;
-      explanation += `**Key Concepts:**\n`;
-      explanation += `• Loops automate repetitive tasks efficiently\n`;
-      explanation += `• Continue until a specific condition is met\n`;
-      explanation += `• Essential for processing data and automation\n\n`;
-      explanation += `**Learning Tip:** Loops are powerful - they let you handle large amounts of data with just a few lines of code!`;
-    } else if (codeInput.includes("if") || codeInput.includes("else")) {
-      explanation += `**Conditional Logic:** This code makes decisions based on different conditions.\n\n`;
-      explanation += `**Key Concepts:**\n`;
-      explanation += `• 'if' checks whether a condition is true\n`;
-      explanation += `• 'else' provides alternative actions\n`;
-      explanation += `• Adds intelligence and flexibility to programs\n\n`;
-      explanation += `**Learning Tip:** Conditionals make your programs smart - they can adapt and respond to different situations!`;
-    } else if (
-      codeInput.includes("console.log") ||
-      codeInput.includes("print")
-    ) {
-      explanation += `**Output Statement:** This code displays information to the user or console.\n\n`;
-      explanation += `**Key Concepts:**\n`;
-      explanation += `• Essential for debugging and showing results\n`;
-      explanation += `• Helps verify your program is working correctly\n`;
-      explanation += `• Provides feedback and communication\n\n`;
-      explanation += `**Learning Tip:** Output statements are your window into what your program is doing - use them liberally while learning!`;
-    } else if (
-      codeInput.includes("var") ||
-      codeInput.includes("let") ||
-      codeInput.includes("const")
-    ) {
-      explanation += `**Variable Declaration:** This code creates containers to store and manage data.\n\n`;
-      explanation += `**Key Concepts:**\n`;
-      explanation += `• Variables hold information your program can use\n`;
-      explanation += `• Different types (var/let/const) have different scopes\n`;
-      explanation += `• Makes code flexible and dynamic\n\n`;
-      explanation += `**Learning Tip:** Good variable names make your code self-documenting and easier to understand!`;
-    } else {
-      explanation += `**General Code Analysis:** This code contains programming instructions that work together to solve a problem.\n\n`;
-      explanation += `**Key Concepts:**\n`;
-      explanation += `• Each line contributes to the overall functionality\n`;
-      explanation += `• Programming is about breaking problems into steps\n`;
-      explanation += `• Practice makes complex concepts clearer\n\n`;
-      explanation += `**Learning Tip:** Every expert was once a beginner - keep coding and you'll master these concepts!`;
-    }
-
-    return explanation;
   };
 
   const copyToClipboard = () => {
@@ -163,11 +142,11 @@ print(f"Sum: {sum}")`,
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Smart Code Explanation
+              AI Code Commenting Assistant
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Paste your code below and get AI-powered explanations in simple,
-              beginner-friendly language
+              Paste your code below and get AI-generated beginner-friendly
+              comments
             </p>
           </div>
 
@@ -210,11 +189,15 @@ print(f"Sum: {sum}")`,
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Smart Code Explanation
+            AI Code Commenting Assistant
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Paste your code below and get AI-powered explanations in simple,
-            beginner-friendly language
+            Paste your C, Python, JavaScript, or React code below and get
+            AI-generated beginner-friendly comments
+          </p>
+          <p className="text-sm text-gray-500 mt-2">
+            Using Google Gemini 2.0 Flash with intelligent pattern analysis
+            fallback
           </p>
         </div>
 
@@ -244,10 +227,38 @@ print(f"Sum: {sum}")`,
               </div>
             </div>
 
+            {/* Language Selection */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Programming Language
+              </label>
+              <select
+                value={language}
+                onChange={(e) => setLanguage(e.target.value)}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              >
+                <option value="python">Python</option>
+                <option value="c">C</option>
+                <option value="javascript">JavaScript</option>
+                <option value="react">React</option>
+              </select>
+              <p className="text-xs text-gray-500 mt-1">
+                Currently supporting C, Python, JavaScript, and React
+              </p>
+            </div>
+
             <textarea
               value={code}
               onChange={(e) => setCode(e.target.value)}
-              placeholder="Paste your code here...&#10;&#10;Example:&#10;function greet(name) {&#10;    return `Hello, ${name}!`;&#10;}"
+              placeholder={
+                language === "python"
+                  ? "Paste your Python code here...\n\nExample:\ndef greet(name):\n    return f'Hello, {name}!'\n\nprint(greet('World'))"
+                  : language === "c"
+                  ? 'Paste your C code here...\n\nExample:\n#include <stdio.h>\n\nint main() {\n    printf("Hello, World!\\n");\n    return 0;\n}'
+                  : language === "javascript"
+                  ? "Paste your JavaScript code here...\n\nExample:\nfunction greet(name) {\n    return `Hello, ${name}!`;\n}\n\nconsole.log(greet('World'));"
+                  : "Paste your React code here...\n\nExample:\nimport React from 'react';\n\nfunction Greeting({ name }) {\n    return <h1>Hello, {name}!</h1>;\n}\n\nexport default Greeting;"
+              }
               className="w-full h-96 p-4 border border-gray-300 rounded-lg font-mono text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
             />
 
@@ -259,31 +270,66 @@ print(f"Sum: {sum}")`,
               {loading ? (
                 <>
                   <Loader2 className="h-5 w-5 animate-spin" />
-                  <span>Generating Explanation...</span>
+                  <span>Adding Comments...</span>
                 </>
               ) : (
                 <>
                   <Sparkles className="h-5 w-5" />
-                  <span>Explain the Code</span>
+                  <span>Add Comments to Code</span>
                 </>
               )}
             </button>
+
+            {/* Error Display */}
+            {error && (
+              <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <div className="flex items-center">
+                  <AlertCircle className="h-5 w-5 text-red-500 mr-2" />
+                  <p className="text-red-700 text-sm">{error}</p>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Explanation Section */}
           <div className="bg-white rounded-xl shadow-lg p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-              <Sparkles className="h-5 w-5 mr-2 text-purple-600" />
-              AI Explanation
+            <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center justify-between">
+              <div className="flex items-center">
+                <Sparkles className="h-5 w-5 mr-2 text-purple-600" />
+                Commented Code
+              </div>
+              {explanationSource && (
+                <div className="flex flex-col items-end space-y-1">
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      explanationSource.includes("Gemini")
+                        ? "bg-purple-100 text-purple-800"
+                        : explanationSource.includes("Pattern Analysis")
+                        ? "bg-green-100 text-green-800"
+                        : "bg-yellow-100 text-yellow-800"
+                    }`}
+                  >
+                    {explanationSource}
+                  </span>
+                  {apiUsed && (
+                    <span className="text-xs text-gray-500">
+                      API: {apiUsed}
+                    </span>
+                  )}
+                </div>
+              )}
             </h2>
 
             {!showExplanation ? (
               <div className="h-96 flex items-center justify-center text-gray-500">
                 <div className="text-center">
                   <Code className="h-16 w-16 mx-auto mb-4 text-gray-300" />
-                  <p className="text-lg">Your explanation will appear here</p>
+                  <p className="text-lg">
+                    Your commented code will appear here
+                  </p>
                   <p className="text-sm">
-                    Paste some code and click "Explain the Code" to get started
+                    Paste some code and click "Add Comments to Code" to get
+                    started
                   </p>
                 </div>
               </div>
@@ -294,7 +340,7 @@ print(f"Sum: {sum}")`,
                     <div className="text-center">
                       <Loader2 className="h-12 w-12 mx-auto mb-4 animate-spin text-primary-600" />
                       <p className="text-lg text-gray-600">
-                        Analyzing your code...
+                        Adding comments to your code...
                       </p>
                       <p className="text-sm text-gray-500">
                         This may take a few moments
