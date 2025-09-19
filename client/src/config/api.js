@@ -11,7 +11,7 @@ export const API_ENDPOINTS = {
   UPDATE_PROFILE: `${API_BASE_URL}/api/user/profile`,
 
   // Code Explanation
-  EXPLAIN_CODE: `${API_BASE_URL}/api/explain`,
+  EXPLAIN_CODE: `${API_BASE_URL}/api/explain-code`,
 
   // Exercises
   EXERCISES: `${API_BASE_URL}/api/exercises`,

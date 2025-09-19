@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#667eea" />
+    <meta
+      name="description"
+      content="AI-powered programming learning platform with smart explanations and interactive exercises"
+    />
+    <title>Programming Learning Platform - AI Code Education</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+          "Oxygen", "Ubuntu", "Cantarell", sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      header {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 1rem 0;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #667eea;
+      }
+
+      .nav-links {
+        display: flex;
+        list-style: none;
+        gap: 2rem;
+      }
+
+      .nav-links a {
+        text-decoration: none;
+        color: #333;
+        font-weight: 500;
+        transition: color 0.3s ease;
+      }
+
+      .nav-links a:hover {
+        color: #667eea;
+      }
+
+      .hero {
+        padding: 120px 0 80px;
+        text-align: center;
+        color: white;
+      }
+
+      .hero h1 {
+        font-size: 3.5rem;
+        margin-bottom: 1rem;
+        font-weight: 700;
+      }
+
+      .hero p {
+        font-size: 1.3rem;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+      }
+
+      .cta-button {
+        display: inline-block;
+        background: white;
+        color: #667eea;
+        padding: 1rem 2rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      }
+
+      .cta-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+      }
+
+      .features {
+        padding: 80px 0;
+        background: white;
+      }
+
+      .features h2 {
+        text-align: center;
+        font-size: 2.5rem;
+        margin-bottom: 3rem;
+        color: #333;
+      }
+
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+      }
+
+      .feature-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: transform 0.3s ease;
+        border: 1px solid #f0f0f0;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-10px);
+      }
+
+      .feature-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 2rem;
+      }
+
+      .feature-card h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: #333;
+      }
+
+      .feature-card p {
+        color: #666;
+        line-height: 1.6;
+      }
+
+      .demo-section {
+        padding: 80px 0;
+        background: #f8f9fa;
+      }
+
+      .demo-container {
+        background: white;
+        padding: 3rem;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .demo-container h2 {
+        text-align: center;
+        margin-bottom: 2rem;
+        color: #333;
+      }
+
+      .code-editor {
+        background: #2d3748;
+        color: #e2e8f0;
+        padding: 1.5rem;
+        border-radius: 10px;
+        font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        margin: 1rem 0;
+        overflow-x: auto;
+      }
+
+      .explanation {
+        background: #e6fffa;
+        border-left: 4px solid #38b2ac;
+        padding: 1.5rem;
+        border-radius: 0 10px 10px 0;
+        margin: 1rem 0;
+      }
+
+      .explanation h4 {
+        color: #2c7a7b;
+        margin-bottom: 0.5rem;
+      }
+
+      .stats {
+        padding: 80px 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        text-align: center;
+      }
+
+      .stat-item h3 {
+        font-size: 3rem;
+        margin-bottom: 0.5rem;
+        font-weight: 700;
+      }
+
+      .stat-item p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+      }
+
+      .footer {
+        background: #2d3748;
+        color: white;
+        padding: 3rem 0;
+        text-align: center;
+      }
+
+      .footer-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .footer-section h3 {
+        margin-bottom: 1rem;
+        color: #667eea;
+      }
+
+      .footer-section p {
+        opacity: 0.8;
+        line-height: 1.6;
+      }
+
+      .footer-bottom {
+        border-top: 1px solid #4a5568;
+        padding-top: 2rem;
+        margin-top: 2rem;
+        opacity: 0.7;
+      }
+
+      @media (max-width: 768px) {
+        .hero h1 {
+          font-size: 2.5rem;
+        }
+
+        .nav-links {
+          display: none;
+        }
+
+        .feature-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .floating-phone {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        background: #28a745;
+        color: white;
+        padding: 1rem;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        z-index: 1000;
+        animation: float 3s ease-in-out infinite;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+
+      .floating-phone h4 {
+        margin-bottom: 0.5rem;
+        font-size: 1rem;
+      }
+
+      .floating-phone p {
+        font-size: 0.9rem;
+        opacity: 0.9;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <nav>
+          <div class="logo">🚀 CodeLearner</div>
+          <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#demo">Demo</a></li>
+            <li><a href="#stats">Stats</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <section id="home" class="hero">
+      <div class="container">
+        <h1>AI-Powered Programming Education</h1>
+        <p>
+          Learn programming with smart explanations, interactive exercises, and
+          AI challenges
+        </p>
+        <a href="#demo" class="cta-button">Try Demo Now</a>
+      </div>
+    </section>
+
+    <section id="features" class="features">
+      <div class="container">
+        <h2>Powerful Learning Features</h2>
+        <div class="feature-grid">
+          <div class="feature-card">
+            <div class="feature-icon">🤖</div>
+            <h3>Smart Code Explanation</h3>
+            <p>
+              Get AI-powered explanations for any code snippet using OpenAI's
+              advanced language models. Understand complex programming concepts
+              in simple, beginner-friendly language.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📚</div>
+            <h3>Interactive Learning</h3>
+            <p>
+              Practice with QCM exercises ranging from easy to hard difficulty
+              levels. Master programming fundamentals through hands-on practice
+              and immediate feedback.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h3>AI Challenge</h3>
+            <p>
+              Compete against AI in a 30-question challenge across 3 rounds of
+              increasing difficulty. Test your skills and track your progress in
+              real-time.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🏆</div>
+            <h3>Ranking System</h3>
+            <p>
+              Progress through 5 levels: Beginner, Expert, Advanced, Epic, and
+              Legend. Earn points and unlock achievements as you master
+              programming concepts.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">👥</div>
+            <h3>Leaderboard</h3>
+            <p>
+              Compete with other learners and track your progress on the global
+              leaderboard. See how you rank among programming enthusiasts
+              worldwide.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🔐</div>
+            <h3>Authentication</h3>
+            <p>
+              Secure login and signup system with JWT authentication. Save your
+              progress, track achievements, and access personalized learning
+              paths.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="demo" class="demo-section">
+      <div class="container">
+        <div class="demo-container">
+          <h2>Smart Code Explanation Demo</h2>
+          <p style="text-align: center; margin-bottom: 2rem; color: #666">
+            See how our AI explains code in simple, beginner-friendly language
+          </p>
+
+          <h4>Input Code:</h4>
+          <div class="code-editor">
+            function fibonacci(n) { if (n <= 1) return n; return fibonacci(n -
+            1) + fibonacci(n - 2); } console.log(fibonacci(10));
+          </div>
+
+          <h4>AI Explanation:</h4>
+          <div class="explanation">
+            <h4>🤖 Smart Explanation:</h4>
+            <p>
+              <strong>What this code does:</strong> This function calculates
+              Fibonacci numbers using recursion.
+            </p>
+
+            <p><strong>How it works:</strong></p>
+            <ul style="margin-left: 1.5rem; margin-top: 0.5rem">
+              <li>
+                <strong>Base case:</strong> If n is 0 or 1, return n directly
+                (Fibonacci of 0 = 0, Fibonacci of 1 = 1)
+              </li>
+              <li>
+                <strong>Recursive case:</strong> For any other number, return
+                the sum of the two previous Fibonacci numbers
+              </li>
+              <li>
+                <strong>Example:</strong> fibonacci(5) = fibonacci(4) +
+                fibonacci(3)
+              </li>
+            </ul>
+
+            <p>
+              <strong>Result:</strong> console.log(fibonacci(10)) will output
+              55, which is the 10th Fibonacci number.
+            </p>
+
+            <p>
+              <strong>Note:</strong> This recursive approach is simple but
+              inefficient for large numbers. In practice, you'd use iteration or
+              memoization for better performance.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="stats" class="stats">
+      <div class="container">
+        <h2 style="text-align: center; margin-bottom: 3rem">
+          Platform Statistics
+        </h2>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <h3>10,000+</h3>
+            <p>Active Learners</p>
+          </div>
+          <div class="stat-item">
+            <h3>50,000+</h3>
+            <p>Exercises Completed</p>
+          </div>
+          <div class="stat-item">
+            <h3>100,000+</h3>
+            <p>Code Explanations</p>
+          </div>
+          <div class="stat-item">
+            <h3>95%</h3>
+            <p>Success Rate</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3>🚀 CodeLearner</h3>
+            <p>
+              AI-powered programming education platform designed for beginners.
+              Learn, practice, and master programming with the help of advanced
+              AI technology.
+            </p>
+          </div>
+          <div class="footer-section">
+            <h3>Features</h3>
+            <p>
+              Smart Code Explanation<br />
+              Interactive Learning<br />
+              AI Challenge Mode<br />
+              Ranking System<br />
+              Leaderboard
+            </p>
+          </div>
+          <div class="footer-section">
+            <h3>Technology</h3>
+            <p>
+              React.js Frontend<br />
+              Node.js Backend<br />
+              OpenAI API<br />
+              MongoDB Database<br />
+              Tailwind CSS
+            </p>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>
+            &copy; 2024 Programming Learning Platform. Built with ❤️ for
+            programming beginners.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <div class="floating-phone">
+      <h4>📞 Need Help?</h4>
+      <p>Call: 067205077<br />For help or advertising</p>
+    </div>
+
+    <script>
+      // Smooth scrolling for navigation links
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          e.preventDefault();
+          document.querySelector(this.getAttribute("href")).scrollIntoView({
+            behavior: "smooth",
+          });
+        });
+      });
+
+      // Add scroll effect to header
+      window.addEventListener("scroll", function () {
+        const header = document.querySelector("header");
+        if (window.scrollY > 100) {
+          header.style.background = "rgba(255, 255, 255, 0.98)";
+        } else {
+          header.style.background = "rgba(255, 255, 255, 0.95)";
+        }
+      });
+
+      // Add animation to feature cards on scroll
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: "0px 0px -50px 0px",
+      };
+
+      const observer = new IntersectionObserver(function (entries) {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = "1";
+            entry.target.style.transform = "translateY(0)";
+          }
+        });
+      }, observerOptions);
+
+      document.querySelectorAll(".feature-card").forEach((card) => {
+        card.style.opacity = "0";
+        card.style.transform = "translateY(30px)";
+        card.style.transition = "opacity 0.6s ease, transform 0.6s ease";
+        observer.observe(card);
+      });
+    </script>
+  </body>
+</html>

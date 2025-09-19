@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#667eea" />
+    <meta
+      name="description"
+      content="AI-powered programming learning platform with smart explanations and interactive exercises"
+    />
+    <title>Programming Learning Platform - Working Demo</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+          "Oxygen", "Ubuntu", "Cantarell", sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      /* Navigation */
+      .navbar {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 1rem 0;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .nav-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #667eea;
+      }
+
+      .nav-links {
+        display: flex;
+        list-style: none;
+        gap: 2rem;
+      }
+
+      .nav-links a {
+        text-decoration: none;
+        color: #333;
+        font-weight: 500;
+        transition: color 0.3s ease;
+        cursor: pointer;
+      }
+
+      .nav-links a:hover,
+      .nav-links a.active {
+        color: #667eea;
+      }
+
+      /* Main Content */
+      .main-content {
+        margin-top: 80px;
+        min-height: calc(100vh - 80px);
+      }
+
+      .page {
+        display: none;
+        padding: 2rem 0;
+      }
+
+      .page.active {
+        display: block;
+      }
+
+      /* Hero Section */
+      .hero {
+        text-align: center;
+        color: white;
+        padding: 4rem 0;
+      }
+
+      .hero h1 {
+        font-size: 3.5rem;
+        margin-bottom: 1rem;
+        font-weight: 700;
+      }
+
+      .hero p {
+        font-size: 1.3rem;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+      }
+
+      .cta-button {
+        display: inline-block;
+        background: white;
+        color: #667eea;
+        padding: 1rem 2rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        border: none;
+      }
+
+      .cta-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+      }
+
+      /* Cards */
+      .card {
+        background: white;
+        padding: 2rem;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+      }
+
+      .card h2 {
+        color: #333;
+        margin-bottom: 1.5rem;
+        font-size: 2rem;
+      }
+
+      /* Code Explanation */
+      .code-input {
+        width: 100%;
+        min-height: 200px;
+        padding: 1rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
+        font-size: 0.9rem;
+        resize: vertical;
+        margin-bottom: 1rem;
+      }
+
+      .code-input:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      .explain-btn {
+        background: #667eea;
+        color: white;
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-bottom: 1rem;
+      }
+
+      .explain-btn:hover {
+        background: #5a6fd8;
+        transform: translateY(-2px);
+      }
+
+      .explain-btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .explanation {
+        background: #e6fffa;
+        border-left: 4px solid #38b2ac;
+        padding: 1.5rem;
+        border-radius: 0 10px 10px 0;
+        margin-top: 1rem;
+        display: none;
+      }
+
+      .explanation.show {
+        display: block;
+      }
+
+      .loading {
+        text-align: center;
+        color: #667eea;
+        font-style: italic;
+      }
+
+      /* Exercises */
+      .exercise {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        border-left: 4px solid #667eea;
+      }
+
+      .exercise h3 {
+        color: #333;
+        margin-bottom: 1rem;
+      }
+
+      .exercise p {
+        margin-bottom: 1rem;
+        color: #666;
+      }
+
+      .options {
+        display: grid;
+        gap: 0.5rem;
+      }
+
+      .option {
+        background: white;
+        border: 2px solid #e2e8f0;
+        padding: 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .option:hover {
+        border-color: #667eea;
+        background: #f0f4ff;
+      }
+
+      .option.selected {
+        border-color: #667eea;
+        background: #f0f4ff;
+      }
+
+      .option.correct {
+        border-color: #28a745;
+        background: #d4edda;
+      }
+
+      .option.incorrect {
+        border-color: #dc3545;
+        background: #f8d7da;
+      }
+
+      .submit-btn {
+        background: #28a745;
+        color: white;
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 1rem;
+        transition: all 0.3s ease;
+      }
+
+      .submit-btn:hover {
+        background: #218838;
+      }
+
+      .score {
+        text-align: center;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #667eea;
+        margin: 1rem 0;
+      }
+
+      /* Challenge */
+      .challenge-info {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 10px;
+        background: #e2e8f0;
+        border-radius: 5px;
+        overflow: hidden;
+        margin: 1rem 0;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        width: 0%;
+        transition: width 0.3s ease;
+      }
+
+      .timer {
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #dc3545;
+        margin: 1rem 0;
+      }
+
+      /* Leaderboard */
+      .leaderboard-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 10px;
+        margin-bottom: 0.5rem;
+      }
+
+      .rank {
+        font-weight: bold;
+        font-size: 1.2rem;
+        color: #667eea;
+      }
+
+      .username {
+        font-weight: 600;
+      }
+
+      .points {
+        color: #28a745;
+        font-weight: bold;
+      }
+
+      /* Auth Modal */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 2000;
+      }
+
+      .modal.show {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .modal-content {
+        background: white;
+        padding: 2rem;
+        border-radius: 20px;
+        max-width: 400px;
+        width: 90%;
+        position: relative;
+      }
+
+      .close-btn {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #666;
+      }
+
+      .form-group {
+        margin-bottom: 1rem;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #333;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 1rem;
+      }
+
+      .form-group input:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      .auth-btn {
+        width: 100%;
+        background: #667eea;
+        color: white;
+        padding: 1rem;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-bottom: 1rem;
+      }
+
+      .auth-btn:hover {
+        background: #5a6fd8;
+      }
+
+      .auth-switch {
+        text-align: center;
+        color: #666;
+      }
+
+      .auth-switch button {
+        background: none;
+        border: none;
+        color: #667eea;
+        cursor: pointer;
+        text-decoration: underline;
+      }
+
+      /* Phone Ad */
+      .phone-ad {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        background: #28a745;
+        color: white;
+        padding: 1rem;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        z-index: 1000;
+        animation: float 3s ease-in-out infinite;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+
+      .phone-ad h4 {
+        margin-bottom: 0.5rem;
+        font-size: 1rem;
+      }
+
+      .phone-ad p {
+        font-size: 0.9rem;
+        opacity: 0.9;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .hero h1 {
+          font-size: 2.5rem;
+        }
+
+        .nav-links {
+          display: none;
+        }
+
+        .card {
+          padding: 1.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar">
+      <div class="container">
+        <div class="nav-content">
+          <div class="logo">🚀 CodeLearner</div>
+          <ul class="nav-links">
+            <li>
+              <a href="#" class="nav-link active" data-page="home">Home</a>
+            </li>
+            <li>
+              <a href="#" class="nav-link" data-page="explain"
+                >Smart Explanation</a
+              >
+            </li>
+            <li>
+              <a href="#" class="nav-link" data-page="exercises"
+                >Interactive Learning</a
+              >
+            </li>
+            <li>
+              <a href="#" class="nav-link" data-page="challenge"
+                >AI Challenge</a
+              >
+            </li>
+            <li>
+              <a href="#" class="nav-link" data-page="leaderboard"
+                >Leaderboard</a
+              >
+            </li>
+            <li><a href="#" class="nav-link" id="auth-btn">Login</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Home Page -->
+      <div id="home" class="page active">
+        <div class="container">
+          <div class="hero">
+            <h1>AI-Powered Programming Education</h1>
+            <p>
+              Learn programming with smart explanations, interactive exercises,
+              and AI challenges
+            </p>
+            <button class="cta-button" onclick="showPage('explain')">
+              Try Smart Explanation
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Smart Explanation Page -->
+      <div id="explain" class="page">
+        <div class="container">
+          <div class="card">
+            <h2>🤖 Smart Code Explanation</h2>
+            <p>
+              Enter any code snippet and get AI-powered explanations in simple,
+              beginner-friendly language.
+            </p>
+
+            <textarea
+              class="code-input"
+              placeholder="Enter your code here... For example:
+function fibonacci(n) {
+    if (n <= 1) return n;
+    return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+console.log(fibonacci(10));"
+            ></textarea>
+
+            <button class="explain-btn" onclick="explainCode()">
+              Explain Code
+            </button>
+
+            <div id="loading" class="loading" style="display: none">
+              🤖 AI is analyzing your code...
+            </div>
+
+            <div id="explanation" class="explanation">
+              <h4>🤖 Smart Explanation:</h4>
+              <div id="explanation-content"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Learning Page -->
+      <div id="exercises" class="page">
+        <div class="container">
+          <div class="card">
+            <h2>📚 Interactive Learning</h2>
+            <p>
+              Practice with QCM exercises ranging from easy to hard difficulty
+              levels.
+            </p>
+
+            <div id="exercise-container">
+              <div class="exercise" id="exercise-1">
+                <h3>Question 1: What does HTML stand for?</h3>
+                <p>Choose the correct answer:</p>
+                <div class="options">
+                  <div class="option" onclick="selectOption(this, 0)">
+                    HyperText Markup Language
+                  </div>
+                  <div class="option" onclick="selectOption(this, 1)">
+                    High Tech Modern Language
+                  </div>
+                  <div class="option" onclick="selectOption(this, 2)">
+                    Home Tool Markup Language
+                  </div>
+                  <div class="option" onclick="selectOption(this, 3)">
+                    Hyperlink and Text Markup Language
+                  </div>
+                </div>
+                <button class="submit-btn" onclick="submitExercise(1, 0)">
+                  Submit Answer
+                </button>
+              </div>
+
+              <div class="exercise" id="exercise-2">
+                <h3>Question 2: Which CSS property changes text color?</h3>
+                <p>Choose the correct answer:</p>
+                <div class="options">
+                  <div class="option" onclick="selectOption(this, 0)">
+                    text-color
+                  </div>
+                  <div class="option" onclick="selectOption(this, 1)">
+                    color
+                  </div>
+                  <div class="option" onclick="selectOption(this, 2)">
+                    font-color
+                  </div>
+                  <div class="option" onclick="selectOption(this, 3)">
+                    text-style
+                  </div>
+                </div>
+                <button class="submit-btn" onclick="submitExercise(2, 1)">
+                  Submit Answer
+                </button>
+              </div>
+
+              <div class="exercise" id="exercise-3">
+                <h3>Question 3: What does console.log() do in JavaScript?</h3>
+                <p>Choose the correct answer:</p>
+                <div class="options">
+                  <div class="option" onclick="selectOption(this, 0)">
+                    Creates a new variable
+                  </div>
+                  <div class="option" onclick="selectOption(this, 1)">
+                    Prints text to console
+                  </div>
+                  <div class="option" onclick="selectOption(this, 2)">
+                    Defines a function
+                  </div>
+                  <div class="option" onclick="selectOption(this, 3)">
+                    Stores data in memory
+                  </div>
+                </div>
+                <button class="submit-btn" onclick="submitExercise(3, 1)">
+                  Submit Answer
+                </button>
+              </div>
+            </div>
+
+            <div id="exercise-score" class="score"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Challenge Page -->
+      <div id="challenge" class="page">
+        <div class="container">
+          <div class="card">
+            <h2>⚡ AI Challenge</h2>
+            <p>
+              Compete against AI in a 30-question challenge across 3 rounds of
+              increasing difficulty!
+            </p>
+
+            <div class="challenge-info">
+              <h4>Challenge Rules:</h4>
+              <ul>
+                <li>30 questions total (10 per round)</li>
+                <li>3 rounds: Easy → Medium → Hard</li>
+                <li>Limited time per question</li>
+                <li>Earn 10 points per correct answer</li>
+              </ul>
+            </div>
+
+            <div id="challenge-start">
+              <button class="cta-button" onclick="startChallenge()">
+                Start Challenge
+              </button>
+            </div>
+
+            <div id="challenge-game" style="display: none">
+              <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+              </div>
+              <div class="timer" id="timer">30s</div>
+
+              <div class="exercise" id="challenge-question">
+                <h3 id="question-text">Question will appear here</h3>
+                <div class="options" id="challenge-options">
+                  <!-- Options will be populated dynamically -->
+                </div>
+                <button class="submit-btn" onclick="submitChallengeAnswer()">
+                  Submit Answer
+                </button>
+              </div>
+            </div>
+
+            <div id="challenge-results" style="display: none">
+              <h3>🎉 Challenge Complete!</h3>
+              <div id="final-score"></div>
+              <button class="cta-button" onclick="resetChallenge()">
+                Try Again
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Leaderboard Page -->
+      <div id="leaderboard" class="page">
+        <div class="container">
+          <div class="card">
+            <h2>🏆 Leaderboard</h2>
+            <p>See how you rank among other programming learners!</p>
+
+            <div id="leaderboard-list">
+              <div class="leaderboard-item">
+                <span class="rank">#1</span>
+                <span class="username">Alex Johnson</span>
+                <span class="points">2,850 pts</span>
+              </div>
+              <div class="leaderboard-item">
+                <span class="rank">#2</span>
+                <span class="username">Sarah Chen</span>
+                <span class="points">2,640 pts</span>
+              </div>
+              <div class="leaderboard-item">
+                <span class="rank">#3</span>
+                <span class="username">Mike Rodriguez</span>
+                <span class="points">2,420 pts</span>
+              </div>
+              <div class="leaderboard-item">
+                <span class="rank">#4</span>
+                <span class="username">Emma Wilson</span>
+                <span class="points">2,180 pts</span>
+              </div>
+              <div class="leaderboard-item">
+                <span class="rank">#5</span>
+                <span class="username">David Kim</span>
+                <span class="points">1,950 pts</span>
+              </div>
+              <div class="leaderboard-item">
+                <span class="rank">#6</span>
+                <span class="username">Lisa Brown</span>
+                <span class="points">1,720 pts</span>
+              </div>
+              <div class="leaderboard-item">
+                <span class="rank">#7</span>
+                <span class="username">Tom Anderson</span>
+                <span class="points">1,480 pts</span>
+              </div>
+              <div class="leaderboard-item">
+                <span class="rank">#8</span>
+                <span class="username">You</span>
+                <span class="points" id="user-points">0 pts</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="modal">
+      <div class="modal-content">
+        <button class="close-btn" onclick="closeModal()">&times;</button>
+        <h2 id="auth-title">Login</h2>
+        <form id="auth-form">
+          <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" id="username" required />
+          </div>
+          <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" required />
+          </div>
+          <button type="submit" class="auth-btn" id="auth-submit-btn">
+            Login
+          </button>
+        </form>
+        <div class="auth-switch">
+          <p>
+            Don't have an account?
+            <button onclick="switchAuthMode()">Sign up</button>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phone Ad -->
+    <div class="phone-ad">
+      <h4>📞 Need Help?</h4>
+      <p>Call: 067205077<br />For help or advertising</p>
+    </div>
+
+    <script>
+      // Global state
+      let currentUser = null;
+      let userPoints = 0;
+      let exerciseScore = 0;
+      let challengeData = {
+        currentQuestion: 0,
+        score: 0,
+        aiScore: 0,
+        timeLeft: 30,
+        timer: null,
+        questions: [
+          {
+            question: "What does HTML stand for?",
+            options: [
+              "HyperText Markup Language",
+              "High Tech Modern Language",
+              "Home Tool Markup Language",
+              "Hyperlink and Text Markup Language",
+            ],
+            correct: 0,
+          },
+          {
+            question: "Which CSS property changes text color?",
+            options: ["text-color", "color", "font-color", "text-style"],
+            correct: 1,
+          },
+          {
+            question: "What does console.log() do in JavaScript?",
+            options: [
+              "Creates a new variable",
+              "Prints text to console",
+              "Defines a function",
+              "Stores data in memory",
+            ],
+            correct: 1,
+          },
+        ],
+      };
+
+      // Navigation
+      function showPage(pageId) {
+        document
+          .querySelectorAll(".page")
+          .forEach((page) => page.classList.remove("active"));
+        document
+          .querySelectorAll(".nav-link")
+          .forEach((link) => link.classList.remove("active"));
+
+        document.getElementById(pageId).classList.add("active");
+        document
+          .querySelector(`[data-page="${pageId}"]`)
+          .classList.add("active");
+      }
+
+      document.querySelectorAll(".nav-link").forEach((link) => {
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+          const pageId = link.getAttribute("data-page");
+          if (pageId) {
+            showPage(pageId);
+          }
+        });
+      });
+
+      // Auth Modal
+      function openModal() {
+        document.getElementById("auth-modal").classList.add("show");
+      }
+
+      function closeModal() {
+        document.getElementById("auth-modal").classList.remove("show");
+      }
+
+      function switchAuthMode() {
+        const title = document.getElementById("auth-title");
+        const btn = document.getElementById("auth-submit-btn");
+        const switchBtn = document.querySelector(".auth-switch button");
+
+        if (title.textContent === "Login") {
+          title.textContent = "Sign Up";
+          btn.textContent = "Sign Up";
+          switchBtn.textContent = "Login";
+        } else {
+          title.textContent = "Login";
+          btn.textContent = "Login";
+          switchBtn.textContent = "Sign up";
+        }
+      }
+
+      document.getElementById("auth-btn").addEventListener("click", openModal);
+
+      document.getElementById("auth-form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+
+        if (username && password) {
+          currentUser = { username, password };
+          document.getElementById("auth-btn").textContent = username;
+          closeModal();
+          alert(`Welcome ${username}! You are now logged in.`);
+        }
+      });
+
+      // Smart Explanation
+      function explainCode() {
+        const codeInput = document.querySelector(".code-input");
+        const loading = document.getElementById("loading");
+        const explanation = document.getElementById("explanation");
+        const explanationContent = document.getElementById(
+          "explanation-content"
+        );
+
+        if (!codeInput.value.trim()) {
+          alert("Please enter some code to explain!");
+          return;
+        }
+
+        loading.style.display = "block";
+        explanation.classList.remove("show");
+
+        // Simulate AI processing
+        setTimeout(() => {
+          loading.style.display = "none";
+
+          // Mock AI explanation based on code content
+          let aiExplanation = generateExplanation(codeInput.value);
+          explanationContent.innerHTML = aiExplanation;
+          explanation.classList.add("show");
+        }, 2000);
+      }
+
+      function generateExplanation(code) {
+        const explanations = {
+          function: `
+                    <p><strong>What this code does:</strong> This appears to be a function definition.</p>
+                    <p><strong>Key concepts:</strong></p>
+                    <ul style="margin-left: 1.5rem;">
+                        <li><strong>Function:</strong> A reusable block of code that performs a specific task</li>
+                        <li><strong>Parameters:</strong> Values passed to the function when it's called</li>
+                        <li><strong>Return:</strong> The value that the function sends back</li>
+                    </ul>
+                    <p><strong>How to use:</strong> Call the function with the required parameters to execute the code inside.</p>
+                `,
+          if: `
+                    <p><strong>What this code does:</strong> This is a conditional statement that makes decisions.</p>
+                    <p><strong>Key concepts:</strong></p>
+                    <ul style="margin-left: 1.5rem;">
+                        <li><strong>Condition:</strong> A test that evaluates to true or false</li>
+                        <li><strong>If statement:</strong> Executes code only when the condition is true</li>
+                        <li><strong>Else statement:</strong> Executes code when the condition is false (if present)</li>
+                    </ul>
+                    <p><strong>Flow:</strong> The program checks the condition and follows the appropriate path.</p>
+                `,
+          for: `
+                    <p><strong>What this code does:</strong> This is a loop that repeats code multiple times.</p>
+                    <p><strong>Key concepts:</strong></p>
+                    <ul style="margin-left: 1.5rem;">
+                        <li><strong>Initialization:</strong> Sets up the starting value</li>
+                        <li><strong>Condition:</strong> Determines when the loop should continue</li>
+                        <li><strong>Increment:</strong> Updates the value after each iteration</li>
+                    </ul>
+                    <p><strong>Execution:</strong> The loop runs as long as the condition is true, then stops.</p>
+                `,
+        };
+
+        let explanation = `
+                <p><strong>Code Analysis:</strong> I've analyzed your code and here's what it does:</p>
+                <p><strong>Structure:</strong> Your code follows good programming practices.</p>
+                <p><strong>Functionality:</strong> This code performs a specific task in a structured way.</p>
+                <p><strong>Best Practices:</strong> Consider adding comments to explain complex logic.</p>
+                <p><strong>Tips:</strong> Make sure to handle edge cases and validate inputs for better reliability.</p>
+            `;
+
+        // Add specific explanations based on code content
+        if (code.includes("function")) {
+          explanation = explanations["function"] + explanation;
+        }
+        if (code.includes("if") || code.includes("else")) {
+          explanation = explanations["if"] + explanation;
+        }
+        if (code.includes("for") || code.includes("while")) {
+          explanation = explanations["for"] + explanation;
+        }
+
+        return explanation;
+      }
+
+      // Interactive Learning
+      function selectOption(element, optionIndex) {
+        const exercise = element.closest(".exercise");
+        exercise
+          .querySelectorAll(".option")
+          .forEach((opt) => opt.classList.remove("selected"));
+        element.classList.add("selected");
+        element.setAttribute("data-selected", optionIndex);
+      }
+
+      function submitExercise(exerciseId, correctAnswer) {
+        const exercise = document.getElementById(`exercise-${exerciseId}`);
+        const selectedOption = exercise.querySelector(".option.selected");
+
+        if (!selectedOption) {
+          alert("Please select an answer!");
+          return;
+        }
+
+        const selectedAnswer = parseInt(
+          selectedOption.getAttribute("data-selected")
+        );
+        const options = exercise.querySelectorAll(".option");
+
+        // Show correct/incorrect answers
+        options.forEach((option, index) => {
+          option.classList.remove("selected");
+          if (index === correctAnswer) {
+            option.classList.add("correct");
+          } else if (
+            index === selectedAnswer &&
+            selectedAnswer !== correctAnswer
+          ) {
+            option.classList.add("incorrect");
+          }
+        });
+
+        // Update score
+        if (selectedAnswer === correctAnswer) {
+          exerciseScore += 10;
+          userPoints += 10;
+        }
+
+        // Disable the submit button
+        exercise.querySelector(".submit-btn").disabled = true;
+
+        // Update score display
+        updateScore();
+      }
+
+      function updateScore() {
+        const scoreElement = document.getElementById("exercise-score");
+        const leaderboardPoints = document.getElementById("user-points");
+
+        if (scoreElement) {
+          scoreElement.textContent = `Your Score: ${exerciseScore} points`;
+        }
+
+        if (leaderboardPoints) {
+          leaderboardPoints.textContent = `${userPoints} pts`;
+        }
+      }
+
+      // AI Challenge
+      function startChallenge() {
+        document.getElementById("challenge-start").style.display = "none";
+        document.getElementById("challenge-game").style.display = "block";
+
+        challengeData.currentQuestion = 0;
+        challengeData.score = 0;
+        challengeData.aiScore = 0;
+        challengeData.timeLeft = 30;
+
+        showChallengeQuestion();
+        startTimer();
+      }
+
+      function showChallengeQuestion() {
+        const question = challengeData.questions[challengeData.currentQuestion];
+        document.getElementById("question-text").textContent =
+          question.question;
+
+        const optionsContainer = document.getElementById("challenge-options");
+        optionsContainer.innerHTML = "";
+
+        question.options.forEach((option, index) => {
+          const optionDiv = document.createElement("div");
+          optionDiv.className = "option";
+          optionDiv.textContent = option;
+          optionDiv.onclick = () => selectChallengeOption(optionDiv, index);
+          optionsContainer.appendChild(optionDiv);
+        });
+
+        // Update progress
+        const progress =
+          ((challengeData.currentQuestion + 1) /
+            challengeData.questions.length) *
+          100;
+        document.getElementById("progress-fill").style.width = progress + "%";
+      }
+
+      function selectChallengeOption(element, optionIndex) {
+        const container = element.parentElement;
+        container
+          .querySelectorAll(".option")
+          .forEach((opt) => opt.classList.remove("selected"));
+        element.classList.add("selected");
+        element.setAttribute("data-selected", optionIndex);
+      }
+
+      function submitChallengeAnswer() {
+        const selectedOption = document.querySelector(
+          "#challenge-options .option.selected"
+        );
+
+        if (!selectedOption) {
+          alert("Please select an answer!");
+          return;
+        }
+
+        const selectedAnswer = parseInt(
+          selectedOption.getAttribute("data-selected")
+        );
+        const question = challengeData.questions[challengeData.currentQuestion];
+
+        // Check user answer
+        if (selectedAnswer === question.correct) {
+          challengeData.score += 10;
+          userPoints += 10;
+        }
+
+        // Simulate AI answer (85% accuracy)
+        const aiCorrect = Math.random() < 0.85;
+        if (aiCorrect) {
+          challengeData.aiScore += 10;
+        }
+
+        // Move to next question
+        challengeData.currentQuestion++;
+
+        if (challengeData.currentQuestion < challengeData.questions.length) {
+          clearInterval(challengeData.timer);
+          challengeData.timeLeft = 30;
+          startTimer();
+          showChallengeQuestion();
+        } else {
+          endChallenge();
+        }
+      }
+
+      function startTimer() {
+        const timerElement = document.getElementById("timer");
+        challengeData.timer = setInterval(() => {
+          challengeData.timeLeft--;
+          timerElement.textContent = challengeData.timeLeft + "s";
+
+          if (challengeData.timeLeft <= 0) {
+            clearInterval(challengeData.timer);
+            // Auto-submit if time runs out
+            submitChallengeAnswer();
+          }
+        }, 1000);
+      }
+
+      function endChallenge() {
+        clearInterval(challengeData.timer);
+        document.getElementById("challenge-game").style.display = "none";
+        document.getElementById("challenge-results").style.display = "block";
+
+        const finalScore = document.getElementById("final-score");
+        const userWon = challengeData.score > challengeData.aiScore;
+        const isTie = challengeData.score === challengeData.aiScore;
+
+        finalScore.innerHTML = `
+                <div style="text-align: center;">
+                    <h4>Final Results:</h4>
+                    <p><strong>Your Score:</strong> ${
+                      challengeData.score
+                    }/30</p>
+                    <p><strong>AI Score:</strong> ${
+                      challengeData.aiScore
+                    }/30</p>
+                    <p style="font-size: 1.2rem; margin-top: 1rem;">
+                        ${
+                          userWon
+                            ? "🎉 Congratulations! You won!"
+                            : isTie
+                            ? "🤝 It's a tie!"
+                            : "🤖 The AI won this time!"
+                        }
+                    </p>
+                    <p>You earned <strong>${
+                      challengeData.score
+                    } points</strong>!</p>
+                </div>
+            `;
+
+        updateScore();
+      }
+
+      function resetChallenge() {
+        document.getElementById("challenge-results").style.display = "none";
+        document.getElementById("challenge-start").style.display = "block";
+        challengeData.currentQuestion = 0;
+        challengeData.score = 0;
+        challengeData.aiScore = 0;
+      }
+
+      // Initialize
+      updateScore();
+    </script>
+  </body>
+</html>

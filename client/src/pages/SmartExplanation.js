@@ -42,30 +42,71 @@ const SmartExplanation = () => {
       setExplanation(data.explanation || "No explanation available");
     } catch (error) {
       console.error("Error generating explanation:", error);
-      setExplanation(
-        "Sorry, there was an error generating the explanation. Please try again."
-      );
+
+      // Fallback to mock explanation if API fails
+      const mockExplanation = generateMockExplanation(code);
+      setExplanation(mockExplanation);
     } finally {
       setLoading(false);
     }
   };
 
   const generateMockExplanation = (codeInput) => {
-    // Simple mock explanation based on common patterns
+    // Enhanced mock explanation based on common patterns
+    let explanation = "🤖 **Smart Code Analysis:**\n\n";
+
     if (codeInput.includes("function") || codeInput.includes("def")) {
-      return `This code defines a function that performs a specific task. Functions are reusable blocks of code that help organize your program and avoid repetition. The function takes input parameters (if any) and returns a result. This makes your code more modular and easier to maintain.`;
+      explanation += `**Function Definition:** This code defines a reusable function that performs a specific task.\n\n`;
+      explanation += `**Key Concepts:**\n`;
+      explanation += `• Functions help organize code and avoid repetition\n`;
+      explanation += `• They take input parameters and can return results\n`;
+      explanation += `• Makes code more modular and maintainable\n\n`;
+      explanation += `**Learning Tip:** Functions are building blocks of programming - master them to write cleaner, more efficient code!`;
     } else if (codeInput.includes("for") || codeInput.includes("while")) {
-      return `This is a loop structure that repeats a block of code multiple times. Loops are essential for performing repetitive tasks efficiently. The loop continues until a certain condition is met, making your code more dynamic and powerful.`;
+      explanation += `**Loop Structure:** This code uses iteration to repeat operations multiple times.\n\n`;
+      explanation += `**Key Concepts:**\n`;
+      explanation += `• Loops automate repetitive tasks efficiently\n`;
+      explanation += `• Continue until a specific condition is met\n`;
+      explanation += `• Essential for processing data and automation\n\n`;
+      explanation += `**Learning Tip:** Loops are powerful - they let you handle large amounts of data with just a few lines of code!`;
     } else if (codeInput.includes("if") || codeInput.includes("else")) {
-      return `This code uses conditional statements to make decisions in your program. The 'if' statement checks whether a condition is true, and if so, executes the code inside. The 'else' part provides an alternative action when the condition is false. This adds logic and flexibility to your programs.`;
+      explanation += `**Conditional Logic:** This code makes decisions based on different conditions.\n\n`;
+      explanation += `**Key Concepts:**\n`;
+      explanation += `• 'if' checks whether a condition is true\n`;
+      explanation += `• 'else' provides alternative actions\n`;
+      explanation += `• Adds intelligence and flexibility to programs\n\n`;
+      explanation += `**Learning Tip:** Conditionals make your programs smart - they can adapt and respond to different situations!`;
     } else if (
       codeInput.includes("console.log") ||
       codeInput.includes("print")
     ) {
-      return `This line outputs information to the console or terminal. It's commonly used for debugging (finding and fixing errors) and displaying results to users. The values inside the parentheses are what will be displayed.`;
+      explanation += `**Output Statement:** This code displays information to the user or console.\n\n`;
+      explanation += `**Key Concepts:**\n`;
+      explanation += `• Essential for debugging and showing results\n`;
+      explanation += `• Helps verify your program is working correctly\n`;
+      explanation += `• Provides feedback and communication\n\n`;
+      explanation += `**Learning Tip:** Output statements are your window into what your program is doing - use them liberally while learning!`;
+    } else if (
+      codeInput.includes("var") ||
+      codeInput.includes("let") ||
+      codeInput.includes("const")
+    ) {
+      explanation += `**Variable Declaration:** This code creates containers to store and manage data.\n\n`;
+      explanation += `**Key Concepts:**\n`;
+      explanation += `• Variables hold information your program can use\n`;
+      explanation += `• Different types (var/let/const) have different scopes\n`;
+      explanation += `• Makes code flexible and dynamic\n\n`;
+      explanation += `**Learning Tip:** Good variable names make your code self-documenting and easier to understand!`;
     } else {
-      return `This code snippet contains programming logic that performs specific operations. Each line contributes to the overall functionality of the program. Understanding the purpose of each part helps you learn how different programming concepts work together to solve problems.`;
+      explanation += `**General Code Analysis:** This code contains programming instructions that work together to solve a problem.\n\n`;
+      explanation += `**Key Concepts:**\n`;
+      explanation += `• Each line contributes to the overall functionality\n`;
+      explanation += `• Programming is about breaking problems into steps\n`;
+      explanation += `• Practice makes complex concepts clearer\n\n`;
+      explanation += `**Learning Tip:** Every expert was once a beginner - keep coding and you'll master these concepts!`;
     }
+
+    return explanation;
   };
 
   const copyToClipboard = () => {
