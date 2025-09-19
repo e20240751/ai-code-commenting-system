@@ -9,6 +9,7 @@ import {
   Lock,
 } from "lucide-react";
 import { useUser } from "../context/UserContext";
+import { API_ENDPOINTS } from "../config/api";
 
 const SmartExplanation = () => {
   const [code, setCode] = useState("");
@@ -24,12 +25,21 @@ const SmartExplanation = () => {
     setShowExplanation(true);
 
     try {
-      // Simulate API call - replace with actual OpenAI integration
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // Call the actual API endpoint
+      const response = await fetch(API_ENDPOINTS.EXPLAIN_CODE, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ code }),
+      });
 
-      // Mock AI explanation - replace with actual OpenAI response
-      const mockExplanation = generateMockExplanation(code);
-      setExplanation(mockExplanation);
+      if (!response.ok) {
+        throw new Error("Failed to get explanation");
+      }
+
+      const data = await response.json();
+      setExplanation(data.explanation || "No explanation available");
     } catch (error) {
       console.error("Error generating explanation:", error);
       setExplanation(
