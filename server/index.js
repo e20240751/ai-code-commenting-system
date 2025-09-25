@@ -432,71 +432,725 @@ function generateExplanationFromPatterns(
   language,
   originalCode = ""
 ) {
-  let explanation = "🤖 **Intelligent Code Analysis:**\n\n";
-
-  if (patterns.length === 0) {
-    explanation += "**Code Overview:**\n";
-    explanation +=
-      "This code demonstrates fundamental programming concepts. Let's break it down:\n\n";
-    explanation += "**Key Learning Points:**\n";
-    explanation +=
-      "• **Sequential Execution**: Code runs line by line from top to bottom\n";
-    explanation += "• **Data Processing**: Each line transforms or uses data\n";
-    explanation +=
-      "• **Problem Solving**: Programming breaks complex tasks into simple steps\n\n";
-    explanation += "**Next Steps:**\n";
-    explanation += "• Try adding variables to store data\n";
-    explanation += "• Experiment with different operations\n";
-    explanation += "• Practice writing your own functions\n";
-    return explanation;
-  }
-
-  explanation += "**Detected Programming Patterns:**\n\n";
-
-  patterns.forEach((pattern, index) => {
-    explanation += `${index + 1}. **${pattern.pattern}**\n`;
-    explanation += `   📚 **What it does**: ${pattern.explanation}\n`;
-    explanation += `   💡 **Example**: \`${pattern.example}\`\n\n`;
-  });
-
-  explanation += "**🎓 Learning Insights:**\n";
-  explanation += `• These patterns are fundamental to ${language} programming\n`;
-  explanation += "• Recognizing patterns helps you understand existing code\n";
-  explanation += "• Practice these patterns to improve your coding skills\n";
-  explanation += "• Each pattern solves a specific programming problem\n\n";
-
-  explanation += "**🚀 Practice Suggestions:**\n";
-  explanation += "• Try modifying the code to use different values\n";
-  explanation += "• Add new functions using similar patterns\n";
-  explanation += "• Experiment with different data types\n\n";
-
-  // Add code analysis section
-  explanation += "**🔍 Code Analysis:**\n";
-  explanation +=
-    "This code demonstrates several important programming concepts:\n\n";
-
-  // Analyze the code structure
-  const lines = originalCode.split("\n").filter((line) => line.trim());
-  explanation += `• **Code Structure**: ${lines.length} lines of executable code\n`;
-  explanation += `• **Complexity Level**: ${
-    patterns.length > 3
-      ? "Intermediate"
-      : patterns.length > 1
-      ? "Beginner-Intermediate"
-      : "Beginner"
-  }\n`;
-  explanation += `• **Main Purpose**: ${analyzeCodePurpose(
-    patterns,
-    language
-  )}\n\n`;
-
-  // Add commented code section
-  explanation += "**📝 Commented Code Version:**\n";
-  explanation += "```" + language.toLowerCase() + "\n";
-  explanation += addCommentsToCode(patterns, language, originalCode);
-  explanation += "\n```\n";
+  // Generate intelligent code analysis that explains what the code does
+  let explanation = analyzeCodeIntelligently(originalCode, language, patterns);
 
   return explanation;
+}
+
+// Function to analyze code intelligently and explain what it does
+function analyzeCodeIntelligently(code, language, patterns) {
+  let analysis = `# ${language.toUpperCase()} Code Analysis\n\n`;
+
+  // Analyze the main purpose of the code
+  const mainPurpose = analyzeCodePurpose(patterns, language, code);
+  analysis += `## 🎯 What This Code Does\n`;
+  analysis += `${mainPurpose}\n\n`;
+
+  // Add step-by-step explanation
+  const stepByStep = generateStepByStepExplanation(code, language);
+  analysis += `## 📝 Step-by-Step Explanation\n`;
+  analysis += `${stepByStep}\n\n`;
+
+  // Add example usage
+  const exampleUsage = generateExampleUsage(code, language);
+  analysis += `## 💡 Example Usage\n`;
+  analysis += `${exampleUsage}\n\n`;
+
+  return analysis;
+}
+
+// Function to generate step-by-step explanation
+function generateStepByStepExplanation(code, language) {
+  const lang = language.toLowerCase();
+  const lines = code.split("\n");
+  let explanation = "";
+
+  if (lang.includes("python")) {
+    if (/def\s+(\w+)\s*\([^)]*\):/.test(code)) {
+      const funcMatch = code.match(/def\s+(\w+)\s*\(([^)]*)\):/);
+      const funcName = funcMatch ? funcMatch[1] : "function";
+      const params = funcMatch ? funcMatch[2] : "";
+
+      explanation += `**Line 1: \`def ${funcName}(${params}):\`**\n`;
+      explanation += `• ${explainLine(
+        `def ${funcName}(${params}):`,
+        language
+      )}\n\n`;
+
+      for (let i = 1; i < lines.length; i++) {
+        const line = lines[i];
+        const lineNumber = i + 1;
+        const trimmedLine = line.trim();
+
+        if (trimmedLine === "") {
+          explanation += `**Line ${lineNumber}: (Empty line)**\n`;
+          explanation += `• **Whitespace**: This is an empty line for code readability\n\n`;
+          continue;
+        }
+
+        explanation += `**Line ${lineNumber}: \`${trimmedLine}\`**\n`;
+        explanation += `• ${explainLine(trimmedLine, language)}\n\n`;
+      }
+    } else {
+      // For non-function code
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        const lineNumber = i + 1;
+        const trimmedLine = line.trim();
+
+        if (trimmedLine === "") {
+          explanation += `**Line ${lineNumber}: (Empty line)**\n`;
+          explanation += `• **Whitespace**: This is an empty line for code readability\n\n`;
+          continue;
+        }
+
+        explanation += `**Line ${lineNumber}: \`${trimmedLine}\`**\n`;
+        explanation += `• **Code Purpose**: ${explainLine(
+          trimmedLine,
+          language
+        )}\n\n`;
+      }
+    }
+  } else if (lang.includes("javascript")) {
+    if (/function\s+(\w+)\s*\([^)]*\)\s*\{/.test(code)) {
+      const funcMatch = code.match(/function\s+(\w+)\s*\(([^)]*)\)\s*\{/);
+      const funcName = funcMatch ? funcMatch[1] : "function";
+      const params = funcMatch ? funcMatch[2] : "";
+
+      explanation += `**Line 1: \`function ${funcName}(${params}) {\`**\n`;
+      explanation += `• ${explainLine(
+        `function ${funcName}(${params}) {`,
+        language
+      )}\n\n`;
+
+      for (let i = 1; i < lines.length; i++) {
+        const line = lines[i];
+        const lineNumber = i + 1;
+        const trimmedLine = line.trim();
+
+        if (trimmedLine === "" || trimmedLine === "}") {
+          if (trimmedLine === "}") {
+            explanation += `**Line ${lineNumber}: \`}\`**\n`;
+            explanation += `• **Function End**: This closing brace ends the function definition\n\n`;
+          } else {
+            explanation += `**Line ${lineNumber}: (Empty line)**\n`;
+            explanation += `• **Whitespace**: This is an empty line for code readability\n\n`;
+          }
+          continue;
+        }
+
+        explanation += `**Line ${lineNumber}: \`${trimmedLine}\`**\n`;
+        explanation += `• ${explainLine(trimmedLine, language)}\n\n`;
+      }
+    } else {
+      // For non-function code
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        const lineNumber = i + 1;
+        const trimmedLine = line.trim();
+
+        if (trimmedLine === "") {
+          explanation += `**Line ${lineNumber}: (Empty line)**\n`;
+          explanation += `• **Whitespace**: This is an empty line for code readability\n\n`;
+          continue;
+        }
+
+        explanation += `**Line ${lineNumber}: \`${trimmedLine}\`**\n`;
+        explanation += `• **Code Purpose**: ${explainLine(
+          trimmedLine,
+          language
+        )}\n\n`;
+      }
+    }
+  } else {
+    // For other languages
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      const lineNumber = i + 1;
+      const trimmedLine = line.trim();
+
+      if (trimmedLine === "") {
+        explanation += `**Line ${lineNumber}: (Empty line)**\n`;
+        explanation += `• **Whitespace**: This is an empty line for code readability\n\n`;
+        continue;
+      }
+
+      explanation += `**Line ${lineNumber}: \`${trimmedLine}\`**\n`;
+      explanation += `• **Code Purpose**: ${explainLine(
+        trimmedLine,
+        language
+      )}\n\n`;
+    }
+  }
+
+  return explanation;
+}
+
+// Function to generate example usage
+function generateExampleUsage(code, language) {
+  const lang = language.toLowerCase();
+  let examples = "";
+
+  if (lang.includes("python")) {
+    if (/def\s+(\w+)\s*\([^)]*\):/.test(code)) {
+      const funcMatch = code.match(/def\s+(\w+)\s*\(([^)]*)\):/);
+      const funcName = funcMatch ? funcMatch[1] : "function";
+      const params = funcMatch ? funcMatch[2] : "";
+
+      examples += `\`\`\`python\n`;
+
+      if (funcName.toLowerCase().includes("greet")) {
+        examples += `print(${funcName}("Alice"))\n`;
+        examples += `# Output: Hello, Alice!\n\n`;
+        examples += `print(${funcName}("Bob"))\n`;
+        examples += `# Output: Hello, Bob!\n`;
+      } else if (funcName.toLowerCase().includes("fib")) {
+        examples += `print(${funcName}(5))\n`;
+        examples += `# Output: 5\n\n`;
+        examples += `print(${funcName}(10))\n`;
+        examples += `# Output: 55\n`;
+      } else if (
+        funcName.toLowerCase().includes("sum") ||
+        funcName.toLowerCase().includes("add")
+      ) {
+        if (params.includes("*")) {
+          examples += `print(${funcName}(1, 2, 3, 4))\n`;
+          examples += `# Output: 10\n\n`;
+          examples += `print(${funcName}(5, 10))\n`;
+          examples += `# Output: 15\n\n`;
+          examples += `print(${funcName}())\n`;
+          examples += `# Output: 0 (no arguments)\n`;
+        } else {
+          examples += `print(${funcName}(5, 3))\n`;
+          examples += `# Output: 8\n\n`;
+          examples += `print(${funcName}(10, 20))\n`;
+          examples += `# Output: 30\n`;
+        }
+      } else {
+        examples += `print(${funcName}())\n`;
+        examples += `# Output: [function result]\n`;
+      }
+
+      examples += `\`\`\`\n`;
+    } else {
+      examples += `\`\`\`python\n`;
+      examples += `# Run this code directly\n`;
+      examples += `${code}\n`;
+      examples += `\`\`\`\n`;
+    }
+  } else if (lang.includes("javascript")) {
+    if (/function\s+(\w+)\s*\([^)]*\)\s*\{/.test(code)) {
+      const funcMatch = code.match(/function\s+(\w+)\s*\(([^)]*)\)\s*\{/);
+      const funcName = funcMatch ? funcMatch[1] : "function";
+
+      examples += `\`\`\`javascript\n`;
+
+      if (funcName.toLowerCase().includes("greet")) {
+        examples += `console.log(${funcName}("Alice"));\n`;
+        examples += `// Output: Hello, Alice!\n\n`;
+        examples += `console.log(${funcName}("Bob"));\n`;
+        examples += `// Output: Hello, Bob!\n`;
+      } else if (
+        funcName.toLowerCase().includes("calc") ||
+        funcName.toLowerCase().includes("add")
+      ) {
+        examples += `console.log(${funcName}(5, 3));\n`;
+        examples += `// Output: 8\n\n`;
+        examples += `console.log(${funcName}(10, 20));\n`;
+        examples += `// Output: 30\n`;
+      } else {
+        examples += `console.log(${funcName}());\n`;
+        examples += `// Output: [function result]\n`;
+      }
+
+      examples += `\`\`\`\n`;
+    } else {
+      examples += `\`\`\`javascript\n`;
+      examples += `// Run this code directly\n`;
+      examples += `${code}\n`;
+      examples += `\`\`\`\n`;
+    }
+  } else if (lang.includes("react")) {
+    examples += `\`\`\`jsx\n`;
+    examples += `// Use this component in your React app\n`;
+    examples += `<Counter />\n`;
+    examples += `\`\`\`\n`;
+  } else if (lang.includes("c")) {
+    examples += `\`\`\`c\n`;
+    examples += `// Compile and run this program\n`;
+    examples += `gcc program.c -o program\n`;
+    examples += `./program\n`;
+    examples += `\`\`\`\n`;
+  } else {
+    examples += `\`\`\`${lang}\n`;
+    examples += `// Example usage\n`;
+    examples += `${code}\n`;
+    examples += `\`\`\`\n`;
+  }
+
+  return examples;
+}
+
+// Function to describe the detailed purpose of the code
+function describeCodePurpose(code, language, patterns) {
+  const lang = language.toLowerCase();
+  let purpose = "";
+
+  // Analyze the code content to determine its specific purpose
+  if (lang.includes("python")) {
+    if (/def\s+(\w+)\s*\([^)]*\):/.test(code)) {
+      const funcMatch = code.match(/def\s+(\w+)\s*\([^)]*\):/);
+      const funcName = funcMatch ? funcMatch[1].toLowerCase() : "";
+
+      if (funcName.includes("greet")) {
+        purpose =
+          "This greeting function is designed to create personalized welcome messages for users. It's commonly used in applications where you need to welcome users by name, such as login systems, chat applications, or user dashboards. The function takes a name parameter and returns a friendly greeting that can be displayed to the user.";
+      } else if (
+        funcName.includes("calc") ||
+        funcName.includes("add") ||
+        funcName.includes("multiply") ||
+        funcName.includes("sum")
+      ) {
+        purpose =
+          "This calculation function is designed to perform mathematical operations and return computed results. It's useful in applications that need to process numerical data, such as calculators, financial software, scientific applications, or any system that requires mathematical computations. The function takes input values and processes them through mathematical formulas.";
+      } else if (funcName.includes("fib")) {
+        purpose =
+          "This Fibonacci function demonstrates recursive programming by calculating Fibonacci numbers. It's often used as a teaching example to show how recursion works, where a function calls itself with smaller inputs until it reaches a base case. This pattern is useful in algorithms that can be broken down into smaller, similar subproblems.";
+      } else if (/print\s*\(/.test(code)) {
+        purpose =
+          "This function combines computation with output display, making it useful for interactive programs or debugging. It performs calculations and immediately shows the results to the user, which is helpful in educational programs, interactive calculators, or when you want to see intermediate results during development.";
+      } else if (/return\s+/.test(code)) {
+        purpose =
+          "This function is designed to be a utility that other parts of your program can call. It processes input data and returns a result that can be used by other functions or stored in variables. This modular approach makes your code more organized and reusable.";
+      } else {
+        purpose =
+          "This function encapsulates a specific behavior or operation that can be reused throughout your program. By organizing code into functions, you make your program more modular, easier to test, and simpler to maintain.";
+      }
+    } else if (/for\s+\w+\s+in\s+/.test(code)) {
+      purpose =
+        "This code uses iteration to process collections of data efficiently. It's designed to handle multiple items without writing repetitive code, making it perfect for data processing, filtering, or transforming lists of information.";
+    } else if (/if\s+/.test(code)) {
+      purpose =
+        "This code implements conditional logic to make decisions based on different scenarios. It's designed to handle various cases and respond appropriately, making your program more intelligent and adaptable to different situations.";
+    } else if (/print\s*\(/.test(code)) {
+      purpose =
+        "This code is designed to communicate with users by displaying information. It's commonly used for showing results, providing feedback, or creating interactive experiences where users need to see what's happening in the program.";
+    } else {
+      purpose =
+        "This code performs a specific operation designed to accomplish a particular task. It demonstrates how programming can solve real-world problems by breaking them down into logical steps.";
+    }
+  } else if (lang.includes("javascript")) {
+    if (/function\s+(\w+)\s*\([^)]*\)\s*\{/.test(code)) {
+      const funcMatch = code.match(/function\s+(\w+)\s*\([^)]*\)\s*\{/);
+      const funcName = funcMatch ? funcMatch[1].toLowerCase() : "";
+
+      if (funcName.includes("greet")) {
+        purpose =
+          "This JavaScript greeting function is designed for web applications where you need to create dynamic, personalized content. It's commonly used in user interfaces, welcome messages on websites, or interactive applications that need to address users by name.";
+      } else if (funcName.includes("calc") || funcName.includes("add")) {
+        purpose =
+          "This JavaScript calculation function is designed for web-based applications that need to perform mathematical operations in real-time. It's useful for interactive calculators, form validations, dynamic content generation, or any web application that requires client-side computations.";
+      } else {
+        purpose =
+          "This JavaScript function is designed to be reusable across different parts of a web application. It helps organize client-side logic and makes web pages more interactive and dynamic.";
+      }
+    } else if (/console\.log\s*\(/.test(code)) {
+      purpose =
+        "This code is designed for debugging and development purposes. It helps developers understand what's happening in their code by displaying information in the browser's developer console, making it easier to identify and fix issues.";
+    } else if (/const\s+\w+\s*=/.test(code) || /let\s+\w+\s*=/.test(code)) {
+      purpose =
+        "This code is designed to store and manage data in your program. Variables act as containers that hold information, allowing your program to remember and work with data throughout its execution.";
+    } else {
+      purpose =
+        "This JavaScript code is designed to add interactivity and functionality to web pages, making them more dynamic and responsive to user actions.";
+    }
+  } else if (lang.includes("react")) {
+    purpose =
+      "This React code is designed to create interactive user interface components for web applications. React components are reusable pieces of UI that can display data, respond to user interactions, and update dynamically based on state changes.";
+  } else if (lang.includes("c")) {
+    if (/int\s+main\s*\([^)]*\)\s*\{/.test(code)) {
+      purpose =
+        "This C code defines the main entry point of a program. Every C program must have a main function where execution begins, making this the foundation that starts your entire application.";
+    } else if (/printf\s*\(/.test(code)) {
+      purpose =
+        "This C code is designed to display formatted output to the console. It's commonly used for showing results, debugging information, or creating command-line interfaces that communicate with users.";
+    } else {
+      purpose =
+        "This C code is designed to perform low-level operations with direct control over memory and system resources, making it suitable for system programming, embedded systems, or performance-critical applications.";
+    }
+  } else {
+    purpose =
+      "This code is designed to solve a specific problem using programming logic and concepts. It demonstrates how to break down complex tasks into manageable, executable steps.";
+  }
+
+  // Add context about why this code might be useful
+  purpose += "\n\n**Why this is useful:** ";
+  if (patterns.some((p) => p.type === "function")) {
+    purpose +=
+      "Functions make code reusable and easier to maintain. You can call this function from different parts of your program.";
+  } else if (patterns.some((p) => p.type === "loops")) {
+    purpose +=
+      "Loops help you process multiple items efficiently without writing repetitive code.";
+  } else if (patterns.some((p) => p.type === "conditionals")) {
+    purpose +=
+      "Conditional statements allow your program to make decisions and respond differently to different situations.";
+  } else {
+    purpose +=
+      "This code demonstrates fundamental programming concepts that are building blocks for more complex programs.";
+  }
+
+  return purpose;
+}
+
+// Function to explain what a specific line of code does
+function explainLine(line, language) {
+  const lang = language.toLowerCase();
+
+  if (lang.includes("python")) {
+    if (/def\s+(\w+)\s*\(([^)]*)\):/.test(line)) {
+      const match = line.match(/def\s+(\w+)\s*\(([^)]*)\):/);
+      const funcName = match[1];
+      const params = match[2];
+
+      // Provide specific explanations based on function name and context
+      if (funcName.toLowerCase().includes("greet")) {
+        return `This creates a personalized greeting system. When someone calls this function with a name, it will welcome them personally instead of using generic messages.`;
+      } else if (
+        funcName.toLowerCase().includes("calc") ||
+        funcName.toLowerCase().includes("add") ||
+        funcName.toLowerCase().includes("multiply") ||
+        funcName.toLowerCase().includes("sum")
+      ) {
+        return `This sets up a math helper that can solve problems with numbers. Instead of doing calculations manually each time, you can use this function to get answers quickly.`;
+      } else if (funcName.toLowerCase().includes("fib")) {
+        return `This creates a number sequence generator. It's like having a calculator that knows how to create the famous Fibonacci pattern where each number is the sum of the two before it.`;
+      } else if (funcName.toLowerCase().includes("sort")) {
+        return `This organizes messy data into neat order. Whether you have a list of names, numbers, or anything else, this function will arrange them from smallest to largest or alphabetically.`;
+      } else if (
+        funcName.toLowerCase().includes("search") ||
+        funcName.toLowerCase().includes("find")
+      ) {
+        return `This acts like a detective that hunts through data to find what you're looking for. Instead of manually checking every item, it does the searching for you.`;
+      } else if (
+        funcName.toLowerCase().includes("validate") ||
+        funcName.toLowerCase().includes("check")
+      ) {
+        return `This acts as a quality checker that makes sure data meets certain rules. It's like having a bouncer that only lets valid information through.`;
+      } else if (
+        funcName.toLowerCase().includes("format") ||
+        funcName.toLowerCase().includes("display")
+      ) {
+        return `This takes raw data and makes it look nice and readable. It's like having a personal assistant that organizes information in a way that's easy to understand.`;
+      } else {
+        if (params) {
+          const paramCount = params.split(",").length;
+          return `This creates a reusable tool that takes ${paramCount} piece(s) of information and does something useful with them. Think of it as a specialized worker that knows how to handle specific tasks.`;
+        } else {
+          return `This creates a simple tool that does one specific job without needing any input. It's like a button you can press to get a predictable result.`;
+        }
+      }
+    } else if (/return\s+(.+)/.test(line)) {
+      const match = line.match(/return\s+(.+)/);
+      const returnValue = match[1];
+
+      // Provide specific explanations based on return value content
+      if (returnValue.includes('f"') || returnValue.includes("f'")) {
+        return `This creates a custom message by filling in the blanks with actual values. Instead of showing "Hello, {name}!", it will show "Hello, Alice!" when Alice uses the function.`;
+      } else if (returnValue.includes("sum(")) {
+        return `This adds up all the numbers you give it and gives you the total. It's like having a calculator that can add as many numbers as you want at once.`;
+      } else if (returnValue.includes("len(")) {
+        return `This counts how many items are in a list or how many characters are in text. It's like having a counter that tells you the size of things.`;
+      } else if (returnValue.includes("+") && returnValue.includes('"')) {
+        return `This combines pieces of text together to make a longer message. It's like gluing words together to create sentences.`;
+      } else if (
+        returnValue.includes("+") ||
+        returnValue.includes("-") ||
+        returnValue.includes("*") ||
+        returnValue.includes("/")
+      ) {
+        return `This does math and gives you the answer. Instead of you calculating manually, the computer does the work and gives you the result.`;
+      } else if (
+        returnValue.includes("True") ||
+        returnValue.includes("False")
+      ) {
+        return `This gives you a simple yes or no answer. It's like asking "Is this true?" and getting back either "Yes" or "No".`;
+      } else if (returnValue.includes("[") && returnValue.includes("]")) {
+        return `This creates a list of items that can be used later. It's like making a shopping list that the program can check and use.`;
+      } else if (returnValue.includes("{")) {
+        return `This creates a collection of paired information. It's like having a phone book where you can look up names to find numbers.`;
+      } else {
+        return `This gives back the result of the function's work. It's like getting the answer after asking the function to do something for you.`;
+      }
+    } else if (/print\s*\((.+)\)/.test(line)) {
+      const match = line.match(/print\s*\((.+)\)/);
+      const printValue = match[1];
+      return `This shows information on the screen so people can see it. It's like writing something on a piece of paper and holding it up for others to read.`;
+    } else if (/for\s+(\w+)\s+in\s+(.+):/.test(line)) {
+      const match = line.match(/for\s+(\w+)\s+in\s+(.+):/);
+      const varName = match[1];
+      const iterable = match[2];
+      return `This creates a repeating process that goes through each item in a collection. It's like having a robot that picks up each item one by one and does something with it.`;
+    } else if (/if\s+(.+):/.test(line)) {
+      const match = line.match(/if\s+(.+):/);
+      const condition = match[1];
+      return `This creates a decision point where the program chooses what to do next. It's like having a fork in the road where you decide which path to take based on certain conditions.`;
+    } else if (/elif\s+(.+):/.test(line)) {
+      const match = line.match(/elif\s+(.+):/);
+      const condition = match[1];
+      return `This provides an alternative path if the first condition wasn't met. It's like saying "If the first option doesn't work, try this instead."`;
+    } else if (/else:/.test(line)) {
+      return `This sets up a backup plan for when none of the other conditions are met. It's like having a default option that always works when everything else fails.`;
+    } else if (
+      /(\w+)\s*=\s*(.+)/.test(line) &&
+      !line.includes("def") &&
+      !line.includes("if") &&
+      !line.includes("for")
+    ) {
+      const match = line.match(/(\w+)\s*=\s*(.+)/);
+      const varName = match[1];
+      const value = match[2];
+
+      if (value.includes("input(")) {
+        return `Assigns user input from the console to the variable '${varName}' for further processing.`;
+      } else if (value.includes("int(") || value.includes("float(")) {
+        return `Converts the value to a number and assigns it to the variable '${varName}'.`;
+      } else if (value.includes("str(")) {
+        return `Converts the value to a string and assigns it to the variable '${varName}'.`;
+      } else if (value.includes("list(") || value.includes("[]")) {
+        return `Creates a list and assigns it to the variable '${varName}' for storing multiple items.`;
+      } else {
+        return `Assigns the value '${value}' to the variable '${varName}' for storage and later use.`;
+      }
+    }
+  } else if (lang.includes("javascript")) {
+    if (/function\s+(\w+)\s*\(([^)]*)\)\s*\{/.test(line)) {
+      const match = line.match(/function\s+(\w+)\s*\(([^)]*)\)\s*\{/);
+      const funcName = match[1];
+      const params = match[2];
+
+      // Provide specific explanations based on function name
+      if (funcName.toLowerCase().includes("greet")) {
+        return `This creates a personalized greeting system for websites. When someone visits your page, this function can welcome them by name instead of showing generic messages.`;
+      } else if (
+        funcName.toLowerCase().includes("calc") ||
+        funcName.toLowerCase().includes("add")
+      ) {
+        return `This sets up a math helper that can solve problems with numbers on web pages. Instead of doing calculations manually, users can get instant answers.`;
+      } else if (
+        funcName.toLowerCase().includes("validate") ||
+        funcName.toLowerCase().includes("check")
+      ) {
+        return `This acts as a quality checker that makes sure users enter the right information in forms. It's like having a bouncer that only lets correct data through.`;
+      } else if (
+        funcName.toLowerCase().includes("render") ||
+        funcName.toLowerCase().includes("display")
+      ) {
+        return `This creates or updates visual elements on web pages. It's like having a painter that knows how to show information in the right places.`;
+      } else if (
+        funcName.toLowerCase().includes("fetch") ||
+        funcName.toLowerCase().includes("get")
+      ) {
+        return `This acts like a messenger that goes to other websites to get information. It's like having a delivery person that brings data from far away places.`;
+      } else {
+        if (params) {
+          const paramCount = params.split(",").length;
+          return `This creates a reusable tool for web pages that takes ${paramCount} piece(s) of information and does something useful with them. Think of it as a specialized worker for your website.`;
+        } else {
+          return `This creates a simple tool that adds functionality to web pages without needing any input. It's like a button that does one specific job.`;
+        }
+      }
+    } else if (/const\s+(\w+)\s*=\s*(.+)/.test(line)) {
+      const match = line.match(/const\s+(\w+)\s*=\s*(.+)/);
+      const varName = match[1];
+      const value = match[2];
+
+      if (value.includes("document.")) {
+        return `Creates a constant reference to a DOM element for manipulation in the web page.`;
+      } else if (value.includes("() =>")) {
+        return `Creates a constant that stores an arrow function for later execution.`;
+      } else if (value.includes("[]")) {
+        return `Creates a constant array that cannot be reassigned but can be modified.`;
+      } else if (value.includes("{}")) {
+        return `Creates a constant object that cannot be reassigned but can be modified.`;
+      } else {
+        return `Creates an immutable constant '${varName}' with the value '${value}' that cannot be changed.`;
+      }
+    } else if (/let\s+(\w+)\s*=\s*(.+)/.test(line)) {
+      const match = line.match(/let\s+(\w+)\s*=\s*(.+)/);
+      const varName = match[1];
+      const value = match[2];
+      return `Declares a mutable variable '${varName}' with block scope and assigns it the value '${value}'.`;
+    } else if (/var\s+(\w+)\s*=\s*(.+)/.test(line)) {
+      const match = line.match(/var\s+(\w+)\s*=\s*(.+)/);
+      const varName = match[1];
+      const value = match[2];
+      return `Declares a variable '${varName}' with function scope and assigns it the value '${value}'.`;
+    } else if (/return\s+(.+)/.test(line)) {
+      const match = line.match(/return\s+(.+)/);
+      const returnValue = match[1];
+
+      if (returnValue.includes("`")) {
+        return `This creates a custom message by filling in the blanks with actual values. Instead of showing "Hello, ${name}!", it will show "Hello, Alice!" when Alice uses the function.`;
+      } else if (returnValue.includes("+")) {
+        return `This combines pieces of text together to make a longer message. It's like gluing words together to create sentences.`;
+      } else if (returnValue.includes("JSON.stringify")) {
+        return `This converts data into a format that can be sent over the internet. It's like packaging information so it can be delivered to other programs.`;
+      } else {
+        return `This gives back the result of the function's work. It's like getting the answer after asking the function to do something for you.`;
+      }
+    } else if (/console\.log\s*\((.+)\)/.test(line)) {
+      const match = line.match(/console\.log\s*\((.+)\)/);
+      const logValue = match[1];
+      return `Outputs the value '${logValue}' to the browser's developer console for debugging purposes.`;
+    } else if (/document\.getElementById\s*\((.+)\)/.test(line)) {
+      const match = line.match(/document\.getElementById\s*\((.+)\)/);
+      const elementId = match[1];
+      return `Retrieves a DOM element by its ID '${elementId}' for manipulation or event handling.`;
+    } else if (/addEventListener\s*\((.+)\)/.test(line)) {
+      return `Attaches an event listener to a DOM element to respond to user interactions like clicks or key presses.`;
+    }
+  } else if (lang.includes("c")) {
+    if (/int\s+main\s*\([^)]*\)\s*\{/.test(line)) {
+      return `This is the entry point of the program where execution begins. Every C program must have a main function.`;
+    } else if (/printf\s*\((.+)\)/.test(line)) {
+      const match = line.match(/printf\s*\((.+)\)/);
+      const formatString = match[1];
+      return `This displays formatted output to the screen. It's like having a printer that shows information to the user.`;
+    } else if (/scanf\s*\((.+)\)/.test(line)) {
+      const match = line.match(/scanf\s*\((.+)\)/);
+      const formatString = match[1];
+      return `This reads input from the user and stores it in variables. It's like having a form that collects information from people.`;
+    } else if (/int\s+(\w+)\s*=/.test(line)) {
+      const match = line.match(/int\s+(\w+)\s*=/);
+      const varName = match[1];
+      return `This creates an integer variable called '${varName}' and gives it an initial value. It's like creating a labeled box to store numbers.`;
+    } else if (/int\s+(\w+)\[\]\s*=/.test(line)) {
+      const match = line.match(/int\s+(\w+)\[\]\s*=/);
+      const varName = match[1];
+      return `This creates an array (a list of numbers) called '${varName}'. It's like having multiple boxes arranged in a row to store related data.`;
+    } else if (/for\s*\([^)]*\)\s*\{/.test(line)) {
+      return `This creates a loop that repeats code multiple times. It's like having a robot that does the same task over and over until it's finished.`;
+    } else if (/if\s*\([^)]*\)\s*\{/.test(line)) {
+      return `This creates a decision point where the program chooses what to do next. It's like having a fork in the road where you pick which path to take.`;
+    } else if (/return\s+(\d+)/.test(line)) {
+      const match = line.match(/return\s+(\d+)/);
+      const returnCode = match[1];
+      return `This ends the program and tells the system whether it ran successfully (0 means success, other numbers mean there was a problem).`;
+    } else if (/#include\s*<(.+)>/.test(line)) {
+      const match = line.match(/#include\s*<(.+)>/);
+      const library = match[1];
+      return `This includes a library that provides useful functions. It's like borrowing tools from a toolbox so you can use them in your program.`;
+    } else if (/(\w+)\s*\+=\s*(.+)/.test(line)) {
+      const match = line.match(/(\w+)\s*\+=\s*(.+)/);
+      const varName = match[1];
+      const value = match[2];
+      return `This adds a value to the variable '${varName}' and stores the result back in the same variable. It's like adding money to a piggy bank.`;
+    } else if (/(\w+)\s*=\s*(.+)/.test(line)) {
+      const match = line.match(/(\w+)\s*=\s*(.+)/);
+      const varName = match[1];
+      const value = match[2];
+      return `This stores a value in the variable '${varName}'. It's like putting something in a labeled box for later use.`;
+    }
+  } else if (lang.includes("cpp") || lang.includes("c++")) {
+    if (/int\s+main\s*\([^)]*\)\s*\{/.test(line)) {
+      return `This is the entry point of the program where execution begins. Every C++ program must have a main function.`;
+    } else if (/cout\s*<</.test(line)) {
+      return `This displays output to the screen using C++'s output stream. It's like having a printer that shows information to the user.`;
+    } else if (/cin\s*>>/.test(line)) {
+      return `This reads input from the user using C++'s input stream. It's like having a form that collects information from people.`;
+    } else if (/#include\s*<(.+)>/.test(line)) {
+      const match = line.match(/#include\s*<(.+)>/);
+      const library = match[1];
+      return `This includes a C++ library that provides useful functions. It's like borrowing tools from a toolbox so you can use them in your program.`;
+    } else if (/using\s+namespace\s+std/.test(line)) {
+      return `This tells the program to use the standard namespace, which allows you to use common functions without typing 'std::' every time.`;
+    }
+  } else if (lang.includes("java")) {
+    if (/public\s+static\s+void\s+main\s*\([^)]*\)/.test(line)) {
+      return `This is the entry point of the Java program where execution begins. Every Java application must have a main method.`;
+    } else if (/System\.out\.print/.test(line)) {
+      return `This displays output to the console. It's like having a printer that shows information to the user.`;
+    } else if (/System\.in/.test(line)) {
+      return `This reads input from the user. It's like having a form that collects information from people.`;
+    } else if (/import\s+(.+)/.test(line)) {
+      const match = line.match(/import\s+(.+)/);
+      const library = match[1];
+      return `This imports a Java library that provides useful classes and methods. It's like borrowing tools from a toolbox so you can use them in your program.`;
+    } else if (/class\s+(\w+)/.test(line)) {
+      const match = line.match(/class\s+(\w+)/);
+      const className = match[1];
+      return `This defines a new class called '${className}'. A class is like a blueprint for creating objects.`;
+    }
+  } else if (lang.includes("html")) {
+    if (/<html/.test(line)) {
+      return `This starts the HTML document structure. It tells the browser that everything inside is HTML content.`;
+    } else if (/<head/.test(line)) {
+      return `This starts the head section where you put information about the page (like title, styles, scripts) that users don't see directly.`;
+    } else if (/<body/.test(line)) {
+      return `This starts the body section where you put the main content that users will see on the webpage.`;
+    } else if (/<h[1-6]/.test(line)) {
+      return `This creates a heading that makes text larger and more prominent. It's like creating a title or subtitle for a section.`;
+    } else if (/<p/.test(line)) {
+      return `This creates a paragraph of text. It's like writing a normal sentence or paragraph in a document.`;
+    } else if (/<div/.test(line)) {
+      return `This creates a container that can hold other elements. It's like having a box that you can put other things inside.`;
+    } else if (/<img/.test(line)) {
+      return `This displays an image on the webpage. It's like putting a picture in a document.`;
+    } else if (/<\/html/.test(line)) {
+      return `This ends the HTML document structure, closing the main container.`;
+    } else if (/<\/head/.test(line)) {
+      return `This ends the head section, closing the area where page information is stored.`;
+    } else if (/<\/body/.test(line)) {
+      return `This ends the body section, closing the main content area.`;
+    } else if (/<\/h[1-6]/.test(line)) {
+      return `This ends a heading, closing the title or subtitle section.`;
+    } else if (/<\/p/.test(line)) {
+      return `This ends a paragraph, closing the text section.`;
+    } else if (/<\/div/.test(line)) {
+      return `This ends a container, closing the box that held other elements.`;
+    } else if (/<\/img/.test(line)) {
+      return `This ends an image element.`;
+    } else if (/<\/a/.test(line)) {
+      return `This ends a link, closing the clickable element.`;
+    } else if (/<title/.test(line)) {
+      return `This sets the page title that appears in the browser tab. It's like giving your webpage a name tag.`;
+    } else if (/<a\s+href/.test(line)) {
+      return `This creates a clickable link that takes users to another webpage or location. It's like having a door that opens to another room.`;
+    }
+  } else if (lang.includes("css")) {
+    if (/\.[\w-]+\s*\{/.test(line)) {
+      return `This starts a CSS rule that applies styles to elements with a specific class. It's like giving instructions on how something should look.`;
+    } else if (/#[\w-]+\s*\{/.test(line)) {
+      return `This starts a CSS rule that applies styles to an element with a specific ID. It's like giving instructions on how one specific thing should look.`;
+    } else if (/\w+\s*:\s*[^;]+;/.test(line)) {
+      const match = line.match(/(\w+)\s*:\s*([^;]+);/);
+      const property = match[1];
+      const value = match[2];
+      return `This sets the '${property}' style to '${value}'. It's like telling the element how it should appear (color, size, position, etc.).`;
+    }
+  }
+
+  // Fallback for unrecognized patterns - now more helpful
+  if (line.trim() === "") {
+    return `This is an empty line used to make the code more readable and organized.`;
+  } else if (line.trim().startsWith("//") || line.trim().startsWith("/*")) {
+    return `This is a comment that explains what the code does. Comments help other programmers (and yourself) understand the code better.`;
+  } else if (line.trim().startsWith("#")) {
+    return `This is a preprocessor directive that gives instructions to the compiler before the code is compiled.`;
+  } else if (
+    line.includes("=") &&
+    !line.includes("==") &&
+    !line.includes("!=")
+  ) {
+    return `This assigns a value to a variable, storing information for later use.`;
+  } else if (line.includes("(") && line.includes(")")) {
+    return `This calls a function or method to perform a specific task.`;
+  } else if (line.includes("{") || line.includes("}")) {
+    return `This creates or ends a block of code that groups related statements together.`;
+  } else {
+    return `This line performs a specific operation that contributes to the overall functionality of the program.`;
+  }
 }
 
 // Function to add comments to actual code based on detected patterns
@@ -617,26 +1271,72 @@ function addCommentsToCode(patterns, language, originalCode) {
 }
 
 // Function to analyze the main purpose of the code
-function analyzeCodePurpose(patterns, language) {
-  const patternTypes = patterns.map((p) => p.type);
+function analyzeCodePurpose(patterns, language, code) {
+  const lang = language.toLowerCase();
 
-  if (patternTypes.includes("function")) {
-    return "Defines and uses functions to organize code into reusable blocks";
-  } else if (patternTypes.includes("loops")) {
-    return "Uses loops to repeat operations or iterate through data";
-  } else if (patternTypes.includes("conditionals")) {
-    return "Implements conditional logic to make decisions based on conditions";
-  } else if (patternTypes.includes("dataStructures")) {
-    return "Works with data structures like arrays or lists to organize information";
-  } else if (patternTypes.includes("hooks") || patternTypes.includes("state")) {
-    return "Manages component state and lifecycle in a React application";
-  } else if (
-    patternTypes.includes("pointers") ||
-    patternTypes.includes("memory")
-  ) {
-    return "Demonstrates low-level memory management and pointer operations";
+  if (lang.includes("python")) {
+    if (/def\s+(\w+)\s*\([^)]*\):/.test(code)) {
+      const funcMatch = code.match(/def\s+(\w+)\s*\([^)]*\):/);
+      const funcName = funcMatch ? funcMatch[1].toLowerCase() : "";
+
+      if (funcName.includes("greet")) {
+        return "Creates personalized greeting messages using user names";
+      } else if (
+        funcName.includes("calc") ||
+        funcName.includes("add") ||
+        funcName.includes("multiply") ||
+        funcName.includes("sum")
+      ) {
+        return "Performs mathematical calculations and returns computed results";
+      } else if (funcName.includes("fib")) {
+        return "Calculates Fibonacci numbers using recursive programming";
+      } else if (/print\s*\(/.test(code)) {
+        return "Executes operations and displays output to the user";
+      } else if (/return\s+/.test(code)) {
+        return "Processes input data and returns a result for other functions to use";
+      } else {
+        return "Defines a reusable function that performs a specific task";
+      }
+    } else if (/for\s+\w+\s+in\s+/.test(code)) {
+      return "Iterates through collections of data to process multiple items";
+    } else if (/if\s+/.test(code)) {
+      return "Makes conditional decisions based on different scenarios";
+    } else if (/print\s*\(/.test(code)) {
+      return "Displays information and communicates with the user";
+    } else {
+      return "Performs a specific operation using programming logic";
+    }
+  } else if (lang.includes("javascript")) {
+    if (/function\s+(\w+)\s*\([^)]*\)\s*\{/.test(code)) {
+      const funcMatch = code.match(/function\s+(\w+)\s*\([^)]*\)\s*\{/);
+      const funcName = funcMatch ? funcMatch[1].toLowerCase() : "";
+
+      if (funcName.includes("greet")) {
+        return "Creates dynamic greeting messages for web applications";
+      } else if (funcName.includes("calc") || funcName.includes("add")) {
+        return "Performs real-time calculations in web applications";
+      } else {
+        return "Defines a reusable JavaScript function for web interactivity";
+      }
+    } else if (/console\.log\s*\(/.test(code)) {
+      return "Outputs debugging information to the browser console";
+    } else if (/const\s+\w+\s*=/.test(code) || /let\s+\w+\s*=/.test(code)) {
+      return "Stores and manages data using variables";
+    } else {
+      return "Adds interactivity and functionality to web pages";
+    }
+  } else if (lang.includes("react")) {
+    return "Creates interactive UI components for web applications";
+  } else if (lang.includes("c")) {
+    if (/int\s+main\s*\([^)]*\)\s*\{/.test(code)) {
+      return "Defines the main entry point where program execution begins";
+    } else if (/printf\s*\(/.test(code)) {
+      return "Displays formatted output to the console";
+    } else {
+      return "Performs low-level operations with direct system control";
+    }
   } else {
-    return "Performs basic operations and demonstrates fundamental programming concepts";
+    return "Solves a specific problem using programming logic";
   }
 }
 
@@ -1322,16 +2022,35 @@ app.post("/api/explain-code", async (req, res) => {
       normalizedLanguage === "python" ||
       normalizedLanguage === "javascript" ||
       normalizedLanguage === "react" ||
+      normalizedLanguage === "html" ||
+      normalizedLanguage === "css" ||
+      normalizedLanguage === "java" ||
+      normalizedLanguage === "c++" ||
+      normalizedLanguage === "cpp" ||
       normalizedLanguage.startsWith("c ") ||
       normalizedLanguage.startsWith("python ") ||
       normalizedLanguage.startsWith("javascript ") ||
-      normalizedLanguage.startsWith("react ");
+      normalizedLanguage.startsWith("react ") ||
+      normalizedLanguage.startsWith("html ") ||
+      normalizedLanguage.startsWith("css ") ||
+      normalizedLanguage.startsWith("java ") ||
+      normalizedLanguage.startsWith("c++ ") ||
+      normalizedLanguage.startsWith("cpp ");
 
     if (!language || !isValidLanguage) {
       return res.status(400).json({
         message:
-          "Only C, Python, JavaScript, and React languages are supported. Please select one of these languages.",
-        supportedLanguages: ["C", "Python", "JavaScript", "React"],
+          "Only C, Python, JavaScript, React, HTML, CSS, Java, and C++ languages are supported. Please select one of these languages.",
+        supportedLanguages: [
+          "C",
+          "Python",
+          "JavaScript",
+          "React",
+          "HTML",
+          "CSS",
+          "Java",
+          "C++",
+        ],
       });
     }
 
