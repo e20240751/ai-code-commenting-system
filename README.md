@@ -7,8 +7,8 @@ A comprehensive web-based platform designed to support beginners in programming 
 ### 1. Smart Code Explanation
 
 - **AI-Powered Analysis**: Paste any code snippet and get instant, beginner-friendly explanations
-- **Interactive Interface**: Clean, intuitive design with real-time explanation generation
-- **Multiple Languages**: Supports JavaScript, Python, React, and more
+- **Educational Step-by-Step**: Each line explained with real-world analogies and clear purposes
+- **Multiple Languages**: Supports C, Python, JavaScript, HTML, CSS, Java, C++, and React
 - **Sample Codes**: Pre-loaded examples to help users get started
 
 ### 2. Interactive Learning (QCM Exercises)
@@ -65,8 +65,9 @@ A comprehensive web-based platform designed to support beginners in programming 
 
 ### AI Integration
 
-- **OpenAI API** - GPT models for intelligent code explanations
-- **Fallback System** - Graceful degradation when AI service is unavailable
+- **Google Gemini API** - Advanced AI models for intelligent code explanations
+- **Fallback System** - Comprehensive pattern-based explanations when AI service is unavailable
+- **Educational Focus** - Explanations designed to teach WHY code works, not just WHAT it does
 
 ### Additional Tools
 
@@ -80,13 +81,13 @@ A comprehensive web-based platform designed to support beginners in programming 
 
 - Node.js (v14 or higher)
 - MongoDB (local installation or MongoDB Atlas)
-- OpenAI API key (optional, fallback explanations available)
+- Google Gemini API key (optional, fallback explanations available)
 
 ### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
-cd code-learning-platform
+git clone https://github.com/e20240751/ai-code-commenting-system.git
+cd ai-code-commenting-system
 ```
 
 ### 2. Install Dependencies
@@ -120,8 +121,8 @@ MONGODB_URI=mongodb://localhost:27017/codelearning
 # JWT Secret
 JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
 
-# OpenAI API Key (optional)
-OPENAI_API_KEY=your-openai-api-key-here
+# Google Gemini API Key (optional)
+GEMINI_API_KEY=your-gemini-api-key-here
 
 # CORS Configuration
 CORS_ORIGIN=http://localhost:3000
@@ -161,7 +162,8 @@ The application will be available at:
 1. Navigate to the "Smart Explanation" page
 2. Paste your code in the text area
 3. Click "Explain the Code" to get AI-powered explanations
-4. Try the sample codes provided for different programming languages
+4. Each line will be explained with educational context and real-world analogies
+5. Try the sample codes provided for different programming languages
 
 ### Interactive Learning
 
@@ -188,7 +190,7 @@ The application will be available at:
 
 ### Code Explanation
 
-- `POST /api/explain-code` - Generate AI code explanation
+- `POST /api/explain-code` - Generate AI code explanation with educational step-by-step descriptions
 
 ### Exercises
 
@@ -277,13 +279,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 If you encounter any issues or have questions:
 
-1. Check the [Issues](https://github.com/your-repo/issues) page
+1. Check the [Issues](https://github.com/e20240751/ai-code-commenting-system/issues) page
 2. Create a new issue with detailed information
 3. Contact the development team
 
 ## 🎉 Acknowledgments
 
-- OpenAI for providing the AI explanation capabilities
+- Google Gemini for providing the AI explanation capabilities
 - The React and Node.js communities for excellent documentation
 - All contributors and users who help improve this platform
 
