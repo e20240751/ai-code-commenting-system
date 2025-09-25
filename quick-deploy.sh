@@ -3,6 +3,19 @@
 echo "🚀 QUICK DEPLOY - Programming Learning Platform"
 echo "=============================================="
 
+# Check if client directory exists
+if [ ! -d "client" ]; then
+    echo "❌ Error: client directory not found!"
+    echo "💡 Make sure you're running this script from the project root"
+    exit 1
+fi
+
+# Check if client/public directory exists, create if not
+if [ ! -d "client/public" ]; then
+    echo "📁 Creating client/public directory..."
+    mkdir -p client/public
+fi
+
 # Create a simple HTML version for immediate deployment
 echo "Creating deployable version..."
 
@@ -203,35 +216,48 @@ cat > client/public/index.html << 'EOF'
 </html>
 EOF
 
-echo "✅ Created deployable HTML version"
-echo ""
-echo "🎯 YOUR WEBSITE IS READY!"
-echo "========================="
-echo ""
-echo "📁 Files created in: client/public/index.html"
-echo ""
-echo "🚀 DEPLOYMENT OPTIONS:"
-echo ""
-echo "1. VERCEL (Recommended - 2 minutes):"
-echo "   → Go to: https://vercel.com/new"
-echo "   → Import: e20240751/programming-learning-platform"
-echo "   → Set Root Directory: client"
-echo "   → Deploy!"
-echo ""
-echo "2. NETLIFY (Alternative - 2 minutes):"
-echo "   → Go to: https://app.netlify.com/start"
-echo "   → Connect GitHub: e20240751/programming-learning-platform"
-echo "   → Set Build Command: cd client && npm install && npm run build"
-echo "   → Set Publish Directory: client/build"
-echo "   → Deploy!"
-echo ""
-echo "3. GITHUB PAGES (Free - 3 minutes):"
-echo "   → Push code to GitHub"
-echo "   → Go to repository Settings → Pages"
-echo "   → Select Source: Deploy from branch"
-echo "   → Choose: main branch, / (root) folder"
-echo ""
-echo "🎉 After deployment, you'll get a live URL like:"
-echo "   https://programming-learning-platform.vercel.app"
-echo ""
-echo "Your website will be live in minutes! 🚀"
+# Check if file was created successfully
+if [ -f "client/public/index.html" ]; then
+    echo "✅ Created deployable HTML version"
+    echo ""
+    echo "🎯 YOUR WEBSITE IS READY!"
+    echo "========================="
+    echo ""
+    echo "📁 Files created in: client/public/index.html"
+    echo ""
+    echo "🚀 DEPLOYMENT OPTIONS:"
+    echo ""
+    echo "1. VERCEL (Recommended - 2 minutes):"
+    echo "   → Go to: https://vercel.com/new"
+    echo "   → Import: e20240751/programming-learning-platform"
+    echo "   → Set Root Directory: client"
+    echo "   → Deploy!"
+    echo ""
+    echo "2. NETLIFY (Alternative - 2 minutes):"
+    echo "   → Go to: https://app.netlify.com/start"
+    echo "   → Connect GitHub: e20240751/programming-learning-platform"
+    echo "   → Set Build Command: cd client && npm install && npm run build"
+    echo "   → Set Publish Directory: client/build"
+    echo "   → Deploy!"
+    echo ""
+    echo "3. GITHUB PAGES (Free - 3 minutes):"
+    echo "   → Push code to GitHub"
+    echo "   → Go to repository Settings → Pages"
+    echo "   → Select Source: Deploy from branch"
+    echo "   → Choose: main branch, / (root) folder"
+    echo ""
+    echo "🎉 After deployment, you'll get a live URL like:"
+    echo "   https://programming-learning-platform.vercel.app"
+    echo ""
+    echo "Your website will be live in minutes! 🚀"
+    echo ""
+    echo "📋 NEXT STEPS:"
+    echo "1. Run: ./push-current-account.sh (to push to GitHub)"
+    echo "2. Choose a deployment platform above"
+    echo "3. Follow the deployment instructions"
+else
+    echo "❌ Error: Failed to create index.html file"
+    echo "💡 Check file permissions and try again"
+    exit 1
+fi
+
