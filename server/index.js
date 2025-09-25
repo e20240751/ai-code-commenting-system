@@ -890,12 +890,16 @@ function explainLine(line, language) {
       const match = line.match(/for\s+(\w+)\s+in\s+(.+):/);
       const varName = match[1];
       const iterable = match[2];
-      
+
       if (iterable.includes("range(")) {
         const rangeMatch = iterable.match(/range\(([^)]+)\)/);
         if (rangeMatch) {
           const rangeValue = rangeMatch[1];
-          return `This creates a loop that repeats ${rangeValue} times, using '${varName}' as a counter that goes from 0 to ${rangeValue - 1}. It's like counting from 0 to ${rangeValue - 1} and doing something each time.`;
+          return `This creates a loop that repeats ${rangeValue} times, using '${varName}' as a counter that goes from 0 to ${
+            rangeValue - 1
+          }. It's like counting from 0 to ${
+            rangeValue - 1
+          } and doing something each time.`;
         }
       } else if (iterable.includes("[")) {
         return `This creates a loop that goes through each item in the list '${iterable}', assigning each item to the variable '${varName}' one by one. It's like going through a shopping list item by item.`;
@@ -907,7 +911,7 @@ function explainLine(line, language) {
     } else if (/if\s+(.+):/.test(line)) {
       const match = line.match(/if\s+(.+):/);
       const condition = match[1];
-      
+
       if (condition.includes("==")) {
         const parts = condition.split("==");
         return `This checks if '${parts[0].trim()}' is exactly equal to '${parts[1].trim()}'. If they match, the code inside will run. It's like asking "Are these two things the same?"`;
@@ -951,7 +955,9 @@ function explainLine(line, language) {
       if (value.includes("input(")) {
         return `This asks the user to type something and saves their answer in the variable '${varName}'. It's like having a conversation where you ask a question and remember the person's response.`;
       } else if (value.includes("int(") || value.includes("float(")) {
-        const convertType = value.includes("int(") ? "whole number" : "decimal number";
+        const convertType = value.includes("int(")
+          ? "whole number"
+          : "decimal number";
         return `This converts the value to a ${convertType} and saves it in the variable '${varName}'. It's like translating text into numbers that the computer can do math with.`;
       } else if (value.includes("str(")) {
         return `This converts the value to text and saves it in the variable '${varName}'. It's like turning numbers or other data into words that can be displayed.`;
@@ -963,7 +969,12 @@ function explainLine(line, language) {
         return `This adds up all the numbers and saves the total in the variable '${varName}'. It's like using a calculator to add many numbers at once.`;
       } else if (value.includes("+") && value.includes('"')) {
         return `This combines pieces of text together and saves the result in the variable '${varName}'. It's like gluing words together to make a longer message.`;
-      } else if (value.includes("+") || value.includes("-") || value.includes("*") || value.includes("/")) {
+      } else if (
+        value.includes("+") ||
+        value.includes("-") ||
+        value.includes("*") ||
+        value.includes("/")
+      ) {
         return `This does a math calculation and saves the answer in the variable '${varName}'. It's like using a calculator and writing down the result.`;
       } else {
         return `This saves the value '${value}' in the variable '${varName}' for later use. It's like putting something in a labeled box so you can find it again.`;
@@ -1010,7 +1021,7 @@ function explainLine(line, language) {
       const match = line.match(/const\s+(\w+)\s*=\s*(.+)/);
       const varName = match[1];
       const value = match[2];
-      
+
       if (value.includes("document.")) {
         return `This creates a permanent reference to a webpage element and saves it in '${varName}'. It's like putting a bookmark on a specific part of a webpage so you can find it easily.`;
       } else if (value.includes("() =>")) {
@@ -1073,7 +1084,7 @@ function explainLine(line, language) {
       const match = line.match(/int\s+(\w+)\s*=\s*(.+)/);
       const varName = match[1];
       const value = match[2];
-      
+
       if (value.includes("0")) {
         return `This creates an integer variable called '${varName}' and sets it to ${value}. It's like creating a labeled box to store whole numbers, starting with ${value}.`;
       } else if (value.includes("scanf")) {
@@ -2071,13 +2082,12 @@ app.post("/api/explain-code", async (req, res) => {
       return res.status(400).json({ message: "Code is required" });
     }
 
-    // Support C, Python, JavaScript, and React - strict validation
+    // Support C, Python, JavaScript, HTML, CSS, Java, and C++ - strict validation
     const normalizedLanguage = language.toLowerCase().trim();
     const isValidLanguage =
       normalizedLanguage === "c" ||
       normalizedLanguage === "python" ||
       normalizedLanguage === "javascript" ||
-      normalizedLanguage === "react" ||
       normalizedLanguage === "html" ||
       normalizedLanguage === "css" ||
       normalizedLanguage === "java" ||
@@ -2086,7 +2096,6 @@ app.post("/api/explain-code", async (req, res) => {
       normalizedLanguage.startsWith("c ") ||
       normalizedLanguage.startsWith("python ") ||
       normalizedLanguage.startsWith("javascript ") ||
-      normalizedLanguage.startsWith("react ") ||
       normalizedLanguage.startsWith("html ") ||
       normalizedLanguage.startsWith("css ") ||
       normalizedLanguage.startsWith("java ") ||
@@ -2096,12 +2105,11 @@ app.post("/api/explain-code", async (req, res) => {
     if (!language || !isValidLanguage) {
       return res.status(400).json({
         message:
-          "Only C, Python, JavaScript, React, HTML, CSS, Java, and C++ languages are supported. Please select one of these languages.",
+          "Only C, Python, JavaScript, HTML, CSS, Java, and C++ languages are supported. React/JSX is not currently supported. Please select one of the supported languages.",
         supportedLanguages: [
           "C",
           "Python",
           "JavaScript",
-          "React",
           "HTML",
           "CSS",
           "Java",
