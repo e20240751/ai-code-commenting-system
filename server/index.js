@@ -890,11 +890,48 @@ function explainLine(line, language) {
       const match = line.match(/for\s+(\w+)\s+in\s+(.+):/);
       const varName = match[1];
       const iterable = match[2];
-      return `This creates a repeating process that goes through each item in a collection. It's like having a robot that picks up each item one by one and does something with it.`;
+      
+      if (iterable.includes("range(")) {
+        const rangeMatch = iterable.match(/range\(([^)]+)\)/);
+        if (rangeMatch) {
+          const rangeValue = rangeMatch[1];
+          return `This creates a loop that repeats ${rangeValue} times, using '${varName}' as a counter that goes from 0 to ${rangeValue - 1}. It's like counting from 0 to ${rangeValue - 1} and doing something each time.`;
+        }
+      } else if (iterable.includes("[")) {
+        return `This creates a loop that goes through each item in the list '${iterable}', assigning each item to the variable '${varName}' one by one. It's like going through a shopping list item by item.`;
+      } else if (iterable.includes("(")) {
+        return `This creates a loop that goes through each item returned by the function '${iterable}', assigning each item to the variable '${varName}'. It's like processing each result from a function call.`;
+      } else {
+        return `This creates a loop that goes through each item in '${iterable}', assigning each item to the variable '${varName}'. It's like having a robot that picks up each item one by one and does something with it.`;
+      }
     } else if (/if\s+(.+):/.test(line)) {
       const match = line.match(/if\s+(.+):/);
       const condition = match[1];
-      return `This creates a decision point where the program chooses what to do next. It's like having a fork in the road where you decide which path to take based on certain conditions.`;
+      
+      if (condition.includes("==")) {
+        const parts = condition.split("==");
+        return `This checks if '${parts[0].trim()}' is exactly equal to '${parts[1].trim()}'. If they match, the code inside will run. It's like asking "Are these two things the same?"`;
+      } else if (condition.includes("!=")) {
+        const parts = condition.split("!=");
+        return `This checks if '${parts[0].trim()}' is NOT equal to '${parts[1].trim()}'. If they're different, the code inside will run. It's like asking "Are these two things different?"`;
+      } else if (condition.includes(">=")) {
+        const parts = condition.split(">=");
+        return `This checks if '${parts[0].trim()}' is greater than or equal to '${parts[1].trim()}'. If it is, the code inside will run. It's like asking "Is the first number bigger than or the same as the second?"`;
+      } else if (condition.includes("<=")) {
+        const parts = condition.split("<=");
+        return `This checks if '${parts[0].trim()}' is less than or equal to '${parts[1].trim()}'. If it is, the code inside will run. It's like asking "Is the first number smaller than or the same as the second?"`;
+      } else if (condition.includes(">")) {
+        const parts = condition.split(">");
+        return `This checks if '${parts[0].trim()}' is greater than '${parts[1].trim()}'. If it is, the code inside will run. It's like asking "Is the first number bigger than the second?"`;
+      } else if (condition.includes("<")) {
+        const parts = condition.split("<");
+        return `This checks if '${parts[0].trim()}' is less than '${parts[1].trim()}'. If it is, the code inside will run. It's like asking "Is the first number smaller than the second?"`;
+      } else if (condition.includes("in ")) {
+        const parts = condition.split("in ");
+        return `This checks if '${parts[0].trim()}' exists inside '${parts[1].trim()}'. If it's found, the code inside will run. It's like asking "Is this item in the list?"`;
+      } else {
+        return `This checks if the condition '${condition}' is true. If it is, the code inside will run. It's like having a fork in the road where you decide which path to take.`;
+      }
     } else if (/elif\s+(.+):/.test(line)) {
       const match = line.match(/elif\s+(.+):/);
       const condition = match[1];
@@ -912,15 +949,24 @@ function explainLine(line, language) {
       const value = match[2];
 
       if (value.includes("input(")) {
-        return `Assigns user input from the console to the variable '${varName}' for further processing.`;
+        return `This asks the user to type something and saves their answer in the variable '${varName}'. It's like having a conversation where you ask a question and remember the person's response.`;
       } else if (value.includes("int(") || value.includes("float(")) {
-        return `Converts the value to a number and assigns it to the variable '${varName}'.`;
+        const convertType = value.includes("int(") ? "whole number" : "decimal number";
+        return `This converts the value to a ${convertType} and saves it in the variable '${varName}'. It's like translating text into numbers that the computer can do math with.`;
       } else if (value.includes("str(")) {
-        return `Converts the value to a string and assigns it to the variable '${varName}'.`;
+        return `This converts the value to text and saves it in the variable '${varName}'. It's like turning numbers or other data into words that can be displayed.`;
       } else if (value.includes("list(") || value.includes("[]")) {
-        return `Creates a list and assigns it to the variable '${varName}' for storing multiple items.`;
+        return `This creates a list (a container for multiple items) and saves it in the variable '${varName}'. It's like making a shopping basket that can hold many different things.`;
+      } else if (value.includes("len(")) {
+        return `This counts how many items are in something and saves the count in the variable '${varName}'. It's like counting how many items are in a box.`;
+      } else if (value.includes("sum(")) {
+        return `This adds up all the numbers and saves the total in the variable '${varName}'. It's like using a calculator to add many numbers at once.`;
+      } else if (value.includes("+") && value.includes('"')) {
+        return `This combines pieces of text together and saves the result in the variable '${varName}'. It's like gluing words together to make a longer message.`;
+      } else if (value.includes("+") || value.includes("-") || value.includes("*") || value.includes("/")) {
+        return `This does a math calculation and saves the answer in the variable '${varName}'. It's like using a calculator and writing down the result.`;
       } else {
-        return `Assigns the value '${value}' to the variable '${varName}' for storage and later use.`;
+        return `This saves the value '${value}' in the variable '${varName}' for later use. It's like putting something in a labeled box so you can find it again.`;
       }
     }
   } else if (lang.includes("javascript")) {
@@ -964,17 +1010,19 @@ function explainLine(line, language) {
       const match = line.match(/const\s+(\w+)\s*=\s*(.+)/);
       const varName = match[1];
       const value = match[2];
-
+      
       if (value.includes("document.")) {
-        return `Creates a constant reference to a DOM element for manipulation in the web page.`;
+        return `This creates a permanent reference to a webpage element and saves it in '${varName}'. It's like putting a bookmark on a specific part of a webpage so you can find it easily.`;
       } else if (value.includes("() =>")) {
-        return `Creates a constant that stores an arrow function for later execution.`;
+        return `This creates a permanent function and saves it in '${varName}'. It's like writing down instructions that can be followed later, but the instructions can't be changed.`;
       } else if (value.includes("[]")) {
-        return `Creates a constant array that cannot be reassigned but can be modified.`;
+        return `This creates a permanent list and saves it in '${varName}'. You can add or remove items from the list, but you can't replace the entire list. It's like having a permanent shopping basket.`;
       } else if (value.includes("{}")) {
-        return `Creates a constant object that cannot be reassigned but can be modified.`;
+        return `This creates a permanent object (like a dictionary) and saves it in '${varName}'. You can add or change properties, but you can't replace the entire object. It's like having a permanent notebook.`;
+      } else if (value.includes("querySelector")) {
+        return `This finds a specific element on the webpage and saves a reference to it in '${varName}'. It's like pointing to a specific item on a page and saying "remember this one."`;
       } else {
-        return `Creates an immutable constant '${varName}' with the value '${value}' that cannot be changed.`;
+        return `This creates a permanent value '${value}' and saves it in '${varName}'. This value cannot be changed later. It's like writing something in permanent ink.`;
       }
     } else if (/let\s+(\w+)\s*=\s*(.+)/.test(line)) {
       const match = line.match(/let\s+(\w+)\s*=\s*(.+)/);
@@ -1022,9 +1070,17 @@ function explainLine(line, language) {
       const formatString = match[1];
       return `This reads input from the user and stores it in variables. It's like having a form that collects information from people.`;
     } else if (/int\s+(\w+)\s*=/.test(line)) {
-      const match = line.match(/int\s+(\w+)\s*=/);
+      const match = line.match(/int\s+(\w+)\s*=\s*(.+)/);
       const varName = match[1];
-      return `This creates an integer variable called '${varName}' and gives it an initial value. It's like creating a labeled box to store numbers.`;
+      const value = match[2];
+      
+      if (value.includes("0")) {
+        return `This creates an integer variable called '${varName}' and sets it to ${value}. It's like creating a labeled box to store whole numbers, starting with ${value}.`;
+      } else if (value.includes("scanf")) {
+        return `This creates an integer variable called '${varName}' and prepares it to receive input from the user. It's like creating a labeled box that will be filled when the user types a number.`;
+      } else {
+        return `This creates an integer variable called '${varName}' and sets it to ${value}. It's like creating a labeled box to store the whole number ${value}.`;
+      }
     } else if (/int\s+(\w+)\[\]\s*=/.test(line)) {
       const match = line.match(/int\s+(\w+)\[\]\s*=/);
       const varName = match[1];
