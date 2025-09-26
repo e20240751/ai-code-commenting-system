@@ -460,128 +460,52 @@ function analyzeCodeIntelligently(code, language, patterns) {
   return analysis;
 }
 
-// Function to generate step-by-step explanation
+// Function to generate focused explanation (only important parts)
 function generateStepByStepExplanation(code, language) {
   const lang = language.toLowerCase();
   const lines = code.split("\n");
   let explanation = "";
 
-  if (lang.includes("python")) {
-    if (/def\s+(\w+)\s*\([^)]*\):/.test(code)) {
-      const funcMatch = code.match(/def\s+(\w+)\s*\(([^)]*)\):/);
-      const funcName = funcMatch ? funcMatch[1] : "function";
-      const params = funcMatch ? funcMatch[2] : "";
-
-      explanation += `**Line 1: \`def ${funcName}(${params}):\`**\n`;
-      explanation += `• ${explainLine(
-        `def ${funcName}(${params}):`,
-        language
-      )}\n\n`;
-
-      for (let i = 1; i < lines.length; i++) {
-        const line = lines[i];
-        const lineNumber = i + 1;
-        const trimmedLine = line.trim();
-
-        if (trimmedLine === "") {
-          explanation += `**Line ${lineNumber}: (Empty line)**\n`;
-          explanation += `• **Whitespace**: This is an empty line for code readability\n\n`;
-          continue;
-        }
-
-        explanation += `**Line ${lineNumber}: \`${trimmedLine}\`**\n`;
-        explanation += `• ${explainLine(trimmedLine, language)}\n\n`;
-      }
-    } else {
-      // For non-function code
-      for (let i = 0; i < lines.length; i++) {
-        const line = lines[i];
-        const lineNumber = i + 1;
-        const trimmedLine = line.trim();
-
-        if (trimmedLine === "") {
-          explanation += `**Line ${lineNumber}: (Empty line)**\n`;
-          explanation += `• **Whitespace**: This is an empty line for code readability\n\n`;
-          continue;
-        }
-
-        explanation += `**Line ${lineNumber}: \`${trimmedLine}\`**\n`;
-        explanation += `• **Code Purpose**: ${explainLine(
-          trimmedLine,
-          language
-        )}\n\n`;
-      }
+  // Identify important lines to explain
+  const importantLines = [];
+  
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    
+    // Skip empty lines and simple statements
+    if (line === "" || 
+        /^\s*(int|char|float|double|string|var|let|const)\s+\w+\s*=/.test(line) ||
+        /^\s*(print|console\.log|printf|cout)\s*\(/.test(line) ||
+        /^\s*\/\/.*$/.test(line) ||
+        /^\s*#include/.test(line)) {
+      continue;
     }
-  } else if (lang.includes("javascript")) {
-    if (/function\s+(\w+)\s*\([^)]*\)\s*\{/.test(code)) {
-      const funcMatch = code.match(/function\s+(\w+)\s*\(([^)]*)\)\s*\{/);
-      const funcName = funcMatch ? funcMatch[1] : "function";
-      const params = funcMatch ? funcMatch[2] : "";
-
-      explanation += `**Line 1: \`function ${funcName}(${params}) {\`**\n`;
-      explanation += `• ${explainLine(
-        `function ${funcName}(${params}) {`,
-        language
-      )}\n\n`;
-
-      for (let i = 1; i < lines.length; i++) {
-        const line = lines[i];
-        const lineNumber = i + 1;
-        const trimmedLine = line.trim();
-
-        if (trimmedLine === "" || trimmedLine === "}") {
-          if (trimmedLine === "}") {
-            explanation += `**Line ${lineNumber}: \`}\`**\n`;
-            explanation += `• **Function End**: This closing brace ends the function definition\n\n`;
-          } else {
-            explanation += `**Line ${lineNumber}: (Empty line)**\n`;
-            explanation += `• **Whitespace**: This is an empty line for code readability\n\n`;
-          }
-          continue;
-        }
-
-        explanation += `**Line ${lineNumber}: \`${trimmedLine}\`**\n`;
-        explanation += `• ${explainLine(trimmedLine, language)}\n\n`;
-      }
-    } else {
-      // For non-function code
-      for (let i = 0; i < lines.length; i++) {
-        const line = lines[i];
-        const lineNumber = i + 1;
-        const trimmedLine = line.trim();
-
-        if (trimmedLine === "") {
-          explanation += `**Line ${lineNumber}: (Empty line)**\n`;
-          explanation += `• **Whitespace**: This is an empty line for code readability\n\n`;
-          continue;
-        }
-
-        explanation += `**Line ${lineNumber}: \`${trimmedLine}\`**\n`;
-        explanation += `• **Code Purpose**: ${explainLine(
-          trimmedLine,
-          language
-        )}\n\n`;
-      }
+    
+    // Include important lines
+    if (/def\s+\w+/.test(line) ||           // Function definitions
+        /function\s+\w+/.test(line) ||      // Function definitions
+        /class\s+\w+/.test(line) ||         // Class definitions
+        /if\s*\(/.test(line) ||             // Complex conditionals
+        /for\s*\(/.test(line) ||            // Complex loops
+        /while\s*\(/.test(line) ||          // Complex loops
+        /return\s+/.test(line) ||           // Return statements
+        /import\s+/.test(line) ||           // Import statements
+        /#define/.test(line) ||             // C macros
+        /malloc|free/.test(line) ||         // Memory management
+        /try\s*\{|catch\s*\(/.test(line)) { // Exception handling
+      importantLines.push({ line, lineNumber: i + 1 });
     }
-  } else {
-    // For other languages
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
-      const lineNumber = i + 1;
-      const trimmedLine = line.trim();
+  }
 
-      if (trimmedLine === "") {
-        explanation += `**Line ${lineNumber}: (Empty line)**\n`;
-        explanation += `• **Whitespace**: This is an empty line for code readability\n\n`;
-        continue;
-      }
+  if (importantLines.length === 0) {
+    return `**Code Analysis:** This code contains basic programming statements. The logic is straightforward and follows standard ${language} patterns.`;
+  }
 
-      explanation += `**Line ${lineNumber}: \`${trimmedLine}\`**\n`;
-      explanation += `• **Code Purpose**: ${explainLine(
-        trimmedLine,
-        language
-      )}\n\n`;
-    }
+  explanation += `**Key Code Analysis:**\n\n`;
+  
+  for (const { line, lineNumber } of importantLines) {
+    explanation += `**Line ${lineNumber}: \`${line}\`**\n`;
+    explanation += `• ${explainLine(line, language)}\n\n`;
   }
 
   return explanation;
@@ -1415,26 +1339,37 @@ async function getGeminiExplanation(code, language) {
       throw new Error("Gemini API key not available");
     }
 
-    const prompt = `You are a coding assistant. Your task is to read the user's ${language} code and add clear, beginner-friendly comments. For each function, variable, or important line, explain what it does and why it is used. The comments should be concise, easy to understand, and written in plain English so that a new programmer can follow along. Do not change the logic of the code — only add helpful comments.
+    const prompt = `You are a coding assistant. Your task is to analyze the user's ${language} code and provide a CONCISE explanation focusing ONLY on the most important and complex parts. Do NOT explain every single line - only explain:
+
+1. Main functions and their purpose
+2. Complex algorithms or logic
+3. Important variables that affect the program's behavior
+4. Key concepts specific to ${language}
+5. Non-obvious code patterns
+
+SKIP explaining:
+- Simple variable declarations (int x = 5;)
+- Basic print/console statements
+- Simple loops with obvious purposes
+- Standard library function calls
+- Comments that are already clear
 
 Original ${language} code:
 \`\`\`${language.toLowerCase()}
 ${code}
 \`\`\`
 
-Please return the same code with detailed comments added. Format your response as:
+Provide a brief, focused explanation that highlights only the important parts. Format as:
 
-COMMENTED CODE:
-\`\`\`${language.toLowerCase()}
-[code with comments]
-\`\`\`
+**Key Code Analysis:**
+[Focus on main functions, complex logic, and important concepts only]
 
-Focus on:
-- Explaining what each function does
-- Describing variable purposes
-- Clarifying complex logic
-- Adding context for ${language}-specific concepts
-- Making it educational for beginners`;
+**Important Parts:**
+- [List only the most significant functions/variables]
+- [Explain complex algorithms or patterns]
+- [Highlight ${language}-specific concepts if relevant]
+
+Keep it concise and educational - explain the "why" and "how" of important parts, not the "what" of every line.`;
 
     const response = await fetch(
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",

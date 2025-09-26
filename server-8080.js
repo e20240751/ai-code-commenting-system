@@ -179,64 +179,46 @@ Focus on:
   }
 });
 
-// Function to generate fallback explanations
+// Function to generate focused fallback explanations
 function generateFallbackExplanation(code, language) {
-  if (language.toLowerCase().includes("c")) {
-    return `**C Code Analysis:**
-
-This C code contains programming instructions that perform specific operations.
-
-**Key C Concepts:**
-• C is a compiled language that runs directly on the hardware
-• Variables must be declared with specific data types (int, char, float, etc.)
-• Manual memory management with malloc/free
-• Functions are the building blocks of C programs
-• Pointers provide direct memory access
-• #include directives import libraries
-• main() function is the entry point
-
-**Common C Patterns:**
-• Variable declarations: \`int x = 5;\`
-• Function calls: \`printf("Hello");\`
-• Loops: \`for(int i=0; i<10; i++)\`
-• Conditionals: \`if (condition) { ... }\`
-
-**Learning Tip:** C teaches low-level programming concepts and memory management - great for understanding how computers work!`;
-  } else if (language.toLowerCase().includes("python")) {
-    return `**Python Code Analysis:**
-
-This Python code contains programming instructions that perform specific operations.
-
-**Key Python Concepts:**
-• Python uses indentation for code blocks (no braces needed)
-• Variables are dynamically typed (no type declarations)
-• Rich standard library and third-party packages
-• Readable and beginner-friendly syntax
-• Object-oriented and functional programming support
-• Interactive interpreter for quick testing
-
-**Common Python Patterns:**
-• Function definition: \`def function_name():\`
-• Variable assignment: \`x = 5\`
-• Loops: \`for item in list:\` or \`while condition:\`
-• Conditionals: \`if condition:\`
-• String formatting: \`f"Hello {name}"\`
-
-**Learning Tip:** Python's simple syntax makes it perfect for beginners - focus on understanding logic and flow!`;
-  } else {
-    return `**Code Analysis:**
-
-This code contains programming logic that performs specific operations. Each line contributes to the overall functionality of the program.
-
-**General Programming Concepts:**
-• Variables store data for later use
-• Functions group related code together
-• Loops repeat operations efficiently
-• Conditionals make decisions based on data
-• Comments explain what the code does
-
-**Learning Tip:** Practice reading and understanding code step by step - this builds your programming intuition!`;
+  // Identify important parts of the code
+  const lines = code.split('\n');
+  const importantParts = [];
+  
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (trimmed && 
+        !trimmed.startsWith('//') && 
+        !trimmed.startsWith('#include') &&
+        !/^\s*(int|char|float|double|string|var|let|const)\s+\w+\s*=/.test(trimmed) &&
+        !/^\s*(print|console\.log|printf|cout)\s*\(/.test(trimmed)) {
+      
+      if (/def\s+\w+/.test(trimmed) || 
+          /function\s+\w+/.test(trimmed) || 
+          /class\s+\w+/.test(trimmed) ||
+          /if\s*\(/.test(trimmed) ||
+          /for\s*\(/.test(trimmed) ||
+          /while\s*\(/.test(trimmed) ||
+          /return\s+/.test(trimmed)) {
+        importantParts.push(trimmed);
+      }
+    }
   }
+
+  if (importantParts.length === 0) {
+    return `**Code Analysis:** This code contains basic programming statements. The logic is straightforward and follows standard ${language} patterns.`;
+  }
+
+  let explanation = `**Key Code Analysis:**\n\n`;
+  explanation += `**Important Parts Found:**\n`;
+  
+  importantParts.forEach((part, index) => {
+    explanation += `${index + 1}. \`${part}\`\n`;
+  });
+  
+  explanation += `\n**Summary:** This code focuses on core programming concepts. The main logic involves ${importantParts.length} key statement${importantParts.length > 1 ? 's' : ''} that drive the program's functionality.`;
+  
+  return explanation;
 }
 
 // Start the server
