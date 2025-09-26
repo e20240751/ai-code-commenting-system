@@ -4,12 +4,15 @@
   "description": "A web platform for beginners to learn programming with AI-powered explanations and interactive exercises",
   "main": "server/index.js",
   "scripts": {
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "dev": "node simple-server.js",
+    "dev-full": "concurrently \"npm run server\" \"npm run client\"",
+    "dev-8080": "node server-8080.js",
     "server": "cd server && npm run dev",
     "client": "cd client && npm start",
     "build": "cd client && npm run build",
     "install-all": "npm install && cd server && npm install && cd ../client && npm install",
-    "deploy": "./deploy.sh"
+    "deploy": "./deploy.sh",
+    "start": "node simple-server.js"
   },
   "keywords": [
     "programming",
@@ -22,5 +25,8 @@
   "license": "MIT",
   "devDependencies": {
     "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
   }
 }

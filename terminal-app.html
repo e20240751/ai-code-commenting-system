@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeLearn - Terminal Style</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fira Code Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'mono': ['Fira Code', 'monospace'],
+                    },
+                    colors: {
+                        'terminal-bg': '#0d1117',
+                        'terminal-card': '#161b22',
+                        'terminal-border': '#30363d',
+                        'neon-cyan': '#00eaff',
+                        'neon-green': '#00ff88',
+                        'neon-purple': '#a970ff',
+                        'code-gray': '#7d8590',
+                    },
+                    animation: {
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                        'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
+                        'typewriter': 'typewriter 3s steps(40) 1s 1 normal both',
+                        'matrix': 'matrix 20s linear infinite',
+                    },
+                    keyframes: {
+                        glow: {
+                            '0%': { 
+                                'box-shadow': '0 0 5px #00eaff, 0 0 10px #00eaff, 0 0 15px #00eaff',
+                                'text-shadow': '0 0 5px #00eaff'
+                            },
+                            '100%': { 
+                                'box-shadow': '0 0 10px #00eaff, 0 0 20px #00eaff, 0 0 30px #00eaff',
+                                'text-shadow': '0 0 10px #00eaff'
+                            }
+                        },
+                        'pulse-glow': {
+                            '0%, 100%': { 
+                                'box-shadow': '0 0 5px currentColor',
+                                'opacity': '1'
+                            },
+                            '50%': { 
+                                'box-shadow': '0 0 20px currentColor',
+                                'opacity': '0.8'
+                            }
+                        },
+                        typewriter: {
+                            '0%': { width: '0' },
+                            '100%': { width: '100%' }
+                        },
+                        matrix: {
+                            '0%': { transform: 'translateY(-100vh)' },
+                            '100%': { transform: 'translateY(100vh)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* Custom styles for terminal effects */
+        .terminal-window {
+            background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+            border: 1px solid #30363d;
+            box-shadow: 0 0 20px rgba(0, 234, 255, 0.1);
+        }
+        
+        .terminal-header {
+            background: #21262d;
+            border-bottom: 1px solid #30363d;
+        }
+        
+        .terminal-dots {
+            display: flex;
+            gap: 6px;
+        }
+        
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27ca3f; }
+        
+        .neon-text {
+            text-shadow: 0 0 10px currentColor;
+        }
+        
+        .neon-border {
+            border: 1px solid transparent;
+            background: linear-gradient(#0d1117, #0d1117) padding-box,
+                        linear-gradient(45deg, #00eaff, #a970ff, #00ff88) border-box;
+        }
+        
+        .neon-border:hover {
+            box-shadow: 0 0 20px rgba(0, 234, 255, 0.3);
+        }
+        
+        .code-comment {
+            color: #7d8590;
+        }
+        
+        .code-keyword {
+            color: #a970ff;
+        }
+        
+        .code-string {
+            color: #00ff88;
+        }
+        
+        .code-function {
+            color: #00eaff;
+        }
+        
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.1;
+        }
+        
+        .matrix-column {
+            position: absolute;
+            top: -100vh;
+            font-family: 'Fira Code', monospace;
+            font-size: 14px;
+            color: #00ff88;
+            animation: matrix 20s linear infinite;
+        }
+        
+        .typing-cursor::after {
+            content: '|';
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        
+        .glow-hover:hover {
+            text-shadow: 0 0 10px currentColor;
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            border-color: #00eaff;
+            box-shadow: 0 0 20px rgba(0, 234, 255, 0.2);
+            transform: translateY(-5px);
+        }
+        
+        .feature-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            border-color: #a970ff;
+            box-shadow: 0 0 25px rgba(169, 112, 255, 0.3);
+            transform: translateY(-8px);
+        }
+    </style>
+</head>
+
+<body class="bg-terminal-bg text-white font-mono min-h-screen overflow-x-hidden">
+    <!-- Matrix Background Effect -->
+    <div class="matrix-bg" id="matrix-bg"></div>
+    
+    <!-- Navigation -->
+    <nav class="bg-terminal-bg/90 backdrop-blur-md border-b border-terminal-border sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3">
+                    <div class="terminal-dots">
+                        <div class="dot dot-red"></div>
+                        <div class="dot dot-yellow"></div>
+                        <div class="dot dot-green"></div>
+                    </div>
+                    <span class="text-xl font-bold text-neon-cyan neon-text">CodeLearn</span>
+                </div>
+                
+                <!-- Navigation Links -->
+                <div class="hidden md:flex space-x-8">
+                    <a href="#home" class="text-gray-300 hover:text-neon-cyan transition-colors glow-hover">Home</a>
+                    <a href="#features" class="text-gray-300 hover:text-neon-cyan transition-colors glow-hover">Smart Explanation</a>
+                    <a href="#tools" class="text-gray-300 hover:text-neon-cyan transition-colors glow-hover">Interactive Learning</a>
+                    <a href="#challenge" class="text-gray-300 hover:text-neon-cyan transition-colors glow-hover">AI Challenge</a>
+                </div>
+                
+                <!-- Auth Button -->
+                <button class="neon-border px-4 py-2 rounded-md text-neon-cyan hover:bg-neon-cyan/10 transition-all">
+                    Login
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="relative z-10">
+        <!-- Hero Section -->
+        <section id="home" class="py-20 px-4">
+            <div class="max-w-7xl mx-auto text-center">
+                <h1 class="text-5xl md:text-7xl font-bold mb-8">
+                    <span class="text-neon-cyan neon-text animate-glow">Master Programming</span>
+                    <br>
+                    <span class="text-neon-purple neon-text">Through Focused Study</span>
+                </h1>
+                
+                <div class="max-w-4xl mx-auto mb-12">
+                    <p class="text-xl md:text-2xl text-gray-300 leading-relaxed">
+                        <span class="code-comment">//</span> Transform your coding skills with our comprehensive learning platform.
+                        <br>
+                        <span class="code-keyword">Study</span> <span class="code-string">Smarter</span>, 
+                        <span class="code-keyword">understand</span> <span class="code-string">deeper</span>, 
+                        <span class="code-keyword">and</span> <span class="code-function">build</span> 
+                        <span class="code-string">confidence</span> through structured programming education.
+                    </p>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row gap-6 justify-center">
+                    <button class="neon-border px-8 py-4 rounded-lg text-neon-cyan hover:bg-neon-cyan/10 transition-all glow-hover">
+                        <span class="code-function">startStudying()</span>
+                    </button>
+                    <button class="neon-border px-8 py-4 rounded-lg text-neon-green hover:bg-neon-green/10 transition-all glow-hover">
+                        <span class="code-function">practiceProblems()</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="py-16 px-4">
+            <div class="max-w-7xl mx-auto">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div class="stat-card p-6 rounded-lg text-center">
+                        <div class="text-3xl mb-2 text-neon-cyan animate-pulse-glow">📖</div>
+                        <div class="text-2xl font-bold text-neon-cyan neon-text">2,500+</div>
+                        <div class="text-code-gray text-sm">Study Hours</div>
+                    </div>
+                    <div class="stat-card p-6 rounded-lg text-center">
+                        <div class="text-3xl mb-2 text-neon-green animate-pulse-glow">🎯</div>
+                        <div class="text-2xl font-bold text-neon-green neon-text">85%</div>
+                        <div class="text-code-gray text-sm">Concept Mastery</div>
+                    </div>
+                    <div class="stat-card p-6 rounded-lg text-center">
+                        <div class="text-3xl mb-2 text-neon-purple animate-pulse-glow">💡</div>
+                        <div class="text-2xl font-bold text-neon-purple neon-text">15,000+</div>
+                        <div class="text-code-gray text-sm">Study Sessions</div>
+                    </div>
+                    <div class="stat-card p-6 rounded-lg text-center">
+                        <div class="text-3xl mb-2 text-neon-cyan animate-pulse-glow">⭐</div>
+                        <div class="text-2xl font-bold text-neon-cyan neon-text">4.8/5</div>
+                        <div class="text-code-gray text-sm">Study Rating</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features/Tools Section -->
+        <section id="features" class="py-20 px-4">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl md:text-5xl font-bold mb-6">
+                        <span class="text-neon-cyan neon-text">Comprehensive Study Tools</span>
+                        <br>
+                        <span class="text-neon-purple neon-text">for Programming Mastery</span>
+                    </h2>
+                    <p class="text-xl text-code-gray max-w-3xl mx-auto">
+                        <span class="code-comment">//</span> Build deep understanding through structured learning and focused practice
+                    </p>
+                </div>
+                
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <!-- Deep Code Analysis -->
+                    <div class="feature-card p-6 rounded-lg">
+                        <div class="terminal-header mb-4 -m-6 p-4 rounded-t-lg">
+                            <div class="terminal-dots">
+                                <div class="dot dot-red"></div>
+                                <div class="dot dot-yellow"></div>
+                                <div class="dot dot-green"></div>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-bold text-neon-cyan mb-4 neon-text">Deep Code Analysis</h3>
+                        <div class="space-y-2 text-sm">
+                            <p class="code-comment">// Study code line-by-line with detailed explanations</p>
+                            <p class="code-keyword">function</p> <span class="text-white">analyzeCode</span><span class="text-gray-400">()</span> <span class="text-gray-400">{</span>
+                            <p class="text-gray-400 ml-4"><span class="code-string">"step-by-step breakdowns"</span></p>
+                            <p class="text-gray-400 ml-4"><span class="code-string">"comprehensive understanding"</span></p>
+                            <p class="text-gray-400">}</p>
+                        </div>
+                        <button class="w-full mt-6 neon-border px-4 py-2 rounded text-neon-cyan hover:bg-neon-cyan/10 transition-all">
+                            <span class="code-function">studyNow()</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Focused Practice -->
+                    <div class="feature-card p-6 rounded-lg">
+                        <div class="terminal-header mb-4 -m-6 p-4 rounded-t-lg">
+                            <div class="terminal-dots">
+                                <div class="dot dot-red"></div>
+                                <div class="dot dot-yellow"></div>
+                                <div class="dot dot-green"></div>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-bold text-neon-green mb-4 neon-text">Focused Practice</h3>
+                        <div class="space-y-2 text-sm">
+                            <p class="code-comment">// Master programming through targeted exercises</p>
+                            <p class="code-keyword">const</p> <span class="text-neon-green">practice</span> <span class="text-gray-400">=</span> <span class="code-keyword">new</span> <span class="text-white">Exercise</span><span class="text-gray-400">();</span>
+                            <p class="text-gray-400 ml-4"><span class="code-string">"concept reinforcement"</span></p>
+                            <p class="text-gray-400 ml-4"><span class="code-string">"progressive skill building"</span></p>
+                        </div>
+                        <button class="w-full mt-6 neon-border px-4 py-2 rounded text-neon-green hover:bg-neon-green/10 transition-all">
+                            <span class="code-function">practice()</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Challenge with AI -->
+                    <div class="feature-card p-6 rounded-lg">
+                        <div class="terminal-header mb-4 -m-6 p-4 rounded-t-lg">
+                            <div class="terminal-dots">
+                                <div class="dot dot-red"></div>
+                                <div class="dot dot-yellow"></div>
+                                <div class="dot dot-green"></div>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-bold text-neon-purple mb-4 neon-text">Challenge with AI</h3>
+                        <div class="space-y-2 text-sm">
+                            <p class="code-comment">// Test your programming skills across difficulty levels</p>
+                            <p class="code-keyword">class</span> <span class="text-white">AIChallenge</span> <span class="text-gray-400">{</span>
+                            <p class="text-gray-400 ml-4"><span class="code-keyword">constructor</span><span class="text-gray-400">() {</span></p>
+                            <p class="text-gray-400 ml-8"><span class="code-string">"AI-generated questions"</span></p>
+                            <p class="text-gray-400 ml-4">}</p>
+                            <p class="text-gray-400">}</p>
+                        </div>
+                        <button class="w-full mt-6 neon-border px-4 py-2 rounded text-neon-purple hover:bg-neon-purple/10 transition-all">
+                            <span class="code-function">startChallenge()</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Study Rankings -->
+                    <div class="feature-card p-6 rounded-lg">
+                        <div class="terminal-header mb-4 -m-6 p-4 rounded-t-lg">
+                            <div class="terminal-dots">
+                                <div class="dot dot-red"></div>
+                                <div class="dot dot-yellow"></div>
+                                <div class="dot dot-green"></div>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-bold text-neon-cyan mb-4 neon-text">Study Rankings</h3>
+                        <div class="space-y-2 text-sm">
+                            <p class="code-comment">// Compare performance and earn achievements</p>
+                            <p class="code-keyword">const</p> <span class="text-neon-cyan">rankings</span> <span class="text-gray-400">=</span> <span class="code-keyword">await</span> <span class="text-white">getRankings</span><span class="text-gray-400">();</span>
+                            <p class="text-gray-400 ml-4"><span class="code-string">"academic competition"</span></p>
+                            <p class="text-gray-400 ml-4"><span class="code-string">"stay motivated"</span></p>
+                        </div>
+                        <button class="w-full mt-6 neon-border px-4 py-2 rounded text-neon-cyan hover:bg-neon-cyan/10 transition-all">
+                            <span class="code-function">viewRankings()</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-terminal-card border-t border-terminal-border py-12 px-4 mt-20">
+        <div class="max-w-7xl mx-auto text-center">
+            <div class="flex items-center justify-center space-x-3 mb-6">
+                <div class="terminal-dots">
+                    <div class="dot dot-red"></div>
+                    <div class="dot dot-yellow"></div>
+                    <div class="dot dot-green"></div>
+                </div>
+                <span class="text-xl font-bold text-neon-cyan neon-text">CodeLearn</span>
+            </div>
+            <p class="text-code-gray">
+                <span class="code-comment">//</span> Built for serious learners who want to master programming
+            </p>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Effects -->
+    <script>
+        // Matrix background effect
+        function createMatrixEffect() {
+            const matrixBg = document.getElementById('matrix-bg');
+            const characters = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+            
+            for (let i = 0; i < 50; i++) {
+                const column = document.createElement('div');
+                column.className = 'matrix-column';
+                column.style.left = Math.random() * 100 + '%';
+                column.style.animationDelay = Math.random() * 20 + 's';
+                column.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                
+                let text = '';
+                for (let j = 0; j < 20; j++) {
+                    text += characters[Math.floor(Math.random() * characters.length)] + '<br>';
+                }
+                column.innerHTML = text;
+                
+                matrixBg.appendChild(column);
+            }
+        }
+        
+        // Initialize effects
+        document.addEventListener('DOMContentLoaded', function() {
+            createMatrixEffect();
+            
+            // Add hover effects to cards
+            const cards = document.querySelectorAll('.stat-card, .feature-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-8px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+            
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        });
+        
+        // Add typing effect to hero subtitle
+        function typeWriter(element, text, speed = 100) {
+            let i = 0;
+            element.innerHTML = '';
+            
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                } else {
+                    element.innerHTML += '<span class="typing-cursor"></span>';
+                }
+            }
+            
+            type();
+        }
+        
+        // Initialize typing effect when page loads
+        window.addEventListener('load', function() {
+            const subtitle = document.querySelector('.hero p');
+            if (subtitle) {
+                const originalText = subtitle.textContent;
+                typeWriter(subtitle, originalText, 50);
+            }
+        });
+    </script>
+</body>
+</html>

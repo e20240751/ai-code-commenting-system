@@ -9,6 +9,15 @@
       content="AI-powered programming learning platform with smart explanations and interactive exercises"
     />
     <title>Programming Learning Platform - Working Demo</title>
+
+    <!-- Prism.js for syntax highlighting -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
     <style>
       * {
         margin: 0;
@@ -20,59 +29,360 @@
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
           "Oxygen", "Ubuntu", "Cantarell", sans-serif;
         line-height: 1.6;
-        color: #333;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #e2e8f0;
+        background: #0a0a0a;
         min-height: 100vh;
+        position: relative;
+        overflow-x: hidden;
+        cursor: auto;
       }
 
-      .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 20px;
+      /* Floating code background removed */
+
+      /* Floating code background removed */
+
+      /* Floating code animations removed */
+
+      /* Additional floating code elements */
+      /* Floating code CSS removed */
+
+      /* All floating code animations removed */
+
+      /* Custom cursors for different elements */
+      .cta-button,
+      .nav-links a,
+      .example-card,
+      .explain-btn,
+      .clear-btn {
+        cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="6" fill="none" stroke="%2300BFFF" stroke-width="2" opacity="0.9"/><circle cx="10" cy="10" r="2" fill="%23FFFFFF" opacity="1"/></svg>'),
+          pointer;
       }
 
-      /* Navigation */
+      .code-input,
+      textarea {
+        cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" fill="none" stroke="%238A2BE2" stroke-width="1" opacity="0.8"/><rect x="4" y="4" width="8" height="8" fill="none" stroke="%2300BFFF" stroke-width="1" opacity="0.6"/><rect x="6" y="6" width="4" height="4" fill="%23FFFFFF" opacity="0.9"/></svg>'),
+          text;
+      }
+
+      /* VS Code-like syntax highlighting styles */
+      .code-editor-container {
+        position: relative;
+        width: 100%;
+        min-height: 200px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        background: #1e1e1e;
+        overflow: hidden;
+        font-family: "Consolas", "Monaco", "Courier New", monospace;
+      }
+
+      .code-editor-header {
+        background: #2d2d30;
+        padding: 8px 12px;
+        border-bottom: 1px solid #3e3e42;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 12px;
+        color: #cccccc;
+      }
+
+      .code-editor-tabs {
+        display: flex;
+        gap: 8px;
+      }
+
+      .code-editor-tab {
+        padding: 4px 8px;
+        background: #1e1e1e;
+        border-radius: 4px 4px 0 0;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      .code-editor-tab.active {
+        background: #1e1e1e;
+        color: #ffffff;
+      }
+
+      .code-editor-content {
+        position: relative;
+        height: 300px;
+        overflow: auto;
+      }
+
+      .code-editor-textarea {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        padding: 16px;
+        border: none;
+        outline: none;
+        background: transparent;
+        color: transparent;
+        caret-color: #22c55e;
+        font-family: "Consolas", "Monaco", "Courier New", monospace;
+        font-size: 14px;
+        line-height: 1.5;
+        resize: none;
+        z-index: 2;
+      }
+
+      .code-editor-highlight {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        padding: 16px;
+        font-family: "Consolas", "Monaco", "Courier New", monospace;
+        font-size: 14px;
+        line-height: 1.5;
+        background: #1e1e1e;
+        color: #22c55e;
+        overflow: hidden;
+        pointer-events: none;
+        z-index: 1;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+
+      .code-editor-textarea:focus {
+        outline: none;
+      }
+
+      /* VS Code color scheme - Green Theme */
+      .code-editor-highlight .token.comment {
+        color: #6a9955;
+      }
+      .code-editor-highlight .token.keyword {
+        color: #4ade80;
+      }
+      .code-editor-highlight .token.string {
+        color: #22c55e;
+      }
+      .code-editor-highlight .token.number {
+        color: #16a34a;
+      }
+      .code-editor-highlight .token.function {
+        color: #22d3ee;
+      }
+      .code-editor-highlight .token.class-name {
+        color: #10b981;
+      }
+      .code-editor-highlight .token.operator {
+        color: #4ade80;
+      }
+      .code-editor-highlight .token.punctuation {
+        color: #22c55e;
+      }
+      .code-editor-highlight .token.variable {
+        color: #34d399;
+      }
+      .code-editor-highlight .token.constant {
+        color: #10b981;
+      }
+      .code-editor-highlight .token.boolean {
+        color: #4ade80;
+      }
+      .code-editor-highlight .token.tag {
+        color: #22c55e;
+      }
+      .code-editor-highlight .token.attr-name {
+        color: #34d399;
+      }
+      .code-editor-highlight .token.attr-value {
+        color: #16a34a;
+      }
+
+      /* Fallback green text for any unhighlighted text */
+      .code-editor-highlight {
+        color: #22c55e !important;
+      }
+
+      .code-editor-highlight * {
+        color: inherit;
+      }
+
+      .language-selector select {
+        cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><polygon points="9,2 15,8 9,14 3,8" fill="none" stroke="%238A2BE2" stroke-width="1.5" opacity="0.8"/><circle cx="9" cy="8" r="2" fill="%2300BFFF" opacity="0.7"/></svg>'),
+          pointer;
+      }
+
+      /* Floating code elements with special cursor */
+      /* Floating code elements completely removed */
+
+      /* Code Control Panel */
+      .code-control-panel {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: rgba(10, 10, 26, 0.9);
+        backdrop-filter: blur(20px);
+        border-radius: 15px;
+        padding: 1rem;
+        box-shadow: 0 0 30px rgba(138, 43, 226, 0.3),
+          inset 0 0 30px rgba(0, 191, 255, 0.1);
+        border: 1px solid rgba(138, 43, 226, 0.3);
+        z-index: 1000;
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+      }
+
+      .code-control-btn {
+        background: linear-gradient(45deg, #8a2be2, #00bfff);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 0 15px rgba(138, 43, 226, 0.4);
+      }
+
+      .code-control-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 25px rgba(138, 43, 226, 0.6);
+      }
+
+      .code-control-btn:active {
+        transform: translateY(0);
+      }
+
+      .code-status {
+        color: #00bfff;
+        font-size: 0.8rem;
+        font-weight: 500;
+        margin-left: 0.5rem;
+      }
       .navbar {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
+        background: rgba(20, 20, 20, 0.95);
+        backdrop-filter: blur(20px);
         padding: 1rem 0;
         position: fixed;
         top: 0;
         left: 0;
         right: 0;
         z-index: 1000;
-        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+        border-bottom: 1px solid rgba(0, 212, 255, 0.1);
       }
 
       .nav-content {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        padding: 0 2rem;
       }
 
       .logo {
         font-size: 1.5rem;
         font-weight: bold;
-        color: #667eea;
+        color: #ffffff;
+        margin-right: 3rem;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+      }
+
+      .logo::before {
+        content: "● ● ●";
+        color: #ff5f56;
+        font-size: 0.7rem;
+        letter-spacing: 0.1em;
+      }
+
+      .nav-right {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
       }
 
       .nav-links {
         display: flex;
         list-style: none;
         gap: 2rem;
+        margin: 0;
+        padding: 0;
       }
 
       .nav-links a {
         text-decoration: none;
-        color: #333;
+        color: #e2e8f0;
         font-weight: 500;
         transition: color 0.3s ease;
         cursor: pointer;
+        font-size: 0.95rem;
       }
 
       .nav-links a:hover,
       .nav-links a.active {
-        color: #667eea;
+        color: #00d4ff;
+      }
+
+      .auth-section {
+        display: flex;
+        align-items: center;
+      }
+
+      .auth-section a {
+        text-decoration: none;
+        color: #1a1a1a;
+        font-weight: 500;
+        transition: color 0.3s ease;
+        cursor: pointer;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        background: linear-gradient(135deg, #00d4ff, #8a2be2);
+        color: #1a1a1a;
+        box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+      }
+
+      .auth-section a:hover {
+        background: linear-gradient(135deg, #8a2be2, #00d4ff);
+        color: #1a1a1a;
+        box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+      }
+
+      .auth-section #user-info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .auth-section #user-name {
+        color: #e2e8f0;
+        font-weight: 500;
+        font-size: 0.9rem;
+      }
+
+      .logout-btn {
+        background: linear-gradient(135deg, #ff4757, #c44569);
+        color: white;
+        border: none;
+        padding: 0.4rem 0.8rem;
+        border-radius: 5px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.3s ease;
+        box-shadow: 0 0 10px rgba(255, 71, 87, 0.3);
+      }
+
+      .logout-btn:hover {
+        background: linear-gradient(135deg, #c44569, #ff4757);
+        box-shadow: 0 0 15px rgba(255, 71, 87, 0.5);
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
       }
 
       /* Main Content */
@@ -93,115 +403,677 @@
       /* Hero Section */
       .hero {
         text-align: center;
-        color: white;
-        padding: 4rem 0;
+        color: #e2e8f0;
+        padding: 4rem 0 3rem;
+        position: relative;
+        z-index: 10;
+        background: transparent;
+        margin: 0;
       }
 
       .hero h1 {
         font-size: 3.5rem;
-        margin-bottom: 1rem;
+        margin-bottom: 1.5rem;
         font-weight: 700;
+        line-height: 1.2;
+        color: #00d4ff;
+        text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+        margin-bottom: 2rem;
       }
 
       .hero p {
-        font-size: 1.3rem;
-        margin-bottom: 2rem;
+        font-size: 1.2rem;
+        margin-bottom: 3rem;
         opacity: 0.9;
+        color: #a0a0a0;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        line-height: 1.6;
+      }
+
+      .hero-buttons {
+        display: flex;
+        gap: 1.5rem;
+        justify-content: center;
+        flex-wrap: wrap;
       }
 
       .cta-button {
         display: inline-block;
-        background: white;
-        color: #667eea;
         padding: 1rem 2rem;
-        border-radius: 50px;
+        border-radius: 8px;
         text-decoration: none;
         font-weight: 600;
-        font-size: 1.1rem;
+        font-size: 1rem;
         transition: all 0.3s ease;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         cursor: pointer;
-        border: none;
+        border: 1px solid #00d4ff;
+        background: transparent;
+        color: #ffffff;
+        min-width: 160px;
       }
 
       .cta-button:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        background: rgba(0, 212, 255, 0.1);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+      }
+
+      /* Statistics Section */
+      .stats-section {
+        background: rgba(30, 30, 30, 0.9);
+        backdrop-filter: blur(20px);
+        padding: 3rem 0;
+        margin: 2rem 0;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        border: 1px solid rgba(0, 212, 255, 0.2);
+      }
+
+      .stats-section .stat-item {
+        text-align: center;
+        padding: 1rem;
+      }
+
+      .stat-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #00d4ff;
+        margin-bottom: 0.5rem;
+        text-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+      }
+
+      .stat-label {
+        font-size: 1.1rem;
+        color: #e2e8f0;
+        font-weight: 500;
+      }
+
+      /* Features Section */
+      .features-section {
+        background: transparent;
+        padding: 4rem 0;
+        margin: 2rem 0;
+      }
+
+      .features-section h2 {
+        text-align: center;
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: #00d4ff;
+        font-weight: 700;
+        text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+      }
+
+      .features-subtitle {
+        text-align: center;
+        font-size: 1.1rem;
+        color: #a0a0a0;
+        margin-bottom: 3rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+        line-height: 1.6;
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 2rem;
+        margin-top: 2rem;
+        padding: 0 2rem;
+        max-width: 1200px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .feature-card {
+        background: #1a1a1a;
+        padding: 2rem;
+        border-radius: 12px;
+        text-align: left;
+        transition: all 0.3s ease;
+        border: 1px solid #2a2a2a;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .feature-card::before {
+        content: "● ● ●";
+        position: absolute;
+        top: 1rem;
+        left: 1.5rem;
+        color: #ff5f56;
+        font-size: 0.6rem;
+        letter-spacing: 0.1em;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-5px);
+        border-color: #00d4ff;
+        box-shadow: 0 15px 40px rgba(0, 212, 255, 0.2);
+      }
+
+      .feature-card h3 {
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+        color: #00d4ff;
+        font-weight: 600;
+        margin-top: 2rem;
+      }
+
+      .feature-card p {
+        color: #a0a0a0;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+        font-size: 0.95rem;
+      }
+
+      .feature-card p::before {
+        content: "// ";
+        color: #00d4ff;
+        font-weight: bold;
+      }
+
+      .feature-card .cta-button {
+        width: 100%;
+        text-align: center;
+        margin-top: auto;
+        padding: 0.8rem 1.5rem;
+        font-size: 0.9rem;
       }
 
       /* Cards */
       .card {
-        background: white;
+        background: #2d2d2d;
         padding: 2rem;
         border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         margin-bottom: 2rem;
+        border: 1px solid #404040;
       }
 
       .card h2 {
-        color: #333;
+        color: #00d4ff;
         margin-bottom: 1.5rem;
         font-size: 2rem;
+        text-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
       }
 
-      /* Code Explanation */
+      .card p {
+        color: #ffffff;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+        font-weight: 500;
+      }
+
+      /* Smart Code Explanation Layout */
+      .explain-header {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .explain-header h2 {
+        font-size: 2.5rem;
+        color: #00d4ff;
+        margin-bottom: 1rem;
+        text-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+      }
+
+      .explain-header p {
+        font-size: 1.2rem;
+        color: #e2e8f0;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .explain-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        min-height: 600px;
+      }
+
+      .explain-left {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .explain-right {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .explanation-panel,
+      .code-panel {
+        background: #2d2d2d;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        padding: 2rem;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid #404040;
+      }
+
+      .explanation-panel h3,
+      .code-panel h3 {
+        color: #00d4ff;
+        margin-bottom: 1.5rem;
+        font-size: 1.5rem;
+        border-bottom: 2px solid #404040;
+        padding-bottom: 0.5rem;
+        text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+      }
+
+      /* Code Input Styles */
+      /* Code Input Styles */
+      .language-detection {
+        margin-bottom: 1rem;
+        padding: 0.75rem;
+        background: #2d2d2d;
+        border-radius: 8px;
+        border: 2px solid #404040;
+      }
+
+      .language-detection label {
+        display: block;
+        font-weight: 600;
+        color: #e2e8f0;
+        margin: 0;
+      }
+
+      #detected-language {
+        color: #00d4ff;
+        font-weight: 700;
+        font-size: 1.1rem;
+        text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+      }
+
       .code-input {
         width: 100%;
-        min-height: 200px;
+        min-height: 300px;
         padding: 1rem;
-        border: 2px solid #e2e8f0;
+        border: 2px solid #404040;
         border-radius: 10px;
-        font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
+        font-family: "Consolas", "Monaco", "Courier New", monospace;
         font-size: 0.9rem;
         resize: vertical;
         margin-bottom: 1rem;
+        flex: 1;
+        background: #1a1a1a;
+        color: #00d4ff;
       }
 
       .code-input:focus {
         outline: none;
-        border-color: #667eea;
+        border-color: #00d4ff;
+        box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
       }
 
-      .explain-btn {
-        background: #667eea;
-        color: white;
-        padding: 1rem 2rem;
+      .code-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: auto;
+      }
+
+      .explain-btn,
+      .save-btn,
+      .clear-btn {
+        flex: 1;
+        padding: 1rem 1.5rem;
         border: none;
         border-radius: 10px;
         font-weight: 600;
         cursor: pointer;
         transition: all 0.3s ease;
-        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+
+      .explain-btn {
+        background: linear-gradient(135deg, #00d4ff, #8a2be2);
+        color: #1a1a1a;
+        box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
       }
 
       .explain-btn:hover {
-        background: #5a6fd8;
+        background: linear-gradient(135deg, #8a2be2, #00d4ff);
         transform: translateY(-2px);
+        box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
       }
 
       .explain-btn:disabled {
-        background: #ccc;
+        background: #404040;
+        color: #666;
         cursor: not-allowed;
         transform: none;
+        box-shadow: none;
       }
 
-      .explanation {
-        background: #e6fffa;
-        border-left: 4px solid #38b2ac;
+      .save-btn {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+        box-shadow: 0 0 15px rgba(40, 167, 69, 0.3);
+      }
+
+      .save-btn:hover {
+        background: linear-gradient(135deg, #20c997, #28a745);
+        transform: translateY(-2px);
+        box-shadow: 0 0 20px rgba(40, 167, 69, 0.5);
+      }
+
+      .clear-btn {
+        background: linear-gradient(135deg, #6c757d, #495057);
+        color: white;
+        box-shadow: 0 0 15px rgba(108, 117, 125, 0.3);
+      }
+
+      .clear-btn:hover {
+        background: linear-gradient(135deg, #495057, #6c757d);
+        transform: translateY(-2px);
+        box-shadow: 0 0 20px rgba(108, 117, 125, 0.5);
+      }
+
+      .btn-icon {
+        font-size: 1.1rem;
+      }
+
+      /* Saved Codes Section */
+      .saved-codes-section {
+        margin-top: 3rem;
+        padding: 2rem;
+        background: #2d2d2d;
+        border-radius: 15px;
+        border: 2px solid #404040;
+      }
+
+      .saved-codes-section h3 {
+        color: #00d4ff;
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+        text-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+      }
+
+      .saved-codes-section p {
+        color: #e2e8f0;
+        margin-bottom: 1.5rem;
+      }
+
+      .saved-codes-list {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .saved-code-item {
+        background: #1a1a1a;
+        border: 1px solid #404040;
+        border-radius: 10px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+
+      .saved-code-item:hover {
+        border-color: #00d4ff;
+        box-shadow: 0 4px 15px rgba(0, 212, 255, 0.2);
+        transform: translateY(-2px);
+      }
+
+      .saved-code-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+
+      .saved-code-title {
+        font-weight: 600;
+        color: #e2e8f0;
+        font-size: 1.1rem;
+      }
+
+      .saved-code-date {
+        color: #a0a0a0;
+        font-size: 0.9rem;
+      }
+
+      .saved-code-preview {
+        background: #0f0f0f;
+        border: 1px solid #404040;
+        border-radius: 8px;
+        padding: 1rem;
+        font-family: "Consolas", "Monaco", "Courier New", monospace;
+        font-size: 0.9rem;
+        color: #00d4ff;
+        max-height: 100px;
+        overflow: hidden;
+        margin-bottom: 1rem;
+      }
+
+      .saved-code-language {
+        display: inline-block;
+        background: linear-gradient(135deg, #00d4ff, #8a2be2);
+        color: #1a1a1a;
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+      }
+
+      .no-saved-codes {
+        text-align: center;
+        padding: 2rem;
+        color: #a0a0a0;
+        font-style: italic;
+      }
+
+      /* Explanation Styles */
+      .explanation-content {
+        flex: 1;
+        overflow-y: auto;
+      }
+
+      .welcome-message {
+        background: #2d2d2d;
+        padding: 2rem;
+        border-radius: 10px;
+        border-left: 4px solid #00d4ff;
+        border: 1px solid #404040;
+      }
+
+      .welcome-message h4 {
+        color: #00d4ff;
+        margin-bottom: 1rem;
+        font-size: 1.3rem;
+        text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+      }
+
+      .welcome-message p {
+        color: #e2e8f0;
+        margin-bottom: 1rem;
+        line-height: 1.6;
+      }
+
+      .welcome-message ul {
+        margin: 1rem 0;
+        padding-left: 1.5rem;
+      }
+
+      .welcome-message li {
+        color: #e2e8f0;
+        margin-bottom: 0.5rem;
+        line-height: 1.5;
+      }
+
+      .explanation-result {
+        background: #2d2d2d;
+        border-left: 4px solid #00d4ff;
         padding: 1.5rem;
         border-radius: 0 10px 10px 0;
         margin-top: 1rem;
-        display: none;
+        border: 1px solid #404040;
       }
 
-      .explanation.show {
-        display: block;
+      .explanation-result h4 {
+        color: #00d4ff;
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+        text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+      }
+
+      .explanation-result p {
+        color: #e2e8f0;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+      }
+
+      .explanation-result ul {
+        margin: 1rem 0;
+        padding-left: 1.5rem;
+      }
+
+      .explanation-result li {
+        color: #e2e8f0;
+        margin-bottom: 0.5rem;
+        line-height: 1.5;
       }
 
       .loading {
         text-align: center;
-        color: #667eea;
-        font-style: italic;
+        color: #00d4ff;
+        padding: 2rem;
+      }
+
+      .loading-spinner {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        animation: spin 2s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Examples Section */
+      .examples-section {
+        background: #2d2d2d;
+        padding: 3rem 0;
+        margin: 2rem 0;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        border: 1px solid #404040;
+      }
+
+      .examples-section h3 {
+        text-align: center;
+        font-size: 2rem;
+        color: #00d4ff;
+        margin-bottom: 1rem;
+        text-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+      }
+
+      .examples-section p {
+        text-align: center;
+        color: #e2e8f0;
+        margin-bottom: 2rem;
+        font-size: 1.1rem;
+      }
+
+      .examples-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        padding: 0 2rem;
+      }
+
+      .example-card {
+        background: #1a1a1a;
+        padding: 1.5rem;
+        border-radius: 15px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid #404040;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .example-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0, 212, 255, 0.2);
+        border-color: #00d4ff;
+        background: #2d2d2d;
+      }
+
+      .example-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(0, 212, 255, 0.1),
+          transparent
+        );
+        transition: left 0.5s;
+      }
+
+      .example-card:hover::before {
+        left: 100%;
+      }
+
+      .example-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .example-card h4 {
+        color: #e2e8f0;
+        margin-bottom: 0.5rem;
+        font-size: 1.2rem;
+        font-weight: 600;
+      }
+
+      .example-card p {
+        color: #a0a0a0;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+        text-align: center;
+      }
+
+      .example-code {
+        background: #0f0f0f;
+        color: #00d4ff;
+        padding: 0.75rem;
+        border-radius: 8px;
+        font-family: "Consolas", "Monaco", "Courier New", monospace;
+        font-size: 0.8rem;
+        text-align: left;
+        margin-top: 1rem;
+        overflow-x: auto;
+        border: 1px solid #404040;
       }
 
       /* Exercises */
@@ -223,6 +1095,322 @@
         color: #666;
       }
 
+      /* Difficulty Selector */
+      .difficulty-selector {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 2rem;
+        justify-content: center;
+      }
+
+      .difficulty-btn {
+        padding: 10px 20px;
+        border: 2px solid #667eea;
+        background: transparent;
+        color: #667eea;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+      }
+
+      .difficulty-btn:hover {
+        background: #667eea;
+        color: white;
+      }
+
+      .difficulty-btn.active {
+        background: #667eea;
+        color: white;
+      }
+
+      .difficulty-btn.locked {
+        background: #e0e0e0;
+        color: #999;
+        border-color: #ccc;
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+
+      .difficulty-btn.locked:hover {
+        background: #e0e0e0;
+        color: #999;
+        transform: none;
+      }
+
+      /* Progress Hint Styling */
+      .progress-hint {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border: 2px solid #dee2e6;
+        border-radius: 15px;
+        padding: 20px;
+        margin: 20px 0;
+        text-align: left;
+        color: #000000;
+      }
+
+      .progress-hint h4 {
+        margin: 0 0 15px 0;
+        color: #000000;
+        font-size: 1.1rem;
+        font-weight: bold;
+      }
+
+      .hint-content p {
+        margin: 8px 0;
+        color: #000000;
+        font-size: 0.95rem;
+        line-height: 1.4;
+      }
+
+      .hint-content strong {
+        color: #000000;
+        font-weight: bold;
+      }
+
+      .hint-content em {
+        color: #28a745;
+        font-style: normal;
+        font-weight: 500;
+      }
+
+      /* Rank Selector */
+      .rank-selector {
+        margin: 2rem 0;
+        text-align: center;
+      }
+
+      .rank-selector h4 {
+        margin-bottom: 1rem;
+        color: #333;
+        font-size: 1.1rem;
+      }
+
+      .rank-buttons {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .rank-btn {
+        padding: 8px 16px;
+        border: 2px solid #667eea;
+        background: transparent;
+        color: #667eea;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        font-size: 0.9rem;
+      }
+
+      .rank-btn:hover {
+        background: #667eea;
+        color: white;
+        transform: translateY(-2px);
+      }
+
+      .rank-btn.active {
+        background: #667eea;
+        color: white;
+        box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+      }
+
+      .rank-btn.locked {
+        background: #e0e0e0;
+        color: #999;
+        border-color: #ccc;
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+
+      .rank-btn.locked:hover {
+        background: #e0e0e0;
+        color: #999;
+        transform: none;
+      }
+
+      /* Next Rank Button Styling */
+      #next-rank-container {
+        margin-top: 30px;
+        text-align: center;
+      }
+
+      .next-rank-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 20px;
+        padding: 30px;
+        color: white;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        animation: slideUp 0.6s ease-out;
+      }
+
+      .next-rank-card h3 {
+        margin: 0 0 15px 0;
+        font-size: 2rem;
+        font-weight: bold;
+      }
+
+      .next-rank-card p {
+        margin: 0 0 25px 0;
+        font-size: 1.1rem;
+        opacity: 0.9;
+      }
+
+      .rank-stats {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin: 20px 0;
+      }
+
+      .stat {
+        text-align: center;
+      }
+
+      .stat-label {
+        display: block;
+        font-size: 0.9rem;
+        opacity: 0.8;
+        margin-bottom: 5px;
+      }
+
+      .stat-value {
+        display: block;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #ffd700;
+      }
+
+      .next-rank-button {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        margin-top: 10px;
+      }
+
+      .next-rank-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(255, 107, 107, 0.6);
+        background: linear-gradient(135deg, #ff5252 0%, #d63031 100%);
+      }
+
+      .next-rank-button:active {
+        transform: translateY(-1px);
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Code Block and Hint Styling */
+      .code-block {
+        background: #2d3748;
+        color: #e2e8f0;
+        padding: 1rem;
+        border-radius: 8px;
+        margin: 1rem 0;
+        font-family: "Courier New", monospace;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        border-left: 4px solid #667eea;
+        white-space: pre-wrap;
+        overflow-x: auto;
+      }
+
+      .hint-box {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        color: #856404;
+        padding: 0.75rem;
+        border-radius: 6px;
+        margin: 1rem 0;
+        font-style: italic;
+        border-left: 4px solid #fdcb6e;
+      }
+
+      .hint-box::before {
+        content: "💡 Hint: ";
+        font-weight: bold;
+      }
+
+      /* Code Input Styling */
+      .description {
+        background: #e8f4fd;
+        border: 1px solid #bee5eb;
+        color: #0c5460;
+        padding: 1rem;
+        border-radius: 6px;
+        margin: 1rem 0;
+        border-left: 4px solid #17a2b8;
+      }
+
+      .code-input-container {
+        margin: 1rem 0;
+      }
+
+      .code-input-container label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #333;
+      }
+
+      .code-textarea {
+        width: 100%;
+        min-height: 150px;
+        padding: 1rem;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        font-family: "Courier New", monospace;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        resize: vertical;
+        background: #f8f9fa;
+        transition: border-color 0.3s ease;
+      }
+
+      .code-textarea:focus {
+        outline: none;
+        border-color: #667eea;
+        background: white;
+      }
+
+      .test-cases {
+        margin-top: 1rem;
+        padding: 1rem;
+        background: #f0f8ff;
+        border-radius: 6px;
+        border-left: 4px solid #4a90e2;
+      }
+
+      .test-cases h4 {
+        margin: 0 0 0.5rem 0;
+        color: #2c5aa0;
+        font-size: 0.9rem;
+      }
+
+      .test-case {
+        margin: 0.25rem 0;
+        font-size: 0.85rem;
+        color: #555;
+      }
+
       .options {
         display: grid;
         gap: 0.5rem;
@@ -235,26 +1423,32 @@
         border-radius: 8px;
         cursor: pointer;
         transition: all 0.3s ease;
+        color: #000000;
+        font-weight: 500;
       }
 
       .option:hover {
         border-color: #667eea;
         background: #f0f4ff;
+        color: #000000;
       }
 
       .option.selected {
         border-color: #667eea;
         background: #f0f4ff;
+        color: #000000;
       }
 
       .option.correct {
         border-color: #28a745;
         background: #d4edda;
+        color: #000000;
       }
 
       .option.incorrect {
         border-color: #dc3545;
         background: #f8d7da;
+        color: #000000;
       }
 
       .submit-btn {
@@ -288,6 +1482,25 @@
         padding: 1rem;
         border-radius: 10px;
         margin-bottom: 1rem;
+        color: #000000;
+      }
+
+      .challenge-info h4 {
+        color: #000000;
+        font-weight: bold;
+      }
+
+      .challenge-info ul {
+        color: #000000;
+      }
+
+      .challenge-info li {
+        color: #000000;
+      }
+
+      .challenge-info strong {
+        color: #000000;
+        font-weight: bold;
       }
 
       .progress-bar {
@@ -323,12 +1536,55 @@
         background: #f8f9fa;
         border-radius: 10px;
         margin-bottom: 0.5rem;
+        position: relative;
       }
 
       .rank {
         font-weight: bold;
         font-size: 1.2rem;
         color: #667eea;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .rank-badge {
+        padding: 0.25rem 0.5rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .rank-legendary {
+        background: linear-gradient(135deg, #ffd700, #ffed4e);
+        color: #8b4513;
+        box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+      }
+
+      .rank-epic {
+        background: linear-gradient(135deg, #9d4edd, #c77dff);
+        color: white;
+        box-shadow: 0 2px 8px rgba(157, 78, 221, 0.3);
+      }
+
+      .rank-advanced {
+        background: linear-gradient(135deg, #06ffa5, #00d4aa);
+        color: white;
+        box-shadow: 0 2px 8px rgba(6, 255, 165, 0.3);
+      }
+
+      .rank-expert {
+        background: linear-gradient(135deg, #ff6b35, #f7931e);
+        color: white;
+        box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
+      }
+
+      .rank-beginner {
+        background: linear-gradient(135deg, #74c0fc, #339af0);
+        color: white;
+        box-shadow: 0 2px 8px rgba(116, 192, 252, 0.3);
       }
 
       .username {
@@ -432,44 +1688,124 @@
         text-decoration: underline;
       }
 
-      /* Phone Ad */
-      .phone-ad {
-        position: fixed;
-        bottom: 20px;
-        left: 20px;
-        background: #28a745;
-        color: white;
-        padding: 1rem;
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        z-index: 1000;
-        animation: float 3s ease-in-out infinite;
-      }
-
-      @keyframes float {
-        0%,
-        100% {
-          transform: translateY(0px);
-        }
-        50% {
-          transform: translateY(-10px);
-        }
-      }
-
-      .phone-ad h4 {
-        margin-bottom: 0.5rem;
-        font-size: 1rem;
-      }
-
-      .phone-ad p {
-        font-size: 0.9rem;
-        opacity: 0.9;
-      }
-
       /* Responsive */
+      @media (max-width: 1200px) {
+        .features-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
       @media (max-width: 768px) {
+        .hero {
+          padding: 3rem 0 2rem;
+        }
+
         .hero h1 {
           font-size: 2.5rem;
+        }
+
+        .hero p {
+          font-size: 1.1rem;
+          margin-bottom: 2rem;
+        }
+
+        .hero-buttons {
+          flex-direction: column;
+          align-items: center;
+          gap: 1rem;
+        }
+
+        .cta-button {
+          width: 100%;
+          max-width: 280px;
+          padding: 1rem 2rem;
+        }
+
+        .features-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .stats-section {
+          padding: 2rem 0;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 0.5rem;
+        }
+
+        .stat-number {
+          font-size: 1.8rem;
+        }
+
+        .stat-icon {
+          font-size: 2rem;
+        }
+
+        .features-grid {
+          grid-template-columns: 1fr;
+          gap: 1rem;
+          padding: 0 0.5rem;
+        }
+
+        .features-section h2 {
+          font-size: 2rem;
+        }
+
+        .features-section {
+          padding: 2rem 0;
+        }
+
+        .nav-content {
+          padding: 0 1rem;
+        }
+
+        .nav-right {
+          gap: 1rem;
+        }
+
+        .nav-links {
+          display: none;
+        }
+
+        .auth-section a {
+          padding: 0.4rem 0.8rem;
+          font-size: 0.9rem;
+        }
+
+        .auth-section #user-info {
+          gap: 0.3rem;
+        }
+
+        .auth-section #user-name {
+          font-size: 0.8rem;
+        }
+
+        .logout-btn {
+          padding: 0.3rem 0.6rem;
+          font-size: 0.7rem;
+        }
+
+        .explain-layout {
+          grid-template-columns: 1fr;
+          gap: 1rem;
+          min-height: auto;
+        }
+
+        .explanation-panel,
+        .code-panel {
+          padding: 1.5rem;
+        }
+
+        .code-input {
+          min-height: 200px;
+        }
+
+        .examples-grid {
+          grid-template-columns: 1fr;
+          gap: 1rem;
+          padding: 0 1rem;
+        }
+
+        .examples-section {
+          padding: 2rem 0;
         }
 
         .nav-links {
@@ -480,40 +1816,62 @@
           padding: 1.5rem;
         }
       }
+
+      @media (max-width: 480px) {
+        .stats-section {
+          grid-template-columns: 1fr;
+        }
+
+        .hero h1 {
+          font-size: 2rem;
+        }
+
+        .hero p {
+          font-size: 1rem;
+        }
+      }
     </style>
   </head>
   <body>
+    <!-- Additional floating code elements -->
+    <!-- Floating code divs removed -->
+
+    <!-- Code Control Panel removed -->
+
     <!-- Navigation -->
     <nav class="navbar">
       <div class="container">
         <div class="nav-content">
-          <div class="logo">🚀 CodeLearner</div>
-          <ul class="nav-links">
-            <li>
-              <a href="#" class="nav-link active" data-page="home">Home</a>
-            </li>
-            <li>
-              <a href="#" class="nav-link" data-page="explain"
-                >Smart Explanation</a
-              >
-            </li>
-            <li>
-              <a href="#" class="nav-link" data-page="exercises"
-                >Interactive Learning</a
-              >
-            </li>
-            <li>
-              <a href="#" class="nav-link" data-page="challenge"
-                >AI Challenge</a
-              >
-            </li>
-            <li>
-              <a href="#" class="nav-link" data-page="leaderboard"
-                >Leaderboard</a
-              >
-            </li>
-            <li><a href="#" class="nav-link" id="auth-btn">Login</a></li>
-          </ul>
+          <div class="logo">CodeLearn</div>
+          <div class="nav-right">
+            <ul class="nav-links">
+              <li>
+                <a href="#" class="nav-link active" data-page="home">Home</a>
+              </li>
+              <li>
+                <a href="#" class="nav-link" data-page="explain"
+                  >Smart Explanation</a
+                >
+              </li>
+              <li>
+                <a href="#" class="nav-link" data-page="exercises"
+                  >Interactive Learning</a
+                >
+              </li>
+              <li>
+                <a href="#" class="nav-link" data-page="challenge"
+                  >AI Challenge</a
+                >
+              </li>
+            </ul>
+            <div class="auth-section">
+              <a href="#" class="nav-link" id="auth-btn">Login</a>
+              <div id="user-info" style="display: none">
+                <span id="user-name"></span>
+                <button id="logout-btn" class="logout-btn">Logout</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </nav>
@@ -524,14 +1882,101 @@
       <div id="home" class="page active">
         <div class="container">
           <div class="hero">
-            <h1>AI-Powered Programming Education</h1>
+            <h1>Master Programming Through Focused Study</h1>
             <p>
-              Learn programming with smart explanations, interactive exercises,
-              and AI challenges
+              Transform your coding skills with our comprehensive learning
+              platform. Study Smarter, understand deeper, and build confidence
+              through structured programming education designed for serious
+              learners.
             </p>
-            <button class="cta-button" onclick="showPage('explain')">
-              Try Smart Explanation
-            </button>
+            <div class="hero-buttons">
+              <button class="cta-button" onclick="showPage('explain')">
+                Start Studying
+              </button>
+              <button class="cta-button" onclick="showPage('exercises')">
+                Practice Problems
+              </button>
+            </div>
+          </div>
+
+          <!-- Study Statistics Section -->
+          <div class="stats-section">
+            <div class="stat-item">
+              <div class="stat-icon">📖</div>
+              <div class="stat-number">2,500+</div>
+              <div class="stat-label">Study Hours</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-icon">🎯</div>
+              <div class="stat-number">85%</div>
+              <div class="stat-label">Concept Mastery</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-icon">💡</div>
+              <div class="stat-number">15,000+</div>
+              <div class="stat-label">Study Sessions</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-icon">⭐</div>
+              <div class="stat-number">4.8/5</div>
+              <div class="stat-label">Study Rating</div>
+            </div>
+          </div>
+
+          <!-- Study Features Section -->
+          <div class="features-section">
+            <h2>Comprehensive Study Tools for Programming Mastery</h2>
+            <p class="features-subtitle">
+              Build deep understanding through structured learning and focused
+              practice
+            </p>
+
+            <div class="features-grid">
+              <div class="feature-card">
+                <h3>Deep Code Analysis</h3>
+                <p>
+                  Study code line-by-line with detailed explanations,
+                  step-by-step breakdowns, and comprehensive understanding of
+                  programming concepts.
+                </p>
+                <button class="cta-button" onclick="showPage('explain')">
+                  Study Now
+                </button>
+              </div>
+              <div class="feature-card">
+                <h3>Focused Practice</h3>
+                <p>
+                  Master programming through targeted exercises, concept
+                  reinforcement, and progressive skill building designed for
+                  serious learners.
+                </p>
+                <button class="cta-button" onclick="showPage('exercises')">
+                  Practice
+                </button>
+              </div>
+              <div class="feature-card">
+                <h3>Challenge with AI</h3>
+                <p>
+                  Test your programming skills across various difficulty levels
+                  with AI-generated questions designed to push your coding
+                  abilities to the limit.
+                </p>
+                <button class="cta-button" onclick="showPage('challenge')">
+                  Start Challenge
+                </button>
+              </div>
+              <div class="feature-card">
+                <h3>Study Rankings</h3>
+                <p>
+                  Compare your study performance, earn achievements, and stay
+                  motivated through academic competition with other serious
+                  learners.
+                </p>
+                <button class="cta-button" onclick="showPage('leaderboard')">
+                  View Rankings
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -539,35 +1984,160 @@
       <!-- Smart Explanation Page -->
       <div id="explain" class="page">
         <div class="container">
-          <div class="card">
+          <div class="explain-header">
             <h2>🤖 Smart Code Explanation</h2>
             <p>
               Enter any code snippet and get AI-powered explanations in simple,
               beginner-friendly language.
             </p>
+          </div>
 
-            <textarea
-              class="code-input"
-              placeholder="Enter your code here... For example:
-function fibonacci(n) {
-    if (n <= 1) return n;
-    return fibonacci(n - 1) + fibonacci(n - 2);
-}
-
-console.log(fibonacci(10));"
-            ></textarea>
-
-            <button class="explain-btn" onclick="explainCode()">
-              Explain Code
-            </button>
-
-            <div id="loading" class="loading" style="display: none">
-              🤖 AI is analyzing your code...
+          <div class="explain-layout">
+            <!-- Left Side - Explanation -->
+            <div class="explain-left">
+              <div class="explanation-panel">
+                <h3>📚 Code Explanation</h3>
+                <div id="loading" class="loading" style="display: none">
+                  <div class="loading-spinner">🤖</div>
+                  <p>AI is analyzing your code...</p>
+                </div>
+                <div id="explanation" class="explanation-content">
+                  <div class="welcome-message">
+                    <h4>👋 Welcome to Smart Code Explanation!</h4>
+                    <p>
+                      Enter your code on the right side and click "Explain Code"
+                      to get:
+                    </p>
+                    <ul>
+                      <li>📖 Step-by-step explanations</li>
+                      <li>💡 Beginner-friendly language</li>
+                      <li>🔍 Pattern recognition</li>
+                      <li>📝 Commented code examples</li>
+                    </ul>
+                    <p>
+                      <strong>Supported languages:</strong> Python, JavaScript,
+                      C, C++, Java, HTML, CSS
+                    </p>
+                    <p
+                      style="color: #ff6b6b; font-size: 0.9em; margin-top: 10px"
+                    >
+                      <strong>Note:</strong> React/JSX is not currently
+                      supported
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div id="explanation" class="explanation">
-              <h4>🤖 Smart Explanation:</h4>
-              <div id="explanation-content"></div>
+            <!-- Right Side - Code Input -->
+            <div class="explain-right">
+              <div class="code-panel">
+                <h3>💻 Enter Your Code</h3>
+                <div class="language-detection">
+                  <label
+                    >Detected Language:
+                    <span id="detected-language">Auto-detecting...</span></label
+                  >
+                </div>
+
+                <div class="code-editor-container">
+                  <div class="code-editor-header">
+                    <div class="code-editor-tabs">
+                      <div class="code-editor-tab active" id="editor-tab">
+                        Code Editor
+                      </div>
+                    </div>
+                    <div id="detected-language-display">Auto-detecting...</div>
+                  </div>
+                  <div class="code-editor-content">
+                    <textarea
+                      id="code-input"
+                      class="code-editor-textarea"
+                      placeholder="Enter your code here... (Language will be auto-detected)
+
+Example:
+def fibonacci(n):
+    if n <= 1:
+        return n
+    return fibonacci(n-1) + fibonacci(n-2)"
+                      oninput="updateSyntaxHighlighting()"
+                    ></textarea>
+                    <div
+                      id="code-highlight"
+                      class="code-editor-highlight"
+                    ></div>
+                  </div>
+                </div>
+
+                <div class="code-actions">
+                  <button class="explain-btn" onclick="explainCode()">
+                    <span class="btn-icon">🤖</span>
+                    Explain Code
+                  </button>
+                  <button
+                    class="save-btn"
+                    onclick="saveCode()"
+                    id="save-btn"
+                    style="display: none"
+                  >
+                    <span class="btn-icon">💾</span>
+                    Save
+                  </button>
+                  <button class="clear-btn" onclick="clearCode()">
+                    <span class="btn-icon">🗑️</span>
+                    Clear
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Examples Section -->
+          <div class="examples-section">
+            <h3>💡 Try These Examples</h3>
+            <p>
+              Click on any example below to see how Smart Code Explanation
+              works:
+            </p>
+
+            <div class="examples-grid">
+              <div
+                class="example-card"
+                onclick="loadExample('javascript', 'function fibonacci(n) {\n    if (n <= 1) return n;\n    return fibonacci(n - 1) + fibonacci(n - 2);\n}\n\nconsole.log(fibonacci(10));')"
+              >
+                <div class="example-icon">🔢</div>
+                <h4>Fibonacci Function</h4>
+                <p>JavaScript recursive function</p>
+                <div class="example-code">function fibonacci(n) { ... }</div>
+              </div>
+
+              <div class="example-card" onclick="loadPythonExample()">
+                <div class="example-icon">🐍</div>
+                <h4>User Greeting</h4>
+                <p>Python function with conditions</p>
+                <div class="example-code">def greet_user(name, age): ...</div>
+              </div>
+
+              <div class="example-card" onclick="loadCExample()">
+                <div class="example-icon">⚙️</div>
+                <h4>Array Sum</h4>
+                <p>C program with loops</p>
+                <div class="example-code">int numbers[] = {1, 2, 3, 4, 5};</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Saved Codes Section -->
+          <div class="saved-codes-section">
+            <h3>💾 Your Saved Code Explanations</h3>
+            <p>View and manage your previously saved code explanations:</p>
+            <div id="saved-codes-list" class="saved-codes-list">
+              <div class="no-saved-codes">
+                <p>
+                  No saved codes yet. Explain some code and save it to see it
+                  here!
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -577,76 +2147,284 @@ console.log(fibonacci(10));"
       <div id="exercises" class="page">
         <div class="container">
           <div class="card">
-            <h2>📚 Interactive Learning</h2>
+            <h2>🎯 Focus Practice</h2>
             <p>
-              Practice with QCM exercises ranging from easy to hard difficulty
-              levels.
+              Master programming through targeted exercises with progressive
+              difficulty levels. Choose your level and practice with different
+              exercises than the AI Challenge.
             </p>
+
+            <div class="difficulty-selector">
+              <button
+                class="difficulty-btn active"
+                onclick="selectDifficulty('easy')"
+              >
+                Easy
+              </button>
+              <button
+                class="difficulty-btn locked"
+                onclick="selectDifficulty('medium')"
+                disabled
+              >
+                Medium 🔒
+              </button>
+              <button
+                class="difficulty-btn locked"
+                onclick="selectDifficulty('hard')"
+                disabled
+              >
+                Hard 🔒
+              </button>
+            </div>
+
+            <!-- Progress Hint -->
+            <div class="progress-hint">
+              <h4>📚 How to Progress:</h4>
+              <div class="hint-content">
+                <p>
+                  <strong>Step 1:</strong> Complete all 3 Easy exercises →
+                  Unlocks Medium
+                </p>
+                <p>
+                  <strong>Step 2:</strong> Complete all 3 Medium exercises →
+                  Unlocks Hard
+                </p>
+                <p>
+                  <strong>Step 3:</strong> Complete all 3 Hard exercises →
+                  Unlocks Next Rank
+                </p>
+                <p>
+                  <em
+                    >💡 You can get points even for wrong answers, so keep
+                    trying!</em
+                  >
+                </p>
+              </div>
+            </div>
+
+            <div class="rank-selector">
+              <h4>Select Rank:</h4>
+              <div class="rank-buttons">
+                <button class="rank-btn active" onclick="selectRank(1)">
+                  🥉 Rank 1
+                </button>
+                <button
+                  class="rank-btn locked"
+                  onclick="selectRank(2)"
+                  disabled
+                >
+                  🔒 Rank 2
+                </button>
+                <button
+                  class="rank-btn locked"
+                  onclick="selectRank(3)"
+                  disabled
+                >
+                  🔒 Rank 3
+                </button>
+                <button
+                  class="rank-btn locked"
+                  onclick="selectRank(4)"
+                  disabled
+                >
+                  🔒 Rank 4
+                </button>
+                <button
+                  class="rank-btn locked"
+                  onclick="selectRank(5)"
+                  disabled
+                >
+                  🔒 Rank 5
+                </button>
+              </div>
+            </div>
 
             <div id="exercise-container">
               <div class="exercise" id="exercise-1">
-                <h3>Question 1: What does HTML stand for?</h3>
-                <p>Choose the correct answer:</p>
-                <div class="options">
+                <h3>
+                  Question 1:
+                  <span id="q1-text">What is a variable in programming?</span>
+                </h3>
+                <div
+                  id="q1-code"
+                  class="code-block"
+                  style="display: none"
+                ></div>
+                <div
+                  id="q1-description"
+                  class="description"
+                  style="display: none"
+                ></div>
+                <div
+                  id="q1-code-input"
+                  class="code-input-container"
+                  style="display: none"
+                >
+                  <label for="q1-textarea">Write your code here:</label>
+                  <textarea
+                    id="q1-textarea"
+                    class="code-textarea"
+                    placeholder="Enter your code here..."
+                  ></textarea>
+                  <div
+                    id="q1-test-cases"
+                    class="test-cases"
+                    style="display: none"
+                  ></div>
+                </div>
+                <p id="q1-instruction">Choose the correct answer:</p>
+                <div class="options" id="q1-options">
                   <div class="option" onclick="selectOption(this, 0)">
-                    HyperText Markup Language
+                    <span id="q1-opt0">A container that stores data</span>
                   </div>
                   <div class="option" onclick="selectOption(this, 1)">
-                    High Tech Modern Language
+                    <span id="q1-opt1">A type of function</span>
                   </div>
                   <div class="option" onclick="selectOption(this, 2)">
-                    Home Tool Markup Language
+                    <span id="q1-opt2">A programming language</span>
                   </div>
                   <div class="option" onclick="selectOption(this, 3)">
-                    Hyperlink and Text Markup Language
+                    <span id="q1-opt3">A computer component</span>
                   </div>
                 </div>
+                <div id="q1-hint" class="hint-box" style="display: none"></div>
                 <button class="submit-btn" onclick="submitExercise(1, 0)">
                   Submit Answer
                 </button>
               </div>
 
               <div class="exercise" id="exercise-2">
-                <h3>Question 2: Which CSS property changes text color?</h3>
-                <p>Choose the correct answer:</p>
-                <div class="options">
+                <h3>
+                  Question 2:
+                  <span id="q2-text">What does 'if' statement do?</span>
+                </h3>
+                <div
+                  id="q2-code"
+                  class="code-block"
+                  style="display: none"
+                ></div>
+                <div
+                  id="q2-description"
+                  class="description"
+                  style="display: none"
+                ></div>
+                <div
+                  id="q2-code-input"
+                  class="code-input-container"
+                  style="display: none"
+                >
+                  <label for="q2-textarea">Write your code here:</label>
+                  <textarea
+                    id="q2-textarea"
+                    class="code-textarea"
+                    placeholder="Enter your code here..."
+                  ></textarea>
+                  <div
+                    id="q2-test-cases"
+                    class="test-cases"
+                    style="display: none"
+                  ></div>
+                </div>
+                <p id="q2-instruction">Choose the correct answer:</p>
+                <div class="options" id="q2-options">
                   <div class="option" onclick="selectOption(this, 0)">
-                    text-color
+                    <span id="q2-opt0"
+                      >Makes decisions based on conditions</span
+                    >
                   </div>
                   <div class="option" onclick="selectOption(this, 1)">
-                    color
+                    <span id="q2-opt1">Creates a loop</span>
                   </div>
                   <div class="option" onclick="selectOption(this, 2)">
-                    font-color
+                    <span id="q2-opt2">Defines a function</span>
                   </div>
                   <div class="option" onclick="selectOption(this, 3)">
-                    text-style
+                    <span id="q2-opt3">Stores data</span>
                   </div>
                 </div>
-                <button class="submit-btn" onclick="submitExercise(2, 1)">
+                <div id="q2-hint" class="hint-box" style="display: none"></div>
+                <button class="submit-btn" onclick="submitExercise(2, 0)">
                   Submit Answer
                 </button>
               </div>
 
               <div class="exercise" id="exercise-3">
-                <h3>Question 3: What does console.log() do in JavaScript?</h3>
-                <p>Choose the correct answer:</p>
-                <div class="options">
+                <h3>
+                  Question 3: <span id="q3-text">What is a loop used for?</span>
+                </h3>
+                <div
+                  id="q3-code"
+                  class="code-block"
+                  style="display: none"
+                ></div>
+                <div
+                  id="q3-description"
+                  class="description"
+                  style="display: none"
+                ></div>
+                <div
+                  id="q3-code-input"
+                  class="code-input-container"
+                  style="display: none"
+                >
+                  <label for="q3-textarea">Write your code here:</label>
+                  <textarea
+                    id="q3-textarea"
+                    class="code-textarea"
+                    placeholder="Enter your code here..."
+                  ></textarea>
+                  <div
+                    id="q3-test-cases"
+                    class="test-cases"
+                    style="display: none"
+                  ></div>
+                </div>
+                <p id="q3-instruction">Choose the correct answer:</p>
+                <div class="options" id="q3-options">
                   <div class="option" onclick="selectOption(this, 0)">
-                    Creates a new variable
+                    <span id="q3-opt0">Repeating code multiple times</span>
                   </div>
                   <div class="option" onclick="selectOption(this, 1)">
-                    Prints text to console
+                    <span id="q3-opt1">Storing multiple values</span>
                   </div>
                   <div class="option" onclick="selectOption(this, 2)">
-                    Defines a function
+                    <span id="q3-opt2">Making decisions</span>
                   </div>
                   <div class="option" onclick="selectOption(this, 3)">
-                    Stores data in memory
+                    <span id="q3-opt3">Creating functions</span>
                   </div>
                 </div>
-                <button class="submit-btn" onclick="submitExercise(3, 1)">
+                <div id="q3-hint" class="hint-box" style="display: none"></div>
+                <button class="submit-btn" onclick="submitExercise(3, 0)">
                   Submit Answer
+                </button>
+              </div>
+            </div>
+
+            <!-- Next Rank Button -->
+            <div id="next-rank-container" style="display: none">
+              <div class="next-rank-card">
+                <h3>🎉 Rank Completed!</h3>
+                <p>
+                  Congratulations! You've completed all exercises in Rank
+                  <span id="completed-rank-number"></span>.
+                </p>
+                <div class="rank-stats">
+                  <div class="stat">
+                    <span class="stat-label">Score:</span>
+                    <span class="stat-value" id="rank-score">0</span>
+                  </div>
+                  <div class="stat">
+                    <span class="stat-label">Questions:</span>
+                    <span class="stat-value">9/9</span>
+                  </div>
+                </div>
+                <button
+                  id="next-rank-btn"
+                  class="next-rank-button"
+                  onclick="goToNextRank()"
+                >
+                  🚀 Unlock Next Rank
                 </button>
               </div>
             </div>
@@ -662,17 +2440,27 @@ console.log(fibonacci(10));"
           <div class="card">
             <h2>⚡ AI Challenge</h2>
             <p>
-              Compete against AI in a 30-question challenge across 3 rounds of
-              increasing difficulty!
+              Compete against AI in a comprehensive 30-question challenge across
+              3 rounds of increasing difficulty: Easy (10 questions), Medium (10
+              questions), and Hard (10 questions)!
             </p>
 
             <div class="challenge-info">
-              <h4>Challenge Rules:</h4>
+              <h4>Challenge Structure:</h4>
               <ul>
-                <li>30 questions total (10 per round)</li>
-                <li>3 rounds: Easy → Medium → Hard</li>
-                <li>Limited time per question</li>
+                <li>
+                  <strong>Round 1 - Easy:</strong> 10 beginner-level questions
+                </li>
+                <li>
+                  <strong>Round 2 - Medium:</strong> 10 intermediate-level
+                  questions
+                </li>
+                <li>
+                  <strong>Round 3 - Hard:</strong> 10 advanced-level questions
+                </li>
+                <li>30 seconds per question</li>
                 <li>Earn 10 points per correct answer</li>
+                <li>Compete against AI with 85% accuracy</li>
               </ul>
             </div>
 
@@ -719,42 +2507,58 @@ console.log(fibonacci(10));"
 
             <div id="leaderboard-list">
               <div class="leaderboard-item">
-                <span class="rank">#1</span>
+                <div class="rank">
+                  #1 <span class="rank-badge rank-legendary">Legendary</span>
+                </div>
                 <span class="username">Alex Johnson</span>
                 <span class="points">2,850 pts</span>
               </div>
               <div class="leaderboard-item">
-                <span class="rank">#2</span>
+                <div class="rank">
+                  #2 <span class="rank-badge rank-epic">Epic</span>
+                </div>
                 <span class="username">Sarah Chen</span>
                 <span class="points">2,640 pts</span>
               </div>
               <div class="leaderboard-item">
-                <span class="rank">#3</span>
+                <div class="rank">
+                  #3 <span class="rank-badge rank-epic">Epic</span>
+                </div>
                 <span class="username">Mike Rodriguez</span>
                 <span class="points">2,420 pts</span>
               </div>
               <div class="leaderboard-item">
-                <span class="rank">#4</span>
+                <div class="rank">
+                  #4 <span class="rank-badge rank-advanced">Advanced</span>
+                </div>
                 <span class="username">Emma Wilson</span>
                 <span class="points">2,180 pts</span>
               </div>
               <div class="leaderboard-item">
-                <span class="rank">#5</span>
+                <div class="rank">
+                  #5 <span class="rank-badge rank-advanced">Advanced</span>
+                </div>
                 <span class="username">David Kim</span>
                 <span class="points">1,950 pts</span>
               </div>
               <div class="leaderboard-item">
-                <span class="rank">#6</span>
+                <div class="rank">
+                  #6 <span class="rank-badge rank-expert">Expert</span>
+                </div>
                 <span class="username">Lisa Brown</span>
                 <span class="points">1,720 pts</span>
               </div>
               <div class="leaderboard-item">
-                <span class="rank">#7</span>
+                <div class="rank">
+                  #7 <span class="rank-badge rank-expert">Expert</span>
+                </div>
                 <span class="username">Tom Anderson</span>
                 <span class="points">1,480 pts</span>
               </div>
               <div class="leaderboard-item">
-                <span class="rank">#8</span>
+                <div class="rank">
+                  #8 <span class="rank-badge rank-beginner">Beginner</span>
+                </div>
                 <span class="username">You</span>
                 <span class="points" id="user-points">0 pts</span>
               </div>
@@ -791,26 +2595,28 @@ console.log(fibonacci(10));"
       </div>
     </div>
 
-    <!-- Phone Ad -->
-    <div class="phone-ad">
-      <h4>📞 Need Help?</h4>
-      <p>Call: 067205077<br />For help or advertising</p>
-    </div>
-
     <script>
       // Global state
       let currentUser = null;
       let userPoints = 0;
       let exerciseScore = 0;
+      let savedCodes = JSON.parse(localStorage.getItem("savedCodes")) || [];
+      let currentExplanation = null;
 
       // Notification system
-      function showNotification(message, type = 'info') {
-        const notification = document.createElement('div');
+      function showNotification(message, type = "info") {
+        const notification = document.createElement("div");
         notification.style.cssText = `
           position: fixed;
           top: 20px;
           right: 20px;
-          background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#667eea'};
+          background: ${
+            type === "success"
+              ? "#28a745"
+              : type === "error"
+              ? "#dc3545"
+              : "#667eea"
+          };
           color: white;
           padding: 1rem 1.5rem;
           border-radius: 10px;
@@ -822,15 +2628,15 @@ console.log(fibonacci(10));"
         `;
         notification.textContent = message;
         document.body.appendChild(notification);
-        
+
         setTimeout(() => {
-          notification.style.animation = 'slideOut 0.3s ease';
+          notification.style.animation = "slideOut 0.3s ease";
           setTimeout(() => notification.remove(), 300);
         }, 3000);
       }
 
       // Add CSS animations for notifications
-      const style = document.createElement('style');
+      const style = document.createElement("style");
       style.textContent = `
         @keyframes slideIn {
           from { transform: translateX(100%); opacity: 0; }
@@ -849,6 +2655,7 @@ console.log(fibonacci(10));"
         timeLeft: 30,
         timer: null,
         questions: [
+          // Easy Round (Questions 1-10)
           {
             question: "What does HTML stand for?",
             options: [
@@ -858,11 +2665,13 @@ console.log(fibonacci(10));"
               "Hyperlink and Text Markup Language",
             ],
             correct: 0,
+            difficulty: "Easy",
           },
           {
             question: "Which CSS property changes text color?",
             options: ["text-color", "color", "font-color", "text-style"],
             correct: 1,
+            difficulty: "Easy",
           },
           {
             question: "What does console.log() do in JavaScript?",
@@ -873,6 +2682,269 @@ console.log(fibonacci(10));"
               "Stores data in memory",
             ],
             correct: 1,
+            difficulty: "Easy",
+          },
+          {
+            question: "Which tag creates a hyperlink in HTML?",
+            options: ["<link>", "<a>", "<href>", "<url>"],
+            correct: 1,
+            difficulty: "Easy",
+          },
+          {
+            question: "What is the correct way to comment in JavaScript?",
+            options: [
+              "// This is a comment",
+              "<!-- This is a comment -->",
+              "/* This is a comment */",
+              "Both A and C",
+            ],
+            correct: 3,
+            difficulty: "Easy",
+          },
+          {
+            question: "Which CSS property controls spacing between elements?",
+            options: ["spacing", "margin", "padding", "gap"],
+            correct: 1,
+            difficulty: "Easy",
+          },
+          {
+            question: "What does 'var' do in JavaScript?",
+            options: [
+              "Creates a function",
+              "Declares a variable",
+              "Imports a module",
+              "Defines a class",
+            ],
+            correct: 1,
+            difficulty: "Easy",
+          },
+          {
+            question: "Which HTML tag is used for the largest heading?",
+            options: ["<h6>", "<h1>", "<header>", "<title>"],
+            correct: 1,
+            difficulty: "Easy",
+          },
+          {
+            question: "What does CSS stand for?",
+            options: [
+              "Computer Style Sheets",
+              "Cascading Style Sheets",
+              "Creative Style Sheets",
+              "Colorful Style Sheets",
+            ],
+            correct: 1,
+            difficulty: "Easy",
+          },
+          {
+            question: "Which operator checks for equality in JavaScript?",
+            options: ["=", "==", "===", "Both B and C"],
+            correct: 3,
+            difficulty: "Easy",
+          },
+
+          // Medium Round (Questions 11-20)
+          {
+            question:
+              "What is the difference between 'let' and 'var' in JavaScript?",
+            options: [
+              "No difference",
+              "'let' has block scope, 'var' has function scope",
+              "'var' is newer than 'let'",
+              "'let' can only be used in loops",
+            ],
+            correct: 1,
+            difficulty: "Medium",
+          },
+          {
+            question: "Which CSS property creates rounded corners?",
+            options: [
+              "border-radius",
+              "corner-radius",
+              "round-border",
+              "border-round",
+            ],
+            correct: 0,
+            difficulty: "Medium",
+          },
+          {
+            question: "What is a closure in JavaScript?",
+            options: [
+              "A function that has access to variables in its outer scope",
+              "A way to close a browser tab",
+              "A CSS property for closing elements",
+              "A method to end a program",
+            ],
+            correct: 0,
+            difficulty: "Medium",
+          },
+          {
+            question:
+              "Which HTML5 element represents a section of navigation links?",
+            options: ["<nav>", "<menu>", "<links>", "<navigation>"],
+            correct: 0,
+            difficulty: "Medium",
+          },
+          {
+            question: "What does the 'this' keyword refer to in JavaScript?",
+            options: [
+              "The current function",
+              "The current object context",
+              "The current file",
+              "The current variable",
+            ],
+            correct: 1,
+            difficulty: "Medium",
+          },
+          {
+            question: "Which CSS property controls the order of flex items?",
+            options: ["order", "flex-order", "item-order", "sequence"],
+            correct: 0,
+            difficulty: "Medium",
+          },
+          {
+            question:
+              "What is the purpose of the 'async' keyword in JavaScript?",
+            options: [
+              "Makes functions synchronous",
+              "Makes functions asynchronous",
+              "Creates arrays",
+              "Defines classes",
+            ],
+            correct: 1,
+            difficulty: "Medium",
+          },
+          {
+            question: "Which HTML attribute makes an input field required?",
+            options: ["mandatory", "required", "necessary", "compulsory"],
+            correct: 1,
+            difficulty: "Medium",
+          },
+          {
+            question: "What does 'DOM' stand for in web development?",
+            options: [
+              "Document Object Model",
+              "Data Object Management",
+              "Dynamic Object Method",
+              "Document Order Management",
+            ],
+            correct: 0,
+            difficulty: "Medium",
+          },
+          {
+            question:
+              "Which CSS selector targets elements with a specific class?",
+            options: ["#classname", ".classname", "classname", "*classname"],
+            correct: 1,
+            difficulty: "Medium",
+          },
+
+          // Hard Round (Questions 21-30)
+          {
+            question:
+              "What is the difference between '==' and '===' in JavaScript?",
+            options: [
+              "No difference",
+              "'==' checks value and type, '===' checks only value",
+              "'===' checks value and type, '==' checks only value",
+              "'==' is deprecated",
+            ],
+            correct: 2,
+            difficulty: "Hard",
+          },
+          {
+            question: "Which CSS property creates a 3D transform effect?",
+            options: [
+              "transform-3d",
+              "perspective",
+              "transform-style",
+              "All of the above",
+            ],
+            correct: 3,
+            difficulty: "Hard",
+          },
+          {
+            question:
+              "What is the purpose of the 'bind()' method in JavaScript?",
+            options: [
+              "Creates a new function with a specific 'this' context",
+              "Binds two objects together",
+              "Creates a copy of an object",
+              "Sorts an array",
+            ],
+            correct: 0,
+            difficulty: "Hard",
+          },
+          {
+            question: "Which HTML5 API allows local storage in the browser?",
+            options: [
+              "localStorage",
+              "sessionStorage",
+              "cookieStorage",
+              "Both A and B",
+            ],
+            correct: 3,
+            difficulty: "Hard",
+          },
+          {
+            question:
+              "What is the CSS Grid property that defines the size of grid tracks?",
+            options: [
+              "grid-size",
+              "grid-template-columns",
+              "grid-columns",
+              "grid-width",
+            ],
+            correct: 1,
+            difficulty: "Hard",
+          },
+          {
+            question: "What is a Promise in JavaScript?",
+            options: [
+              "A guarantee that code will run",
+              "An object representing eventual completion of an async operation",
+              "A type of variable",
+              "A way to import modules",
+            ],
+            correct: 1,
+            difficulty: "Hard",
+          },
+          {
+            question:
+              "Which CSS property controls the stacking order of elements?",
+            options: ["z-index", "stack-order", "layer", "depth"],
+            correct: 0,
+            difficulty: "Hard",
+          },
+          {
+            question:
+              "What is the purpose of the 'use strict' directive in JavaScript?",
+            options: [
+              "Enables strict mode for better error checking",
+              "Makes code run faster",
+              "Imports strict functions",
+              "Creates strict variables",
+            ],
+            correct: 0,
+            difficulty: "Hard",
+          },
+          {
+            question:
+              "Which CSS property creates a smooth transition between states?",
+            options: ["transition", "animation", "transform", "Both A and B"],
+            correct: 3,
+            difficulty: "Hard",
+          },
+          {
+            question:
+              "What is the difference between 'map()' and 'forEach()' in JavaScript?",
+            options: [
+              "No difference",
+              "'map()' returns a new array, 'forEach()' returns undefined",
+              "'forEach()' is faster than 'map()'",
+              "'map()' can only be used with numbers",
+            ],
+            correct: 1,
+            difficulty: "Hard",
           },
         ],
       };
@@ -936,42 +3008,536 @@ console.log(fibonacci(10));"
 
         if (username && password) {
           currentUser = { username, password };
-          document.getElementById("auth-btn").textContent = username;
+          // Hide login button and show user info
+          document.getElementById("auth-btn").style.display = "none";
+          document.getElementById("user-info").style.display = "flex";
+          document.getElementById("user-name").textContent = username;
           closeModal();
           // Show welcome message in a more elegant way
-          showNotification(`Welcome ${username}! You are now logged in.`, 'success');
+          showNotification(
+            `Welcome ${username}! You are now logged in.`,
+            "success"
+          );
         }
       });
 
+      // Logout functionality
+      function logout() {
+        currentUser = null;
+        // Show login button and hide user info
+        document.getElementById("auth-btn").style.display = "block";
+        document.getElementById("user-info").style.display = "none";
+        showNotification("You have been logged out successfully.", "success");
+      }
+
+      // Add logout event listener
+      document.getElementById("logout-btn").addEventListener("click", logout);
+
       // Smart Explanation
-      function explainCode() {
-        const codeInput = document.querySelector(".code-input");
-        const loading = document.getElementById("loading");
-        const explanation = document.getElementById("explanation");
-        const explanationContent = document.getElementById(
-          "explanation-content"
+      // Function to format explanation with proper styling
+      function formatExplanation(explanation) {
+        // Split the explanation into sections
+        const sections = explanation.split("## ");
+        let formatted = "";
+
+        sections.forEach((section) => {
+          if (section.trim() === "") return;
+
+          const lines = section.split("\n");
+          const title = lines[0];
+          const content = lines.slice(1).join("\n").trim();
+
+          if (title.includes("What This Code Does")) {
+            formatted += `
+              <div style="background: #0f3460; padding: 1rem; border-radius: 8px; margin: 1rem 0; border-left: 4px solid #00d4ff;">
+                <h5 style="color: #00d4ff; margin: 0 0 0.5rem 0; font-size: 0.9rem;">🎯 What This Code Does</h5>
+                <p style="margin: 0; color: #b8c5d6; font-size: 0.9rem; line-height: 1.5;">${content}</p>
+              </div>
+            `;
+          } else if (title.includes("Step-by-Step Explanation")) {
+            formatted += `
+              <div style="background: #1a1a2e; padding: 1.5rem; border-radius: 12px; margin: 1rem 0; border: 1px solid #16213e;">
+                <h5 style="color: #00d4ff; margin: 0 0 1rem 0; font-size: 1rem;">📝 Step-by-Step Explanation</h5>
+                <div style="color: #e0e0e0; font-size: 0.9rem; line-height: 1.6;">${formatStepByStep(
+                  content
+                )}</div>
+              </div>
+            `;
+          } else if (title.includes("Example Usage")) {
+            formatted += `
+              <div style="background: #1a1a2e; padding: 1.5rem; border-radius: 12px; margin: 1rem 0; border: 1px solid #16213e;">
+                <h5 style="color: #00d4ff; margin: 0 0 1rem 0; font-size: 1rem;">💡 Example Usage</h5>
+                <pre style="margin: 0; font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace; font-size: 0.9rem; white-space: pre-wrap; color: #e0e0e0; line-height: 1.6;">${content}</pre>
+              </div>
+            `;
+          }
+        });
+
+        return formatted;
+      }
+
+      // Function to format step-by-step explanation
+      function formatStepByStep(content) {
+        return content
+          .replace(
+            /\*\*(.*?)\*\*/g,
+            '<strong style="color: #00d4ff;">$1</strong>'
+          )
+          .replace(
+            /`(.*?)`/g,
+            '<code style="background: #2a2a3e; padding: 0.2rem 0.4rem; border-radius: 4px; color: #ffd700;">$1</code>'
+          )
+          .replace(/•/g, "<br>•")
+          .replace(/\n/g, "<br>");
+      }
+
+      // Syntax highlighting function
+      function updateSyntaxHighlighting() {
+        const codeInput = document.getElementById("code-input");
+        const codeHighlight = document.getElementById("code-highlight");
+        const detectedLanguageDisplay = document.getElementById(
+          "detected-language-display"
         );
+        const detectedLanguageSpan =
+          document.getElementById("detected-language");
+
+        const code = codeInput.value;
+
+        // Detect language
+        const language = detectLanguageFromCode(code);
+
+        // Update language display
+        detectedLanguageDisplay.textContent = language;
+        detectedLanguageSpan.textContent = language;
+
+        // Apply syntax highlighting
+        if (code.trim()) {
+          // Escape HTML characters
+          const escapedCode = code
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;");
+
+          // Apply Prism.js highlighting
+          try {
+            const highlightedCode = Prism.highlight(
+              escapedCode,
+              Prism.languages[language.toLowerCase()] || Prism.languages.python,
+              language.toLowerCase()
+            );
+            codeHighlight.innerHTML = highlightedCode;
+          } catch (error) {
+            // Fallback: just show the code in green
+            codeHighlight.innerHTML = `<span style="color: #22c55e;">${escapedCode}</span>`;
+          }
+        } else {
+          codeHighlight.innerHTML = "";
+        }
+      }
+
+      // Language detection function
+      function detectLanguageFromCode(code) {
+        const trimmedCode = code.trim();
+
+        if (!code) {
+          return "Auto-detecting...";
+        }
+
+        // Detect language based on code patterns
+        let detectedLang = "Unknown";
+
+        if (
+          /def\s+\w+\s*\(/.test(code) ||
+          /import\s+\w+/.test(code) ||
+          /print\s*\(/.test(code) ||
+          /if\s+.*:/.test(code) ||
+          /for\s+\w+\s+in/.test(code)
+        ) {
+          detectedLang = "Python";
+        } else if (
+          /function\s+\w+\s*\(/.test(code) ||
+          /const\s+\w+\s*=/.test(code) ||
+          /let\s+\w+\s*=/.test(code) ||
+          /console\.log\s*\(/.test(code) ||
+          /=>\s*/.test(code)
+        ) {
+          detectedLang = "JavaScript";
+        } else if (
+          /int\s+main\s*\(/.test(code) ||
+          /#include\s*</.test(code) ||
+          /printf\s*\(/.test(code) ||
+          /scanf\s*\(/.test(code)
+        ) {
+          detectedLang = "C";
+        }
+
+        return detectedLang;
+      }
+
+      // Backward compatibility function
+      function detectLanguage() {
+        updateSyntaxHighlighting();
+      }
+
+      // Initialize syntax highlighting when page loads
+      document.addEventListener("DOMContentLoaded", function () {
+        // Initialize Prism.js
+        if (typeof Prism !== "undefined") {
+          Prism.highlightAll();
+        }
+
+        // Set up initial syntax highlighting
+        setTimeout(updateSyntaxHighlighting, 100);
+      });
+
+      function explainCode() {
+        const codeInput = document.getElementById("code-input");
+        const detectedLanguageSpan =
+          document.getElementById("detected-language");
+        const loading = document.getElementById("loading");
+        const explanationContent = document.getElementById("explanation");
 
         if (!codeInput.value.trim()) {
-          showNotification("Please enter some code to explain!", 'error');
+          showNotification("Please enter some code to explain!", "error");
+          return;
+        }
+
+        // Get detected language
+        const detectedLang = detectedLanguageSpan.textContent.toLowerCase();
+        if (
+          detectedLang === "auto-detecting..." ||
+          detectedLang === "unknown"
+        ) {
+          showNotification(
+            "Please enter valid code so we can detect the language!",
+            "error"
+          );
           return;
         }
 
         loading.style.display = "block";
-        explanation.classList.remove("show");
+        explanationContent.innerHTML = "";
 
-        // Simulate AI processing
-        setTimeout(() => {
-          loading.style.display = "none";
+        // Call real AI API
+        fetch("http://localhost:8080/api/explain-code", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            code: codeInput.value.trim(),
+            language: detectedLang,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            loading.style.display = "none";
 
-          // Mock AI explanation based on code content
-          let aiExplanation = generateExplanation(codeInput.value);
-          explanationContent.innerHTML = aiExplanation;
-          explanation.classList.add("show");
-        }, 2000);
+            if (data.error) {
+              explanationContent.innerHTML = `
+              <div class="explanation-result">
+                <h4>❌ Error</h4>
+                <p>${data.error}</p>
+              </div>
+            `;
+              showNotification("Error generating explanation", "error");
+            } else {
+              // Show AI explanation with new format
+              const formattedExplanation = formatExplanation(data.explanation);
+              explanationContent.innerHTML = `
+              <div class="explanation-result">
+                <h4>🤖 Code Explanation</h4>
+                <p><strong>Language:</strong> ${detectedLang.toUpperCase()}</p>
+                
+                ${formattedExplanation}
+              </div>
+            `;
+
+              // Store current explanation data for saving
+              currentExplanation = {
+                code: codeInput.value.trim(),
+                language: detectedLang,
+                explanation: data.explanation,
+                timestamp: new Date().toISOString(),
+              };
+
+              // Show save button
+              document.getElementById("save-btn").style.display = "block";
+              showNotification("AI explanation generated!", "success");
+            }
+          })
+          .catch((error) => {
+            loading.style.display = "none";
+
+            explanationContent.innerHTML = `
+            <div class="explanation-result">
+              <h4>❌ Connection Error</h4>
+              <p>Unable to connect to AI service. Please check your internet connection and try again.</p>
+              <p style="margin-top: 1rem; font-size: 0.9rem; color: #666;">
+                Make sure the server is running on port 8080.
+              </p>
+            </div>
+          `;
+            showNotification("Connection error - Check server", "error");
+            console.error("Error:", error);
+          });
       }
 
-      function generateExplanation(code) {
+      // Save code function
+      function saveCode() {
+        if (!currentExplanation) {
+          showNotification("No explanation to save!", "error");
+          return;
+        }
+
+        // Create a unique ID for the saved code
+        const savedCode = {
+          id: Date.now().toString(),
+          title: `Code Explanation - ${currentExplanation.language.toUpperCase()}`,
+          ...currentExplanation,
+          savedAt: new Date().toLocaleString(),
+        };
+
+        // Add to saved codes array
+        savedCodes.unshift(savedCode);
+
+        // Save to localStorage
+        localStorage.setItem("savedCodes", JSON.stringify(savedCodes));
+
+        // Update the saved codes display
+        updateSavedCodesDisplay();
+
+        // Hide save button
+        document.getElementById("save-btn").style.display = "none";
+
+        showNotification("Code explanation saved successfully!", "success");
+      }
+
+      // Clear code function
+      function clearCode() {
+        const codeInput = document.getElementById("code-input");
+        const explanationContent = document.getElementById("explanation");
+
+        codeInput.value = "";
+        currentExplanation = null;
+
+        // Hide save button
+        document.getElementById("save-btn").style.display = "none";
+
+        explanationContent.innerHTML = `
+          <div class="welcome-message">
+            <h4>👋 Welcome to Smart Code Explanation!</h4>
+            <p>Enter your code on the right side and click "Explain Code" to get:</p>
+            <ul>
+              <li>📖 Step-by-step explanations</li>
+              <li>💡 Beginner-friendly language</li>
+              <li>🔍 Pattern recognition</li>
+              <li>📝 Commented code examples</li>
+            </ul>
+            <p><strong>Supported languages:</strong> Python, JavaScript, C, C++, Java, HTML, CSS</p>
+            <p style="color: #ff6b6b; font-size: 0.9em; margin-top: 10px;">
+              <strong>Note:</strong> React/JSX is not currently supported
+            </p>
+          </div>
+        `;
+      }
+
+      // Update saved codes display
+      function updateSavedCodesDisplay() {
+        const savedCodesList = document.getElementById("saved-codes-list");
+
+        if (savedCodes.length === 0) {
+          savedCodesList.innerHTML = `
+            <div class="no-saved-codes">
+              <p>No saved codes yet. Explain some code and save it to see it here!</p>
+            </div>
+          `;
+          return;
+        }
+
+        savedCodesList.innerHTML = savedCodes
+          .map(
+            (code) => `
+          <div class="saved-code-item" onclick="loadSavedCode('${code.id}')">
+            <div class="saved-code-header">
+              <div class="saved-code-title">${code.title}</div>
+              <div class="saved-code-date">${code.savedAt}</div>
+            </div>
+            <div class="saved-code-preview">${code.code.substring(0, 150)}${
+              code.code.length > 150 ? "..." : ""
+            }</div>
+            <div class="saved-code-language">${code.language.toUpperCase()}</div>
+          </div>
+        `
+          )
+          .join("");
+      }
+
+      // Load saved code
+      function loadSavedCode(codeId) {
+        const savedCode = savedCodes.find((code) => code.id === codeId);
+        if (!savedCode) {
+          showNotification("Saved code not found!", "error");
+          return;
+        }
+
+        // Load code into the input
+        const codeInput = document.getElementById("code-input");
+        codeInput.value = savedCode.code;
+
+        // Detect language
+        detectLanguage();
+
+        // Load explanation
+        const explanationContent = document.getElementById("explanation");
+        const formattedExplanation = formatExplanation(savedCode.explanation);
+        explanationContent.innerHTML = `
+          <div class="explanation-result">
+            <h4>🤖 Code Explanation</h4>
+            <p><strong>Language:</strong> ${savedCode.language.toUpperCase()}</p>
+            <p><strong>Saved:</strong> ${savedCode.savedAt}</p>
+            
+            ${formattedExplanation}
+          </div>
+        `;
+
+        // Hide save button since this is already saved
+        document.getElementById("save-btn").style.display = "none";
+
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: "smooth" });
+
+        showNotification("Saved code loaded!", "success");
+      }
+
+      // Initialize saved codes display on page load
+      function initializeSavedCodes() {
+        updateSavedCodesDisplay();
+      }
+
+      // Code Control Functions
+      let codeVisible = true;
+
+      function toggleFloatingCode() {
+        const floatingElements = document.querySelectorAll(
+          ".floating-code-1, .floating-code-2"
+        );
+        const bodyBefore = document.querySelector("body::before");
+        const bodyAfter = document.querySelector("body::after");
+        const toggleText = document.getElementById("code-toggle-text");
+        const status = document.getElementById("code-status");
+
+        codeVisible = !codeVisible;
+
+        if (codeVisible) {
+          // Show code
+          floatingElements.forEach((el) => {
+            el.style.display = "block";
+            el.style.animationPlayState = "running";
+          });
+          toggleText.textContent = "Hide Code";
+          status.textContent = "Code Active";
+          status.style.color = "#00BFFF";
+        } else {
+          // Hide code
+          floatingElements.forEach((el) => {
+            el.style.display = "none";
+            el.style.animationPlayState = "paused";
+          });
+          toggleText.textContent = "Show Code";
+          status.textContent = "Code Hidden";
+          status.style.color = "#8A2BE2";
+        }
+      }
+
+      function clearAllCode() {
+        const floatingElements = document.querySelectorAll(
+          ".floating-code-1, .floating-code-2"
+        );
+        const toggleText = document.getElementById("code-toggle-text");
+        const status = document.getElementById("code-status");
+
+        floatingElements.forEach((el) => {
+          el.style.display = "none";
+          el.style.animationPlayState = "paused";
+        });
+
+        codeVisible = false;
+        toggleText.textContent = "Show Code";
+        status.textContent = "Code Cleared";
+        status.style.color = "#ff6b6b";
+
+        // Show notification
+        showNotification("Floating code cleared!", "success");
+      }
+      function loadExample(language, code) {
+        const codeInput = document.getElementById("code-input");
+        const explanationContent = document.getElementById("explanation");
+
+        // Set the code (language will be auto-detected)
+        codeInput.value = code;
+
+        // Trigger language detection
+        detectLanguage();
+
+        // Clear explanation and show welcome message
+        explanationContent.innerHTML = `
+          <div class="welcome-message">
+            <h4>🎯 Example Loaded!</h4>
+            <p>Click "Explain Code" to see how this ${language.toUpperCase()} code works:</p>
+            <ul>
+              <li>📖 Step-by-step breakdown</li>
+              <li>💡 Beginner-friendly explanations</li>
+              <li>🔍 Pattern recognition</li>
+              <li>📝 Commented version</li>
+            </ul>
+            <p><strong>Ready to analyze!</strong></p>
+          </div>
+        `;
+
+        // Scroll to the top of the page
+        window.scrollTo({ top: 0, behavior: "smooth" });
+
+        // Show notification
+        showNotification(
+          `Example loaded! Click "Explain Code" to analyze.`,
+          "success"
+        );
+      }
+
+      // Python example function
+      function loadPythonExample() {
+        const pythonCode = `def greet_user(name, age):
+    if age >= 18:
+        return f"Hello {name}, you are an adult!"
+    else:
+        return f"Hi {name}, you are {age} years old"
+
+print(greet_user("Alice", 25))`;
+        loadExample("python", pythonCode);
+      }
+
+      // C example function
+      function loadCExample() {
+        const cCode = `#include <stdio.h>
+
+int main() {
+    int numbers[] = {1, 2, 3, 4, 5};
+    int sum = 0;
+    
+    for (int i = 0; i < 5; i++) {
+        sum += numbers[i];
+    }
+    
+    printf("Sum: %d", sum);
+    return 0;
+}`;
+        loadExample("c", cCode);
+      }
+
+      function generateExplanation(code, language = "javascript") {
         const explanations = {
           function: `
                     <p><strong>What this code does:</strong> This appears to be a function definition.</p>
@@ -1042,7 +3608,7 @@ console.log(fibonacci(10));"
         const selectedOption = exercise.querySelector(".option.selected");
 
         if (!selectedOption) {
-          showNotification("Please select an answer!", 'error');
+          showNotification("Please select an answer!", "error");
           return;
         }
 
@@ -1064,11 +3630,80 @@ console.log(fibonacci(10));"
           }
         });
 
-        // Update score
+        // Show explanation for wrong answers
+        const rankKey = `rank${currentRank}`;
+        const questions = practiceQuestions[rankKey][currentDifficulty];
+        const currentQuestion = questions[exerciseId - 1];
+
+        if (selectedAnswer !== correctAnswer) {
+          // Show explanation for wrong answer
+          const explanation =
+            currentQuestion.explanation ||
+            `The correct answer is: ${options[
+              correctAnswer
+            ].textContent.trim()}`;
+          showNotification(`❌ Wrong! ${explanation}`, "error");
+        } else {
+          showNotification("✅ Correct!", "success");
+        }
+
+        // Update score and track correct answers
         if (selectedAnswer === correctAnswer) {
           exerciseScore += 10;
           userPoints += 10;
+          // Only count correct answers for difficulty completion
+          rankCorrectAnswers[currentRank][currentDifficulty]++;
+        } else {
+          exerciseScore += 5; // Half points for wrong answers
+          userPoints += 5;
         }
+
+        // Always track progress (total exercises attempted)
+        rankProgress[currentRank][currentDifficulty]++;
+        difficultyExerciseCount[currentDifficulty]++;
+
+        // Check if difficulty is completed (all 3 exercises done)
+        if (difficultyExerciseCount[currentDifficulty] >= 3) {
+          if (!completedDifficulties.includes(currentDifficulty)) {
+            completedDifficulties.push(currentDifficulty);
+            // Also track for this specific rank
+            if (
+              !rankCompletedDifficulties[currentRank].includes(
+                currentDifficulty
+              )
+            ) {
+              rankCompletedDifficulties[currentRank].push(currentDifficulty);
+            }
+            showNotification(
+              `🎉 ${
+                currentDifficulty.charAt(0).toUpperCase() +
+                currentDifficulty.slice(1)
+              } difficulty completed!`,
+              "success"
+            );
+            updateDifficultyButtons();
+
+            // Auto-switch to next difficulty if available
+            if (
+              currentDifficulty === "easy" &&
+              !completedDifficulties.includes("medium")
+            ) {
+              setTimeout(() => {
+                selectDifficulty("medium");
+              }, 1500);
+            } else if (
+              currentDifficulty === "medium" &&
+              !completedDifficulties.includes("hard")
+            ) {
+              setTimeout(() => {
+                selectDifficulty("hard");
+              }, 1500);
+            }
+          }
+        }
+
+        // Check if rank is completed
+        checkRankCompletion();
 
         // Disable the submit button
         exercise.querySelector(".submit-btn").disabled = true;
@@ -1089,6 +3724,1423 @@ console.log(fibonacci(10));"
           leaderboardPoints.textContent = `${userPoints} pts`;
         }
       }
+
+      // Focus Practice Difficulty Functions
+      let currentDifficulty = "easy";
+      let currentRank = 1;
+      let completedRanks = []; // Track completed ranks
+      let completedDifficulties = []; // Track completed difficulties for current rank
+      let rankCompletedDifficulties = {
+        1: [], // Track completed difficulties for each rank
+        2: [],
+        3: [],
+        4: [],
+        5: [],
+      };
+      let rankCorrectAnswers = {
+        1: { easy: 0, medium: 0, hard: 0 }, // Track correct answers for each rank/difficulty
+        2: { easy: 0, medium: 0, hard: 0 },
+        3: { easy: 0, medium: 0, hard: 0 },
+        4: { easy: 0, medium: 0, hard: 0 },
+        5: { easy: 0, medium: 0, hard: 0 },
+      };
+      let rankProgress = {
+        1: { easy: 0, medium: 0, hard: 0 }, // Track progress for each rank
+        2: { easy: 0, medium: 0, hard: 0 },
+        3: { easy: 0, medium: 0, hard: 0 },
+        4: { easy: 0, medium: 0, hard: 0 },
+        5: { easy: 0, medium: 0, hard: 0 },
+      };
+      let currentExerciseIndex = 0; // Track current exercise within difficulty
+      let difficultyExerciseCount = {
+        // Track exercises completed per difficulty
+        easy: 0,
+        medium: 0,
+        hard: 0,
+      };
+
+      const practiceQuestions = {
+        // Rank 1 - Beginner Fundamentals
+        rank1: {
+          easy: [
+            {
+              question: "What is a variable in programming?",
+              options: [
+                "A container that stores data",
+                "A type of function",
+                "A programming language",
+                "A computer component",
+              ],
+              correct: 0,
+              explanation:
+                "A variable is like a labeled box that stores data (numbers, text, etc.) that your program can use and change.",
+            },
+            {
+              question: "What does 'if' statement do?",
+              options: [
+                "Makes decisions based on conditions",
+                "Creates a loop",
+                "Defines a function",
+                "Stores data",
+              ],
+              correct: 0,
+              explanation:
+                "An 'if' statement is like asking a yes/no question. If the answer is yes (true), the code inside runs. If no (false), it skips to the next part.",
+            },
+            {
+              question: "What is a loop used for?",
+              options: [
+                "Repeating code multiple times",
+                "Storing multiple values",
+                "Making decisions",
+                "Creating functions",
+              ],
+              correct: 0,
+              explanation:
+                "A loop is like giving instructions to do something over and over again until you're done. For example, 'count from 1 to 10' or 'print each name in a list'.",
+            },
+          ],
+          medium: [
+            {
+              question:
+                "Fix this JavaScript code - it should return the sum of all numbers in the array:",
+              code: `function sumArray(arr) {
+    let total = 0;
+    for (let i = 0; i < arr.length; i++) {
+        total += arr[i];
+    }
+    return total;
+}
+
+// Hint: The code looks correct, but there's a subtle issue with the loop condition`,
+              options: [
+                "Change 'i < arr.length' to 'i <= arr.length'",
+                "Change 'i++' to 'i += 2'",
+                "Add 'arr[i] = 0' inside the loop",
+                "The code is already correct",
+              ],
+              correct: 3,
+              hint: "Look carefully at the loop condition. What happens when i equals arr.length?",
+            },
+            {
+              question:
+                "Debug this Python function - it should find the maximum number:",
+              code: `def find_max(numbers):
+    max_num = numbers[0]
+    for num in numbers:
+        if num > max_num:
+            max_num = num
+    return max_num
+
+# Hint: What happens if the list is empty?`,
+              options: [
+                "Add 'if not numbers: return None' at the start",
+                "Change 'max_num = numbers[0]' to 'max_num = 0'",
+                "Add 'numbers.sort()' before the loop",
+                "The code is already correct",
+              ],
+              correct: 0,
+              hint: "Consider edge cases - what if the input list is empty?",
+            },
+            {
+              question:
+                "Fix this CSS - the button should be centered horizontally:",
+              code: `.button {
+    width: 200px;
+    height: 50px;
+    background: blue;
+    margin: 0 auto;
+}
+
+/* Hint: The margin auto should work, but something is missing */`,
+              options: [
+                "Add 'display: block' to the button",
+                "Change 'margin: 0 auto' to 'margin: auto'",
+                "Add 'text-align: center' to parent",
+                "Add 'position: absolute' and 'left: 50%'",
+              ],
+              correct: 0,
+              hint: "margin: auto only works on block-level elements",
+            },
+          ],
+          hard: [
+            {
+              question: "Write a JavaScript function that reverses a string:",
+              description:
+                "Create a function called 'reverseString' that takes a string as input and returns the reversed version. For example, reverseString('hello') should return 'olleh'.",
+              codeInput: true,
+              testCases: [
+                { input: "hello", output: "olleh" },
+                { input: "world", output: "dlrow" },
+                { input: "abc", output: "cba" },
+              ],
+              hint: "You can use a loop to iterate through the string characters, or use built-in methods like split(), reverse(), and join().",
+            },
+            {
+              question:
+                "Write a Python function that finds the factorial of a number:",
+              description:
+                "Create a function called 'factorial' that takes a positive integer n and returns n! (n factorial). For example, factorial(5) should return 120 (5×4×3×2×1).",
+              codeInput: true,
+              testCases: [
+                { input: "5", output: "120" },
+                { input: "3", output: "6" },
+                { input: "1", output: "1" },
+              ],
+              hint: "Use a loop to multiply numbers from 1 to n, or use recursion if you're familiar with it.",
+            },
+            {
+              question: "Write CSS to create a responsive grid layout:",
+              description:
+                "Create CSS for a container that displays 3 items per row on desktop, 2 items per row on tablet, and 1 item per row on mobile. Use CSS Grid or Flexbox.",
+              codeInput: true,
+              testCases: [
+                { input: "Desktop", output: "3 columns" },
+                { input: "Tablet", output: "2 columns" },
+                { input: "Mobile", output: "1 column" },
+              ],
+              hint: "Use CSS Grid with grid-template-columns and media queries, or Flexbox with flex-wrap and responsive widths.",
+            },
+          ],
+        },
+        // Rank 2 - Data Structures
+        rank2: {
+          easy: [
+            {
+              question: "What is an array in programming?",
+              options: [
+                "A collection of items stored in sequence",
+                "A single variable",
+                "A type of loop",
+                "A function",
+              ],
+              correct: 0,
+            },
+            {
+              question: "What is the index of the first element in an array?",
+              options: ["0", "1", "-1", "It depends on the language"],
+              correct: 0,
+            },
+            {
+              question: "What does array.length return?",
+              options: [
+                "The number of elements in the array",
+                "The last element of the array",
+                "The first element of the array",
+                "The sum of all elements",
+              ],
+              correct: 0,
+            },
+          ],
+          medium: [
+            {
+              question: "Fix this array sorting code:",
+              code: `let numbers = [3, 1, 4, 1, 5];
+numbers.sort();
+console.log(numbers);
+
+// Expected: [1, 1, 3, 4, 5]`,
+              options: [
+                "The code is correct",
+                "Add numbers.sort((a, b) => a - b)",
+                "Change sort() to reverse()",
+                "Add numbers.filter() before sort",
+              ],
+              correct: 0,
+              hint: "JavaScript sort() works correctly for numbers in this case.",
+            },
+            {
+              question: "Debug this array search function:",
+              code: `function findElement(arr, target) {
+    for (let i = 0; i <= arr.length; i++) {
+        if (arr[i] === target) {
+            return i;
+        }
+    }
+    return -1;
+}`,
+              options: [
+                "Change 'i <= arr.length' to 'i < arr.length'",
+                "Change 'i++' to 'i += 2'",
+                "Add 'break' after return i",
+                "The code is correct",
+              ],
+              correct: 0,
+              hint: "Array indices go from 0 to length-1, not length.",
+            },
+            {
+              question: "Fix this array concatenation:",
+              code: `let arr1 = [1, 2, 3];
+let arr2 = [4, 5, 6];
+let result = arr1 + arr2;
+console.log(result); // Should be [1,2,3,4,5,6]`,
+              options: [
+                "Use arr1.concat(arr2)",
+                "Use arr1.push(arr2)",
+                "Use arr1.join(arr2)",
+                "The code is correct",
+              ],
+              correct: 0,
+              hint: "Use concat() method to combine arrays properly.",
+            },
+          ],
+          hard: [
+            {
+              question:
+                "Write a function that removes duplicates from an array:",
+              description:
+                "Create a function called 'removeDuplicates' that takes an array and returns a new array with duplicates removed. For example, removeDuplicates([1,2,2,3,3,3]) should return [1,2,3].",
+              codeInput: true,
+              testCases: [
+                { input: "[1,2,2,3]", output: "[1,2,3]" },
+                { input: "['a','b','a','c']", output: "['a','b','c']" },
+                { input: "[1,1,1]", output: "[1]" },
+              ],
+              hint: "You can use Set, filter with indexOf, or a loop with includes().",
+            },
+            {
+              question:
+                "Write a function that finds the second largest number:",
+              description:
+                "Create a function called 'secondLargest' that finds the second largest number in an array. For example, secondLargest([3,1,4,1,5]) should return 4.",
+              codeInput: true,
+              testCases: [
+                { input: "[3,1,4,1,5]", output: "4" },
+                { input: "[1,2,3,4,5]", output: "4" },
+                { input: "[5,5,5,5]", output: "5" },
+              ],
+              hint: "Sort the array or find the largest, then find the next largest.",
+            },
+            {
+              question: "Write a function that rotates an array:",
+              description:
+                "Create a function called 'rotateArray' that rotates an array to the right by k positions. For example, rotateArray([1,2,3,4,5], 2) should return [4,5,1,2,3].",
+              codeInput: true,
+              testCases: [
+                { input: "([1,2,3,4,5], 2)", output: "[4,5,1,2,3]" },
+                { input: "([1,2,3], 1)", output: "[3,1,2]" },
+                { input: "([1,2], 3)", output: "[2,1]" },
+              ],
+              hint: "Use slice() and concat(), or pop() and unshift() in a loop.",
+            },
+          ],
+        },
+        // Rank 3 - Functions and Scope
+        rank3: {
+          easy: [
+            {
+              question: "What is a function in programming?",
+              options: [
+                "A reusable block of code",
+                "A variable",
+                "A data type",
+                "A loop",
+              ],
+              correct: 0,
+            },
+            {
+              question: "What does 'return' do in a function?",
+              options: [
+                "Sends a value back to the caller",
+                "Stops the function",
+                "Prints a value",
+                "Creates a variable",
+              ],
+              correct: 0,
+            },
+            {
+              question: "What are function parameters?",
+              options: [
+                "Values passed into a function",
+                "Values returned by a function",
+                "Variables inside a function",
+                "Functions inside a function",
+              ],
+              correct: 0,
+            },
+          ],
+          medium: [
+            {
+              question: "Fix this function scope issue:",
+              code: `function outerFunction() {
+    let outerVar = "I'm outside";
+    
+    function innerFunction() {
+        console.log(outerVar);
+        let innerVar = "I'm inside";
+    }
+    
+    console.log(innerVar); // Error here
+}`,
+              options: [
+                "Move innerVar declaration outside innerFunction",
+                "Return innerVar from innerFunction",
+                "Use var instead of let",
+                "The code is correct",
+              ],
+              correct: 0,
+              hint: "Variables declared inside a function are not accessible outside.",
+            },
+            {
+              question: "Debug this closure function:",
+              code: `function createCounter() {
+    let count = 0;
+    return function() {
+        count++;
+        return count;
+    };
+}
+
+let counter = createCounter();
+console.log(counter()); // Should print 1
+console.log(counter()); // Should print 2`,
+              options: [
+                "The code is correct",
+                "Add 'let count = 0' inside the returned function",
+                "Change 'count++' to 'count = count + 1'",
+                "Add 'return count' at the end",
+              ],
+              correct: 0,
+              hint: "This is a correct closure example - the inner function remembers count.",
+            },
+            {
+              question: "Fix this callback function:",
+              code: `function processArray(arr, callback) {
+    let result = [];
+    for (let i = 0; i < arr.length; i++) {
+        result.push(callback(arr[i]));
+    }
+    return result;
+}
+
+let numbers = [1, 2, 3, 4];
+let doubled = processArray(numbers, function(x) {
+    return x * 2;
+});`,
+              options: [
+                "The code is correct",
+                "Change 'function(x)' to 'x =>'",
+                "Add 'return' before 'x * 2'",
+                "Change 'push' to 'concat'",
+              ],
+              correct: 0,
+              hint: "This callback function is correctly implemented.",
+            },
+          ],
+          hard: [
+            {
+              question: "Write a higher-order function that filters arrays:",
+              description:
+                "Create a function called 'myFilter' that works like Array.filter(). It should take an array and a predicate function, and return a new array with elements that pass the test.",
+              codeInput: true,
+              testCases: [
+                { input: "([1,2,3,4,5], x => x > 2)", output: "[3,4,5]" },
+                {
+                  input: "(['a','b','c'], x => x !== 'b')",
+                  output: "['a','c']",
+                },
+                { input: "([], x => true)", output: "[]" },
+              ],
+              hint: "Use a loop to iterate through the array and test each element with the predicate function.",
+            },
+            {
+              question: "Write a memoization function:",
+              description:
+                "Create a function called 'memoize' that takes a function and returns a memoized version that caches results for repeated inputs.",
+              codeInput: true,
+              testCases: [
+                {
+                  input: "fibonacci function",
+                  output: "Cached results for repeated calls",
+                },
+                {
+                  input: "expensive calculation",
+                  output: "Faster subsequent calls",
+                },
+              ],
+              hint: "Use a Map or object to store results, check if input exists before computing.",
+            },
+            {
+              question: "Write a curried function:",
+              description:
+                "Create a curried version of a function that adds three numbers. For example, add(1)(2)(3) should return 6.",
+              codeInput: true,
+              testCases: [
+                { input: "add(1)(2)(3)", output: "6" },
+                { input: "add(5)(10)(15)", output: "30" },
+                { input: "add(0)(0)(0)", output: "0" },
+              ],
+              hint: "Return a function that takes the next argument, repeat until all arguments are collected.",
+            },
+          ],
+        },
+        // Rank 4 - Object-Oriented Programming
+        rank4: {
+          easy: [
+            {
+              question: "What is an object in programming?",
+              options: [
+                "A collection of key-value pairs",
+                "A function",
+                "A variable",
+                "A loop",
+              ],
+              correct: 0,
+            },
+            {
+              question: "How do you access object properties?",
+              options: [
+                "object.property or object['property']",
+                "object->property",
+                "object.property()",
+                "object[property]",
+              ],
+              correct: 0,
+            },
+            {
+              question: "What is a class?",
+              options: [
+                "A blueprint for creating objects",
+                "A function",
+                "A variable",
+                "A data type",
+              ],
+              correct: 0,
+            },
+          ],
+          medium: [
+            {
+              question: "Fix this object method binding:",
+              code: `let person = {
+    name: "John",
+    greet: function() {
+        return "Hello, I'm " + this.name;
+    }
+};
+
+let greetFunc = person.greet;
+console.log(greetFunc()); // Should print "Hello, I'm John"`,
+              options: [
+                "Use greetFunc.bind(person)",
+                "Change 'this.name' to 'person.name'",
+                "Add 'return this' to greet method",
+                "The code is correct",
+              ],
+              correct: 0,
+              hint: "When you extract a method, 'this' context is lost. Use bind() to fix it.",
+            },
+            {
+              question: "Debug this class inheritance:",
+              code: `class Animal {
+    constructor(name) {
+        this.name = name;
+    }
+    
+    speak() {
+        return this.name + " makes a sound";
+    }
+}
+
+class Dog extends Animal {
+    speak() {
+        return this.name + " barks";
+    }
+}
+
+let dog = new Dog("Buddy");
+console.log(dog.speak());`,
+              options: [
+                "The code is correct",
+                "Add 'super()' in Dog constructor",
+                "Change 'extends' to 'implements'",
+                "Add 'return' before the speak methods",
+              ],
+              correct: 0,
+              hint: "This inheritance example is correctly implemented.",
+            },
+            {
+              question: "Fix this object destructuring:",
+              code: `let user = { name: "Alice", age: 30, city: "New York" };
+let { name, age } = user;
+console.log(name, age); // Should print "Alice 30"`,
+              options: [
+                "The code is correct",
+                "Add 'let' before the destructuring",
+                "Change '{ name, age }' to '[name, age]'",
+                "Add 'return' before the destructuring",
+              ],
+              correct: 0,
+              hint: "This destructuring assignment is correctly implemented.",
+            },
+          ],
+          hard: [
+            {
+              question: "Write a class with getters and setters:",
+              description:
+                "Create a class called 'BankAccount' with private balance, and public getter/setter methods. The setter should validate that balance is not negative.",
+              codeInput: true,
+              testCases: [
+                { input: "account.balance = 100", output: "balance = 100" },
+                {
+                  input: "account.balance = -50",
+                  output: "Error or no change",
+                },
+                { input: "account.balance", output: "Current balance" },
+              ],
+              hint: "Use private fields (#balance) and get/set methods, or use closures for privacy.",
+            },
+            {
+              question: "Write a factory function pattern:",
+              description:
+                "Create a factory function that creates different types of vehicles (Car, Truck, Motorcycle) with shared methods but different properties.",
+              codeInput: true,
+              testCases: [
+                {
+                  input: "createVehicle('car', 'Toyota')",
+                  output: "Car object with drive method",
+                },
+                {
+                  input: "createVehicle('truck', 'Ford')",
+                  output: "Truck object with drive method",
+                },
+                {
+                  input: "vehicle.drive()",
+                  output: "Vehicle-specific driving behavior",
+                },
+              ],
+              hint: "Return objects with common methods but different properties based on type parameter.",
+            },
+            {
+              question: "Write a mixin pattern:",
+              description:
+                "Create mixins for 'Flyable' and 'Swimmable' behaviors that can be added to any object. Then create a 'Duck' that can both fly and swim.",
+              codeInput: true,
+              testCases: [
+                { input: "duck.fly()", output: "Duck is flying" },
+                { input: "duck.swim()", output: "Duck is swimming" },
+                { input: "duck.quack()", output: "Duck is quacking" },
+              ],
+              hint: "Use Object.assign() or spread operator to mix in behaviors to objects.",
+            },
+          ],
+        },
+        // Rank 5 - Advanced Concepts
+        rank5: {
+          easy: [
+            {
+              question: "What is asynchronous programming?",
+              options: [
+                "Code that doesn't block the main thread",
+                "Code that runs faster",
+                "Code that uses loops",
+                "Code that creates objects",
+              ],
+              correct: 0,
+            },
+            {
+              question: "What is a Promise?",
+              options: [
+                "An object representing eventual completion of an async operation",
+                "A function",
+                "A variable",
+                "A loop",
+              ],
+              correct: 0,
+            },
+            {
+              question: "What does 'async/await' do?",
+              options: [
+                "Makes asynchronous code look synchronous",
+                "Makes code run faster",
+                "Creates new functions",
+                "Replaces loops",
+              ],
+              correct: 0,
+            },
+          ],
+          medium: [
+            {
+              question: "Fix this Promise chain:",
+              code: `fetch('/api/data')
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+        return data.length;
+    })
+    .then(length => {
+        console.log('Data length:', length);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });`,
+              options: [
+                "The code is correct",
+                "Add 'await' before fetch",
+                "Change '.then' to '.await'",
+                "Add 'return' before fetch",
+              ],
+              correct: 0,
+              hint: "This Promise chain is correctly implemented.",
+            },
+            {
+              question: "Debug this async function:",
+              code: `async function fetchUserData(userId) {
+    try {
+        let response = await fetch(\`/api/users/\${userId}\`);
+        let user = await response.json();
+        return user;
+    } catch (error) {
+        console.error('Failed to fetch user:', error);
+        return null;
+    }
+}`,
+              options: [
+                "The code is correct",
+                "Add 'return' before fetch",
+                "Change 'await' to 'then'",
+                "Remove 'async' keyword",
+              ],
+              correct: 0,
+              hint: "This async function is correctly implemented with proper error handling.",
+            },
+            {
+              question: "Fix this race condition:",
+              code: `let data = null;
+
+async function loadData() {
+    if (!data) {
+        data = await fetch('/api/data').then(r => r.json());
+    }
+    return data;
+}`,
+              options: [
+                "The code is correct",
+                "Add 'let data = null' inside the function",
+                "Change 'if (!data)' to 'if (data === null)'",
+                "Add 'return data' at the end",
+              ],
+              correct: 0,
+              hint: "This caching pattern is correctly implemented.",
+            },
+          ],
+          hard: [
+            {
+              question: "Write a Promise.all implementation:",
+              description:
+                "Create a function called 'myPromiseAll' that takes an array of promises and returns a promise that resolves when all input promises resolve, or rejects if any promise rejects.",
+              codeInput: true,
+              testCases: [
+                {
+                  input: "myPromiseAll([p1, p2, p3])",
+                  output: "Promise resolving to [result1, result2, result3]",
+                },
+                {
+                  input: "myPromiseAll([p1, rejectPromise])",
+                  output: "Promise rejecting with first error",
+                },
+                {
+                  input: "myPromiseAll([])",
+                  output: "Promise resolving to []",
+                },
+              ],
+              hint: "Use a counter to track resolved promises, collect results in order, handle rejections.",
+            },
+            {
+              question: "Write a debounce function:",
+              description:
+                "Create a function called 'debounce' that delays invoking a function until after a specified time has elapsed since its last invocation.",
+              codeInput: true,
+              testCases: [
+                {
+                  input: "debounce(func, 300)",
+                  output: "Function that waits 300ms after last call",
+                },
+                {
+                  input: "Multiple rapid calls",
+                  output: "Only last call executes",
+                },
+                { input: "Single call", output: "Executes after delay" },
+              ],
+              hint: "Use setTimeout and clearTimeout to manage the delay, return a new function.",
+            },
+            {
+              question: "Write a retry mechanism:",
+              description:
+                "Create a function called 'retry' that retries a failed operation a specified number of times with exponential backoff.",
+              codeInput: true,
+              testCases: [
+                {
+                  input: "retry(fetchData, 3)",
+                  output: "Retries up to 3 times with increasing delays",
+                },
+                {
+                  input: "Successful first attempt",
+                  output: "Returns result immediately",
+                },
+                { input: "All attempts fail", output: "Throws final error" },
+              ],
+              hint: "Use recursion or a loop with setTimeout, double the delay each time, handle success/failure cases.",
+            },
+          ],
+        },
+        // Fallback for old structure
+        easy: [
+          {
+            question: "What is a variable in programming?",
+            options: [
+              "A container that stores data",
+              "A type of function",
+              "A programming language",
+              "A computer component",
+            ],
+            correct: 0,
+          },
+          {
+            question: "What does 'if' statement do?",
+            options: [
+              "Makes decisions based on conditions",
+              "Creates a loop",
+              "Defines a function",
+              "Stores data",
+            ],
+            correct: 0,
+          },
+          {
+            question: "What is a loop used for?",
+            options: [
+              "Repeating code multiple times",
+              "Storing multiple values",
+              "Making decisions",
+              "Creating functions",
+            ],
+            correct: 0,
+          },
+        ],
+        medium: [
+          {
+            question:
+              "Fix this JavaScript code - it should return the sum of all numbers in the array:",
+            code: `function sumArray(arr) {
+    let total = 0;
+    for (let i = 0; i < arr.length; i++) {
+        total += arr[i];
+    }
+    return total;
+}
+
+// Hint: The code looks correct, but there's a subtle issue with the loop condition`,
+            options: [
+              "Change 'i < arr.length' to 'i <= arr.length'",
+              "Change 'i++' to 'i += 2'",
+              "Add 'arr[i] = 0' inside the loop",
+              "The code is already correct",
+            ],
+            correct: 3,
+            hint: "Look carefully at the loop condition. What happens when i equals arr.length?",
+          },
+          {
+            question:
+              "Debug this Python function - it should find the maximum number:",
+            code: `def find_max(numbers):
+    max_num = numbers[0]
+    for num in numbers:
+        if num > max_num:
+            max_num = num
+    return max_num
+
+# Hint: What happens if the list is empty?`,
+            options: [
+              "Add 'if not numbers: return None' at the start",
+              "Change 'max_num = numbers[0]' to 'max_num = 0'",
+              "Add 'numbers.sort()' before the loop",
+              "The code is already correct",
+            ],
+            correct: 0,
+            hint: "Consider edge cases - what if the input list is empty?",
+          },
+          {
+            question:
+              "Fix this CSS - the button should be centered horizontally:",
+            code: `.button {
+    width: 200px;
+    height: 50px;
+    background: blue;
+    margin: 0 auto;
+}
+
+/* Hint: The margin auto should work, but something is missing */`,
+            options: [
+              "Add 'display: block' to the button",
+              "Change 'margin: 0 auto' to 'margin: auto'",
+              "Add 'text-align: center' to parent",
+              "Add 'position: absolute' and 'left: 50%'",
+            ],
+            correct: 0,
+            hint: "margin: auto only works on block-level elements",
+          },
+        ],
+        hard: [
+          {
+            question: "Write a JavaScript function that reverses a string:",
+            description:
+              "Create a function called 'reverseString' that takes a string as input and returns the reversed version. For example, reverseString('hello') should return 'olleh'.",
+            codeInput: true,
+            testCases: [
+              { input: "hello", output: "olleh" },
+              { input: "world", output: "dlrow" },
+              { input: "abc", output: "cba" },
+            ],
+            hint: "You can use a loop to iterate through the string characters, or use built-in methods like split(), reverse(), and join().",
+          },
+          {
+            question:
+              "Write a Python function that finds the factorial of a number:",
+            description:
+              "Create a function called 'factorial' that takes a positive integer n and returns n! (n factorial). For example, factorial(5) should return 120 (5×4×3×2×1).",
+            codeInput: true,
+            testCases: [
+              { input: "5", output: "120" },
+              { input: "3", output: "6" },
+              { input: "1", output: "1" },
+            ],
+            hint: "Use a loop to multiply numbers from 1 to n, or use recursion if you're familiar with it.",
+          },
+          {
+            question: "Write CSS to create a responsive grid layout:",
+            description:
+              "Create CSS for a container that displays 3 items per row on desktop, 2 items per row on tablet, and 1 item per row on mobile. Use CSS Grid or Flexbox.",
+            codeInput: true,
+            testCases: [
+              { input: "Desktop", output: "3 columns" },
+              { input: "Tablet", output: "2 columns" },
+              { input: "Mobile", output: "1 column" },
+            ],
+            hint: "Use CSS Grid with grid-template-columns and media queries, or Flexbox with flex-wrap and responsive widths.",
+          },
+        ],
+      };
+
+      function selectDifficulty(difficulty) {
+        // Check if difficulty is unlocked
+        if (
+          difficulty === "medium" &&
+          !completedDifficulties.includes("easy")
+        ) {
+          showNotification(
+            "Complete Easy difficulty first to unlock Medium!",
+            "error"
+          );
+          return;
+        }
+        if (
+          difficulty === "hard" &&
+          !completedDifficulties.includes("medium")
+        ) {
+          showNotification(
+            "Complete Medium difficulty first to unlock Hard!",
+            "error"
+          );
+          return;
+        }
+
+        currentDifficulty = difficulty;
+        currentExerciseIndex = 0; // Reset exercise index
+
+        // Update button states
+        document.querySelectorAll(".difficulty-btn").forEach((btn) => {
+          btn.classList.remove("active");
+        });
+        document
+          .querySelector(`[onclick="selectDifficulty('${difficulty}')"]`)
+          .classList.add("active");
+
+        // Load questions for selected difficulty and rank
+        loadPracticeQuestions(difficulty, currentRank);
+      }
+
+      function selectRank(rank) {
+        // Check if rank is unlocked
+        if (rank > 1 && !completedRanks.includes(rank - 1)) {
+          showNotification(
+            `Complete Rank ${rank - 1} first to unlock Rank ${rank}!`,
+            "error"
+          );
+          return;
+        }
+
+        currentRank = rank;
+
+        // Restore completed difficulties for this rank
+        completedDifficulties = [...rankCompletedDifficulties[rank]];
+        currentExerciseIndex = 0;
+        currentDifficulty = "easy"; // Reset to easy
+
+        // Reset difficulty exercise counts
+        difficultyExerciseCount = {
+          easy: 0,
+          medium: 0,
+          hard: 0,
+        };
+
+        // Update button states
+        document.querySelectorAll(".rank-btn").forEach((btn) => {
+          btn.classList.remove("active");
+        });
+        document
+          .querySelector(`[onclick="selectRank(${rank})"]`)
+          .classList.add("active");
+
+        // Update difficulty buttons for new rank
+        updateDifficultyButtons();
+
+        // Reset difficulty selector to easy
+        document.querySelectorAll(".difficulty-btn").forEach((btn) => {
+          btn.classList.remove("active");
+        });
+        document
+          .querySelector("[onclick=\"selectDifficulty('easy')\"]")
+          .classList.add("active");
+
+        // Hide Next Rank button if visible
+        document.getElementById("next-rank-container").style.display = "none";
+
+        // Show exercise container
+        document.getElementById("exercise-container").style.display = "block";
+
+        // Load questions for selected difficulty and rank
+        loadPracticeQuestions(currentDifficulty, rank);
+      }
+
+      function loadPracticeQuestions(difficulty, rank = 1) {
+        const rankKey = `rank${rank}`;
+        const questions = practiceQuestions[rankKey]
+          ? practiceQuestions[rankKey][difficulty]
+          : practiceQuestions[difficulty];
+
+        console.log(
+          `Loading questions for rank ${rank}, difficulty ${difficulty}`
+        );
+        console.log("Questions found:", questions);
+
+        if (!questions || questions.length === 0) {
+          console.error(
+            `No questions found for rank ${rank}, difficulty ${difficulty}`
+          );
+          showNotification(
+            `No questions available for ${difficulty} difficulty in Rank ${rank}`,
+            "error"
+          );
+          return;
+        }
+
+        questions.forEach((q, index) => {
+          const questionNum = index + 1;
+          document.getElementById(`q${questionNum}-text`).textContent =
+            q.question;
+
+          // Handle different question types
+          const codeBlock = document.getElementById(`q${questionNum}-code`);
+          const description = document.getElementById(
+            `q${questionNum}-description`
+          );
+          const codeInput = document.getElementById(
+            `q${questionNum}-code-input`
+          );
+          const instruction = document.getElementById(
+            `q${questionNum}-instruction`
+          );
+          const options = document.getElementById(`q${questionNum}-options`);
+          const hintBox = document.getElementById(`q${questionNum}-hint`);
+          const testCases = document.getElementById(
+            `q${questionNum}-test-cases`
+          );
+
+          // Reset all elements
+          codeBlock.style.display = "none";
+          description.style.display = "none";
+          codeInput.style.display = "none";
+          testCases.style.display = "none";
+          hintBox.style.display = "none";
+          options.style.display = "grid";
+          instruction.textContent = "Choose the correct answer:";
+
+          if (q.codeInput) {
+            // Hard questions - code input mode
+            description.textContent = q.description;
+            description.style.display = "block";
+            codeInput.style.display = "block";
+            instruction.textContent =
+              "Write your solution in the code area below:";
+            options.style.display = "none";
+
+            // Clear textarea
+            document.getElementById(`q${questionNum}-textarea`).value = "";
+
+            // Show test cases
+            if (q.testCases) {
+              testCases.innerHTML = "<h4>Test Cases:</h4>";
+              q.testCases.forEach((testCase) => {
+                const testDiv = document.createElement("div");
+                testDiv.className = "test-case";
+                testDiv.textContent = `Input: ${testCase.input} → Expected Output: ${testCase.output}`;
+                testCases.appendChild(testDiv);
+              });
+              testCases.style.display = "block";
+            }
+          } else if (q.code) {
+            // Medium questions - code debugging mode
+            codeBlock.textContent = q.code;
+            codeBlock.style.display = "block";
+          }
+
+          if (q.hint) {
+            hintBox.textContent = q.hint;
+            hintBox.style.display = "block";
+          }
+
+          if (q.options) {
+            q.options.forEach((option, optIndex) => {
+              document.getElementById(
+                `q${questionNum}-opt${optIndex}`
+              ).textContent = option;
+            });
+          }
+
+          // Update submit button
+          const submitBtn = document.querySelector(
+            `#exercise-${questionNum} .submit-btn`
+          );
+
+          if (q.codeInput) {
+            submitBtn.setAttribute(
+              "onclick",
+              `submitCodeExercise(${questionNum})`
+            );
+            submitBtn.textContent = "Submit Code";
+          } else {
+            submitBtn.setAttribute(
+              "onclick",
+              `submitExercise(${questionNum}, ${q.correct})`
+            );
+            submitBtn.textContent = "Submit Answer";
+          }
+
+          // Reset exercise state
+          const exercise = document.getElementById(`exercise-${questionNum}`);
+          exercise.querySelectorAll(".option").forEach((opt) => {
+            opt.classList.remove("selected", "correct", "incorrect");
+            opt.removeAttribute("data-selected");
+          });
+          submitBtn.disabled = false;
+        });
+      }
+
+      // Code Exercise Submission
+      function submitCodeExercise(exerciseId) {
+        const textarea = document.getElementById(`q${exerciseId}-textarea`);
+        const code = textarea.value.trim();
+
+        if (!code) {
+          showNotification(
+            "Please write some code before submitting!",
+            "error"
+          );
+          return;
+        }
+
+        // Simple validation - check if code contains basic function structure
+        const questions = practiceQuestions[currentDifficulty];
+        const question = questions[exerciseId - 1];
+
+        let isValid = false;
+        let feedback = "";
+
+        if (question.question.includes("JavaScript")) {
+          // Check for JavaScript function
+          if (code.includes("function") || code.includes("=>")) {
+            isValid = true;
+            feedback =
+              "✅ Great! You've written a JavaScript function. Check if it handles the test cases correctly.";
+          } else {
+            feedback =
+              "❌ Please write a JavaScript function. Use 'function' keyword or arrow function syntax.";
+          }
+        } else if (question.question.includes("Python")) {
+          // Check for Python function
+          if (code.includes("def ")) {
+            isValid = true;
+            feedback =
+              "✅ Great! You've written a Python function. Check if it handles the test cases correctly.";
+          } else {
+            feedback = "❌ Please write a Python function using 'def' keyword.";
+          }
+        } else if (question.question.includes("CSS")) {
+          // Check for CSS
+          if (code.includes("{") && code.includes("}")) {
+            isValid = true;
+            feedback =
+              "✅ Great! You've written CSS. Check if it creates the responsive layout correctly.";
+          } else {
+            feedback = "❌ Please write valid CSS with curly braces {}.";
+          }
+        }
+
+        // Show feedback
+        showNotification(feedback, isValid ? "success" : "error");
+
+        // Award points for code submission
+        if (isValid) {
+          exerciseScore += 15; // More points for valid code
+          userPoints += 15;
+        } else {
+          exerciseScore += 5; // Half points for invalid code
+          userPoints += 5;
+        }
+
+        // Always track progress (total exercises attempted)
+        rankProgress[currentRank][currentDifficulty]++;
+        difficultyExerciseCount[currentDifficulty]++;
+
+        // Check if difficulty is completed (all 3 exercises done)
+        if (difficultyExerciseCount[currentDifficulty] >= 3) {
+          if (!completedDifficulties.includes(currentDifficulty)) {
+            completedDifficulties.push(currentDifficulty);
+            // Also track for this specific rank
+            if (
+              !rankCompletedDifficulties[currentRank].includes(
+                currentDifficulty
+              )
+            ) {
+              rankCompletedDifficulties[currentRank].push(currentDifficulty);
+            }
+            showNotification(
+              `🎉 ${
+                currentDifficulty.charAt(0).toUpperCase() +
+                currentDifficulty.slice(1)
+              } difficulty completed!`,
+              "success"
+            );
+            updateDifficultyButtons();
+
+            // Auto-switch to next difficulty if available
+            if (
+              currentDifficulty === "easy" &&
+              !completedDifficulties.includes("medium")
+            ) {
+              setTimeout(() => {
+                selectDifficulty("medium");
+              }, 1500);
+            } else if (
+              currentDifficulty === "medium" &&
+              !completedDifficulties.includes("hard")
+            ) {
+              setTimeout(() => {
+                selectDifficulty("hard");
+              }, 1500);
+            }
+          }
+        }
+
+        // Check if rank is completed
+        checkRankCompletion();
+
+        updateScore();
+
+        // Disable submit button
+        const submitBtn = document.querySelector(
+          `#exercise-${exerciseId} .submit-btn`
+        );
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Code Submitted";
+      }
+
+      // Debug function to check completion status
+      function debugCompletion() {
+        console.log("Current Rank:", currentRank);
+        console.log("Current Difficulty:", currentDifficulty);
+        console.log("Current Exercise Index:", currentExerciseIndex);
+        console.log(
+          "Completed Difficulties (Current Rank):",
+          completedDifficulties
+        );
+        console.log(
+          "All Rank Completed Difficulties:",
+          rankCompletedDifficulties
+        );
+        console.log("Rank Correct Answers:", rankCorrectAnswers[currentRank]);
+        console.log("Rank Progress:", rankProgress[currentRank]);
+        console.log("Completed Ranks:", completedRanks);
+      }
+
+      // Rank completion and unlocking functions
+      function checkRankCompletion() {
+        // Debug information
+        debugCompletion();
+
+        // Check if all difficulties are completed (easy, medium, hard) for current rank
+        if (
+          rankCompletedDifficulties[currentRank].includes("easy") &&
+          rankCompletedDifficulties[currentRank].includes("medium") &&
+          rankCompletedDifficulties[currentRank].includes("hard")
+        ) {
+          // Mark rank as completed
+          if (!completedRanks.includes(currentRank)) {
+            completedRanks.push(currentRank);
+            showNotification(
+              `🎉 Rank ${currentRank} completed! Next rank unlocked!`,
+              "success"
+            );
+
+            // Update rank buttons
+            updateRankButtons();
+
+            // Auto-advance to next rank
+            setTimeout(() => {
+              if (currentRank < 5) {
+                showNotification(
+                  `🚀 Auto-advancing to Rank ${currentRank + 1}!`,
+                  "success"
+                );
+                goToNextRank();
+              } else {
+                showNotification(
+                  "🏆 Congratulations! You have completed all ranks!",
+                  "success"
+                );
+              }
+            }, 2000);
+          }
+        } else {
+          console.log(
+            "Rank not completed yet. Missing:",
+            ["easy", "medium", "hard"].filter(
+              (d) => !rankCompletedDifficulties[currentRank].includes(d)
+            )
+          );
+        }
+      }
+
+      function updateRankButtons() {
+        document.querySelectorAll(".rank-btn").forEach((btn, index) => {
+          const rankNumber = index + 1;
+
+          if (completedRanks.includes(rankNumber)) {
+            // Completed rank
+            btn.classList.remove("locked");
+            btn.disabled = false;
+            btn.innerHTML = getRankEmoji(rankNumber) + ` Rank ${rankNumber} ✅`;
+          } else if (
+            rankNumber === 1 ||
+            completedRanks.includes(rankNumber - 1)
+          ) {
+            // Unlocked rank
+            btn.classList.remove("locked");
+            btn.disabled = false;
+            btn.innerHTML = getRankEmoji(rankNumber) + ` Rank ${rankNumber}`;
+          } else {
+            // Locked rank
+            btn.classList.add("locked");
+            btn.disabled = true;
+            btn.innerHTML = `🔒 Rank ${rankNumber}`;
+          }
+        });
+      }
+
+      function getRankEmoji(rank) {
+        const emojis = ["🥉", "🥈", "🥇", "💎", "👑"];
+        return emojis[rank - 1] || "🏆";
+      }
+
+      // Initialize rank buttons on page load
+      function initializeRanks() {
+        updateRankButtons();
+      }
+
+      // Next Rank Button Functions
+      function showNextRankButton() {
+        const container = document.getElementById("next-rank-container");
+        const rankNumber = document.getElementById("completed-rank-number");
+        const rankScore = document.getElementById("rank-score");
+        const nextRankBtn = document.getElementById("next-rank-btn");
+
+        // Update content
+        rankNumber.textContent = currentRank;
+        rankScore.textContent = exerciseScore;
+
+        // Update button text based on whether there's a next rank
+        if (currentRank < 5) {
+          nextRankBtn.textContent = `🚀 Unlock Rank ${currentRank + 1}`;
+        } else {
+          nextRankBtn.textContent = "🏆 All Ranks Completed!";
+          nextRankBtn.style.background =
+            "linear-gradient(135deg, #ffd700 0%, #ffed4e 100%)";
+          nextRankBtn.style.color = "#333";
+        }
+
+        // Show the container
+        container.style.display = "block";
+
+        // Hide exercise container
+        document.getElementById("exercise-container").style.display = "none";
+      }
+
+      function goToNextRank() {
+        if (currentRank < 5) {
+          // Hide Next Rank button
+          document.getElementById("next-rank-container").style.display = "none";
+
+          // Show exercise container
+          document.getElementById("exercise-container").style.display = "block";
+
+          // Go to next rank
+          selectRank(currentRank + 1);
+
+          // Reset exercise score for new rank
+          exerciseScore = 0;
+          updateScore();
+        } else {
+          showNotification(
+            "🎉 Congratulations! You have completed all ranks!",
+            "success"
+          );
+        }
+      }
+
+      // Update difficulty button states
+      function updateDifficultyButtons() {
+        const buttons = document.querySelectorAll(".difficulty-btn");
+
+        // Easy is always unlocked
+        buttons[0].classList.remove("locked");
+        buttons[0].disabled = false;
+        buttons[0].innerHTML = "Easy";
+
+        // Medium unlocked if easy is completed
+        if (completedDifficulties.includes("easy")) {
+          buttons[1].classList.remove("locked");
+          buttons[1].disabled = false;
+          buttons[1].innerHTML = "Medium";
+        } else {
+          buttons[1].classList.add("locked");
+          buttons[1].disabled = true;
+          buttons[1].innerHTML = "Medium 🔒";
+        }
+
+        // Hard unlocked if medium is completed
+        if (completedDifficulties.includes("medium")) {
+          buttons[2].classList.remove("locked");
+          buttons[2].disabled = false;
+          buttons[2].innerHTML = "Hard";
+        } else {
+          buttons[2].classList.add("locked");
+          buttons[2].disabled = true;
+          buttons[2].innerHTML = "Hard 🔒";
+        }
+      }
+
+      // Initialize on page load
+      initializeRanks();
+      initializeSavedCodes();
 
       // AI Challenge
       function startChallenge() {
@@ -1143,7 +5195,7 @@ console.log(fibonacci(10));"
         );
 
         if (!selectedOption) {
-          showNotification("Please select an answer!", 'error');
+          showNotification("Please select an answer!", "error");
           return;
         }
 
@@ -1240,4 +5292,3 @@ console.log(fibonacci(10));"
     </script>
   </body>
 </html>
-

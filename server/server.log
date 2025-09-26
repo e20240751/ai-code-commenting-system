@@ -1,0 +1,52 @@
+✅ API Key loaded from secret.env: AIzaSyDK4v8eAJa...
+ℹ️ Running in AI-only mode (no MongoDB)
+Server is running on port 5001
+API endpoints available at http://localhost:5001/api
+API Key check: Present
+API Key value: AIzaSyDK4v...
+Trying Gemini API...
+Gemini API error: Error: Gemini API error: 403
+    at getGeminiExplanation (/Users/anbschool0004/Downloads/code comment/server/index.js:1113:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async /Users/anbschool0004/Downloads/code comment/server/index.js:1777:23
+Gemini API failed, using pattern-based explanation: Gemini API error: 403
+API Key check: Present
+API Key value: AIzaSyDK4v...
+Trying Gemini API...
+Gemini API error: Error: Gemini API error: 403
+    at getGeminiExplanation (/Users/anbschool0004/Downloads/code comment/server/index.js:1113:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async /Users/anbschool0004/Downloads/code comment/server/index.js:1777:23
+Gemini API failed, using pattern-based explanation: Gemini API error: 403
+API Key check: Present
+API Key value: AIzaSyDK4v...
+Trying Gemini API...
+Gemini API error: Error: Gemini API error: 403
+    at getGeminiExplanation (/Users/anbschool0004/Downloads/code comment/server/index.js:1113:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async /Users/anbschool0004/Downloads/code comment/server/index.js:1777:23
+Gemini API failed, using pattern-based explanation: Gemini API error: 403
+API Key check: Present
+API Key value: AIzaSyDK4v...
+Trying Gemini API...
+Gemini API error: Error: Gemini API error: 403
+    at getGeminiExplanation (/Users/anbschool0004/Downloads/code comment/server/index.js:1113:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async /Users/anbschool0004/Downloads/code comment/server/index.js:1777:23
+Gemini API failed, using pattern-based explanation: Gemini API error: 403
+API Key check: Present
+API Key value: AIzaSyDK4v...
+Trying Gemini API...
+Gemini API error: Error: Gemini API error: 403
+    at getGeminiExplanation (/Users/anbschool0004/Downloads/code comment/server/index.js:1113:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async /Users/anbschool0004/Downloads/code comment/server/index.js:1777:23
+Gemini API failed, using pattern-based explanation: Gemini API error: 403
+API Key check: Present
+API Key value: AIzaSyDK4v...
+Trying Gemini API...
+Gemini API error: Error: Gemini API error: 403
+    at getGeminiExplanation (/Users/anbschool0004/Downloads/code comment/server/index.js:1113:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async /Users/anbschool0004/Downloads/code comment/server/index.js:1777:23
+Gemini API failed, using pattern-based explanation: Gemini API error: 403
