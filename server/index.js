@@ -1168,40 +1168,161 @@ function explainLine(line, language) {
       return `This defines a new class called '${className}'. A class is like a blueprint for creating objects.`;
     }
   } else if (lang.includes("html")) {
-    if (/<html/.test(line)) {
+    // Document structure
+    if (/<!DOCTYPE\s+html/i.test(line)) {
+      return `This declares the document type as HTML5, telling the browser how to interpret the page. It's like putting a label on a package.`;
+    } else if (/<html/.test(line)) {
       return `This starts the HTML document structure. It tells the browser that everything inside is HTML content.`;
-    } else if (/<head/.test(line)) {
-      return `This starts the head section where you put information about the page (like title, styles, scripts) that users don't see directly.`;
-    } else if (/<body/.test(line)) {
-      return `This starts the body section where you put the main content that users will see on the webpage.`;
-    } else if (/<h[1-6]/.test(line)) {
-      return `This creates a heading that makes text larger and more prominent. It's like creating a title or subtitle for a section.`;
-    } else if (/<p/.test(line)) {
-      return `This creates a paragraph of text. It's like writing a normal sentence or paragraph in a document.`;
-    } else if (/<div/.test(line)) {
-      return `This creates a container that can hold other elements. It's like having a box that you can put other things inside.`;
-    } else if (/<img/.test(line)) {
-      return `This displays an image on the webpage. It's like putting a picture in a document.`;
     } else if (/<\/html/.test(line)) {
       return `This ends the HTML document structure, closing the main container.`;
+    }
+    // Head section
+    else if (/<head/.test(line)) {
+      return `This starts the head section where you put information about the page (like title, styles, scripts) that users don't see directly.`;
     } else if (/<\/head/.test(line)) {
       return `This ends the head section, closing the area where page information is stored.`;
-    } else if (/<\/body/.test(line)) {
-      return `This ends the body section, closing the main content area.`;
-    } else if (/<\/h[1-6]/.test(line)) {
-      return `This ends a heading, closing the title or subtitle section.`;
-    } else if (/<\/p/.test(line)) {
-      return `This ends a paragraph, closing the text section.`;
-    } else if (/<\/div/.test(line)) {
-      return `This ends a container, closing the box that held other elements.`;
-    } else if (/<\/img/.test(line)) {
-      return `This ends an image element.`;
-    } else if (/<\/a/.test(line)) {
-      return `This ends a link, closing the clickable element.`;
     } else if (/<title/.test(line)) {
       return `This sets the page title that appears in the browser tab. It's like giving your webpage a name tag.`;
-    } else if (/<a\s+href/.test(line)) {
+    } else if (/<meta/.test(line)) {
+      return `This provides metadata about the webpage (like character encoding, description) that helps browsers and search engines understand the page.`;
+    } else if (/<link/.test(line)) {
+      return `This links external resources like CSS files or icons to the webpage. It's like connecting your page to other files.`;
+    } else if (/<style/.test(line)) {
+      return `This starts a section for CSS styles that will be applied to the webpage. It's like having a style guide for your page.`;
+    } else if (/<\/style/.test(line)) {
+      return `This ends the CSS style section.`;
+    } else if (/<script/.test(line)) {
+      return `This starts a section for JavaScript code that adds interactivity to the webpage. It's like adding smart features to your page.`;
+    } else if (/<\/script/.test(line)) {
+      return `This ends the JavaScript code section.`;
+    }
+    // Body section
+    else if (/<body/.test(line)) {
+      return `This starts the body section where you put the main content that users will see on the webpage.`;
+    } else if (/<\/body/.test(line)) {
+      return `This ends the body section, closing the main content area.`;
+    }
+    // Text elements
+    else if (/<h[1-6]/.test(line)) {
+      const match = line.match(/<h([1-6])/);
+      const level = match ? match[1] : '1';
+      return `This creates a heading level ${level} that makes text larger and more prominent. It's like creating a title or subtitle for a section.`;
+    } else if (/<\/h[1-6]/.test(line)) {
+      return `This ends a heading, closing the title or subtitle section.`;
+    } else if (/<p/.test(line)) {
+      return `This creates a paragraph of text. It's like writing a normal sentence or paragraph in a document.`;
+    } else if (/<\/p/.test(line)) {
+      return `This ends a paragraph, closing the text section.`;
+    } else if (/<span/.test(line)) {
+      return `This creates an inline container for styling or scripting small pieces of text. It's like highlighting a few words in a sentence.`;
+    } else if (/<\/span/.test(line)) {
+      return `This ends an inline text container.`;
+    } else if (/<strong/.test(line) || /<b/.test(line)) {
+      return `This makes text bold and emphasizes its importance. It's like making words stand out in a sentence.`;
+    } else if (/<\/strong/.test(line) || /<\/b/.test(line)) {
+      return `This ends the bold text formatting.`;
+    } else if (/<em/.test(line) || /<i/.test(line)) {
+      return `This makes text italic and emphasizes it. It's like adding emphasis to words in a sentence.`;
+    } else if (/<\/em/.test(line) || /<\/i/.test(line)) {
+      return `This ends the italic text formatting.`;
+    }
+    // Container elements
+    else if (/<div/.test(line)) {
+      return `This creates a container that can hold other elements. It's like having a box that you can put other things inside.`;
+    } else if (/<\/div/.test(line)) {
+      return `This ends a container, closing the box that held other elements.`;
+    } else if (/<section/.test(line)) {
+      return `This creates a semantic section of content. It's like dividing a document into logical parts.`;
+    } else if (/<\/section/.test(line)) {
+      return `This ends a semantic section.`;
+    } else if (/<article/.test(line)) {
+      return `This creates a self-contained piece of content like a blog post or news article.`;
+    } else if (/<\/article/.test(line)) {
+      return `This ends an article section.`;
+    } else if (/<header/.test(line)) {
+      return `This creates a header section typically containing navigation or introductory content.`;
+    } else if (/<\/header/.test(line)) {
+      return `This ends a header section.`;
+    } else if (/<footer/.test(line)) {
+      return `This creates a footer section typically containing copyright or contact information.`;
+    } else if (/<\/footer/.test(line)) {
+      return `This ends a footer section.`;
+    } else if (/<nav/.test(line)) {
+      return `This creates a navigation section containing links to other pages or sections.`;
+    } else if (/<\/nav/.test(line)) {
+      return `This ends a navigation section.`;
+    }
+    // Lists
+    else if (/<ul/.test(line)) {
+      return `This creates an unordered list (bullet points). It's like making a list with dots or bullets.`;
+    } else if (/<\/ul/.test(line)) {
+      return `This ends an unordered list.`;
+    } else if (/<ol/.test(line)) {
+      return `This creates an ordered list (numbered items). It's like making a numbered list.`;
+    } else if (/<\/ol/.test(line)) {
+      return `This ends an ordered list.`;
+    } else if (/<li/.test(line)) {
+      return `This creates a list item. It's like adding one item to a list.`;
+    } else if (/<\/li/.test(line)) {
+      return `This ends a list item.`;
+    }
+    // Media elements
+    else if (/<img/.test(line)) {
+      return `This displays an image on the webpage. It's like putting a picture in a document.`;
+    } else if (/<\/img/.test(line)) {
+      return `This ends an image element.`;
+    } else if (/<video/.test(line)) {
+      return `This embeds a video player on the webpage. It's like adding a movie to your page.`;
+    } else if (/<\/video/.test(line)) {
+      return `This ends a video element.`;
+    } else if (/<audio/.test(line)) {
+      return `This embeds an audio player on the webpage. It's like adding music or sound to your page.`;
+    } else if (/<\/audio/.test(line)) {
+      return `This ends an audio element.`;
+    }
+    // Interactive elements
+    else if (/<a\s+href/.test(line)) {
       return `This creates a clickable link that takes users to another webpage or location. It's like having a door that opens to another room.`;
+    } else if (/<\/a/.test(line)) {
+      return `This ends a link, closing the clickable element.`;
+    } else if (/<button/.test(line)) {
+      return `This creates a clickable button that users can interact with. It's like having a switch or control on your page.`;
+    } else if (/<\/button/.test(line)) {
+      return `This ends a button element.`;
+    } else if (/<input/.test(line)) {
+      return `This creates an input field where users can type text, numbers, or other data. It's like having a form field for user input.`;
+    } else if (/<textarea/.test(line)) {
+      return `This creates a larger text input area for longer text. It's like having a big text box for writing.`;
+    } else if (/<\/textarea/.test(line)) {
+      return `This ends a textarea element.`;
+    } else if (/<form/.test(line)) {
+      return `This creates a form that collects user input and can send it to a server. It's like having a questionnaire on your page.`;
+    } else if (/<\/form/.test(line)) {
+      return `This ends a form element.`;
+    }
+    // Table elements
+    else if (/<table/.test(line)) {
+      return `This creates a table for displaying data in rows and columns. It's like making a spreadsheet on your webpage.`;
+    } else if (/<\/table/.test(line)) {
+      return `This ends a table element.`;
+    } else if (/<tr/.test(line)) {
+      return `This creates a table row. It's like adding one horizontal line to a table.`;
+    } else if (/<\/tr/.test(line)) {
+      return `This ends a table row.`;
+    } else if (/<td/.test(line)) {
+      return `This creates a table cell for data. It's like adding one box to a table.`;
+    } else if (/<\/td/.test(line)) {
+      return `This ends a table cell.`;
+    } else if (/<th/.test(line)) {
+      return `This creates a table header cell. It's like adding a title to a column in a table.`;
+    } else if (/<\/th/.test(line)) {
+      return `This ends a table header cell.`;
+    }
+    // Comments
+    else if (/<!--/.test(line)) {
+      return `This starts an HTML comment that won't be displayed on the webpage. It's like leaving a note for other developers.`;
+    } else if (/-->/.test(line)) {
+      return `This ends an HTML comment.`;
     }
   } else if (lang.includes("css")) {
     if (/\.[\w-]+\s*\{/.test(line)) {

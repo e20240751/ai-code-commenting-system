@@ -198,10 +198,18 @@ function generateFallbackExplanation(code, language) {
       imports.push({ line, lineNumber: i + 1 });
     } else if (/def\s+\w+|function\s+\w+|class\s+\w+/.test(line)) {
       functions.push({ line, lineNumber: i + 1 });
-    } else if (/^\s*(int|char|float|double|string|var|let|const)\s+\w+/.test(line)) {
+    } else if (
+      /^\s*(int|char|float|double|string|var|let|const)\s+\w+/.test(line)
+    ) {
       variables.push({ line, lineNumber: i + 1 });
-    } else if (line.includes("if") || line.includes("for") || line.includes("while") || 
-               line.includes("return") || line.includes("print") || line.includes("printf")) {
+    } else if (
+      line.includes("if") ||
+      line.includes("for") ||
+      line.includes("while") ||
+      line.includes("return") ||
+      line.includes("print") ||
+      line.includes("printf")
+    ) {
       logic.push({ line, lineNumber: i + 1 });
     }
   }
@@ -257,14 +265,66 @@ function generateFallbackExplanation(code, language) {
 // Helper function to explain individual lines
 function getLineExplanation(line, language) {
   const lang = language.toLowerCase();
-  
-  if (line.includes("if")) {
+
+  if (lang.includes("html")) {
+    if (/<!DOCTYPE\s+html/i.test(line)) {
+      return "Declares the document type as HTML5";
+    } else if (/<html/.test(line)) {
+      return "Starts the HTML document structure";
+    } else if (/<head/.test(line)) {
+      return "Starts the head section for page metadata";
+    } else if (/<body/.test(line)) {
+      return "Starts the body section for main content";
+    } else if (/<h[1-6]/.test(line)) {
+      return "Creates a heading for titles and subtitles";
+    } else if (/<p/.test(line)) {
+      return "Creates a paragraph of text";
+    } else if (/<div/.test(line)) {
+      return "Creates a container for other elements";
+    } else if (/<img/.test(line)) {
+      return "Displays an image on the webpage";
+    } else if (/<a\s+href/.test(line)) {
+      return "Creates a clickable link";
+    } else if (/<ul/.test(line)) {
+      return "Creates an unordered list (bullet points)";
+    } else if (/<ol/.test(line)) {
+      return "Creates an ordered list (numbered items)";
+    } else if (/<li/.test(line)) {
+      return "Creates a list item";
+    } else if (/<table/.test(line)) {
+      return "Creates a table for data display";
+    } else if (/<form/.test(line)) {
+      return "Creates a form for user input";
+    } else if (/<input/.test(line)) {
+      return "Creates an input field for user data";
+    } else if (/<button/.test(line)) {
+      return "Creates a clickable button";
+    } else if (/<script/.test(line)) {
+      return "Starts JavaScript code section";
+    } else if (/<style/.test(line)) {
+      return "Starts CSS styling section";
+    } else if (/<!--/.test(line)) {
+      return "HTML comment (not displayed)";
+    }
+  } else if (lang.includes("css")) {
+    if (/\.[\w-]+\s*\{/.test(line)) {
+      return "CSS rule for elements with a specific class";
+    } else if (/#[\w-]+\s*\{/.test(line)) {
+      return "CSS rule for an element with a specific ID";
+    } else if (/\w+\s*:\s*[^;]+;/.test(line)) {
+      return "CSS property setting a style value";
+    }
+  } else if (line.includes("if")) {
     return "Conditional statement - executes code only if condition is true";
   } else if (line.includes("for") || line.includes("while")) {
     return "Loop statement - repeats code multiple times";
   } else if (line.includes("return")) {
     return "Returns a value from a function";
-  } else if (line.includes("print") || line.includes("printf") || line.includes("cout")) {
+  } else if (
+    line.includes("print") ||
+    line.includes("printf") ||
+    line.includes("cout")
+  ) {
     return "Outputs text or data to the console/screen";
   } else if (line.includes("=")) {
     return "Assignment - stores a value in a variable";
@@ -273,7 +333,7 @@ function getLineExplanation(line, language) {
   } else if (line.includes("class ")) {
     return "Class definition - creates a blueprint for objects";
   }
-  
+
   return "Executes a programming instruction";
 }
 
