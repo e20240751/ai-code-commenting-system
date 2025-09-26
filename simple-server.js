@@ -181,46 +181,123 @@ Make the explanation beginner-friendly, clear, and educational. Focus on helping
   }
 });
 
-// Function to generate focused fallback explanations
+// Function to generate comprehensive fallback explanations
 function generateFallbackExplanation(code, language) {
-  // Identify important parts of the code
   const lines = code.split('\n');
-  const importantParts = [];
-  
-  for (const line of lines) {
-    const trimmed = line.trim();
-    if (trimmed && 
-        !trimmed.startsWith('//') && 
-        !trimmed.startsWith('#include') &&
-        !/^\s*(int|char|float|double|string|var|let|const)\s+\w+\s*=/.test(trimmed) &&
-        !/^\s*(print|console\.log|printf|cout)\s*\(/.test(trimmed)) {
-      
-      if (/def\s+\w+/.test(trimmed) || 
-          /function\s+\w+/.test(trimmed) || 
-          /class\s+\w+/.test(trimmed) ||
-          /if\s*\(/.test(trimmed) ||
-          /for\s*\(/.test(trimmed) ||
-          /while\s*\(/.test(trimmed) ||
-          /return\s+/.test(trimmed)) {
-        importantParts.push(trimmed);
-      }
+  let explanation = "";
+
+  // Analyze code structure
+  const functions = [];
+  const variables = [];
+  const imports = [];
+  const logic = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (line === "" || line.startsWith('//')) continue;
+
+    if (/^#include|^import\s+|^from\s+/.test(line)) {
+      imports.push({ line, lineNumber: i + 1 });
+    } else if (/def\s+\w+|function\s+\w+|class\s+\w+/.test(line)) {
+      functions.push({ line, lineNumber: i + 1 });
+    } else if (/^\s*(int|char|float|double|string|var|let|const)\s+\w+/.test(line)) {
+      variables.push({ line, lineNumber: i + 1 });
+    } else if (line.includes('if') || line.includes('for') || line.includes('while') || 
+               line.includes('return') || line.includes('print') || line.includes('printf')) {
+      logic.push({ line, lineNumber: i + 1 });
     }
   }
 
-  if (importantParts.length === 0) {
-    return `**Code Analysis:** This code contains basic programming statements. The logic is straightforward and follows standard ${language} patterns.`;
+  // Build comprehensive explanation
+  explanation += `**Code Overview:**\n`;
+  explanation += `This ${language} code demonstrates programming concepts and functionality.\n\n`;
+
+  if (imports.length > 0) {
+    explanation += `**Dependencies:**\n`;
+    imports.forEach(({ line, lineNumber }) => {
+      explanation += `• Line ${lineNumber}: \`${line}\` - Brings in external functionality\n`;
+    });
+    explanation += `\n`;
   }
 
-  let explanation = `**Key Code Analysis:**\n\n`;
-  explanation += `**Important Parts Found:**\n`;
-  
-  importantParts.forEach((part, index) => {
-    explanation += `${index + 1}. \`${part}\`\n`;
-  });
-  
-  explanation += `\n**Summary:** This code focuses on core programming concepts. The main logic involves ${importantParts.length} key statement${importantParts.length > 1 ? 's' : ''} that drive the program's functionality.`;
-  
+  if (functions.length > 0) {
+    explanation += `**Functions/Classes:**\n`;
+    functions.forEach(({ line, lineNumber }) => {
+      explanation += `• Line ${lineNumber}: \`${line}\` - Defines reusable code block\n`;
+    });
+    explanation += `\n`;
+  }
+
+  if (variables.length > 0) {
+    explanation += `**Variables:**\n`;
+    variables.forEach(({ line, lineNumber }) => {
+      explanation += `• Line ${lineNumber}: \`${line}\` - Stores data for use in program\n`;
+    });
+    explanation += `\n`;
+  }
+
+  explanation += `**Step-by-Step Execution:**\n`;
+  let stepNumber = 1;
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (line && !line.startsWith('//')) {
+      explanation += `${stepNumber}. Line ${i + 1}: \`${line}\`\n`;
+      explanation += `   → ${getLineExplanation(line, language)}\n\n`;
+      stepNumber++;
+    }
+  }
+
+  explanation += `**Key Concepts:**\n`;
+  explanation += `• ${getLanguageSpecificConcepts(language)}\n\n`;
+
+  explanation += `**How It Works:**\n`;
+  explanation += `The program executes sequentially, with each line contributing to the overall functionality. Control structures like loops and conditionals modify the flow of execution.\n\n`;
+
   return explanation;
+}
+
+// Helper function to explain individual lines
+function getLineExplanation(line, language) {
+  const lang = language.toLowerCase();
+  
+  if (line.includes('if')) {
+    return "Conditional statement - executes code only if condition is true";
+  } else if (line.includes('for') || line.includes('while')) {
+    return "Loop statement - repeats code multiple times";
+  } else if (line.includes('return')) {
+    return "Returns a value from a function";
+  } else if (line.includes('print') || line.includes('printf') || line.includes('cout')) {
+    return "Outputs text or data to the console/screen";
+  } else if (line.includes('=')) {
+    return "Assignment - stores a value in a variable";
+  } else if (line.includes('def ') || line.includes('function ')) {
+    return "Function definition - creates a reusable code block";
+  } else if (line.includes('class ')) {
+    return "Class definition - creates a blueprint for objects";
+  }
+  
+  return "Executes a programming instruction";
+}
+
+// Helper function for language-specific concepts
+function getLanguageSpecificConcepts(language) {
+  const lang = language.toLowerCase();
+  if (lang.includes('python')) {
+    return "Python uses indentation, dynamic typing, and has extensive libraries";
+  } else if (lang.includes('javascript')) {
+    return "JavaScript is versatile, supports multiple programming paradigms";
+  } else if (lang.includes('c')) {
+    return "C provides low-level control and direct memory management";
+  } else if (lang.includes('c++')) {
+    return "C++ combines C's efficiency with object-oriented features";
+  } else if (lang.includes('java')) {
+    return "Java is platform-independent and strongly object-oriented";
+  } else if (lang.includes('html')) {
+    return "HTML structures content using semantic tags and elements";
+  } else if (lang.includes('css')) {
+    return "CSS controls visual presentation and layout of web content";
+  }
+  return "Follows standard programming principles and best practices";
 }
 
 // Start the server

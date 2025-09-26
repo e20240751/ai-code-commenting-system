@@ -460,55 +460,149 @@ function analyzeCodeIntelligently(code, language, patterns) {
   return analysis;
 }
 
-// Function to generate focused explanation (only important parts)
+// Function to generate comprehensive step-by-step explanation
 function generateStepByStepExplanation(code, language) {
   const lang = language.toLowerCase();
   const lines = code.split("\n");
   let explanation = "";
 
-  // Identify important lines to explain
-  const importantLines = [];
+  // Analyze the code structure
+  const functions = [];
+  const variables = [];
+  const imports = [];
+  const mainLogic = [];
   
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
+    const lineNumber = i + 1;
     
-    // Skip empty lines and simple statements
-    if (line === "" || 
-        /^\s*(int|char|float|double|string|var|let|const)\s+\w+\s*=/.test(line) ||
-        /^\s*(print|console\.log|printf|cout)\s*\(/.test(line) ||
-        /^\s*\/\/.*$/.test(line) ||
-        /^\s*#include/.test(line)) {
-      continue;
-    }
+    if (line === "" || line.startsWith("//")) continue;
     
-    // Include important lines
-    if (/def\s+\w+/.test(line) ||           // Function definitions
-        /function\s+\w+/.test(line) ||      // Function definitions
-        /class\s+\w+/.test(line) ||         // Class definitions
-        /if\s*\(/.test(line) ||             // Complex conditionals
-        /for\s*\(/.test(line) ||            // Complex loops
-        /while\s*\(/.test(line) ||          // Complex loops
-        /return\s+/.test(line) ||           // Return statements
-        /import\s+/.test(line) ||           // Import statements
-        /#define/.test(line) ||             // C macros
-        /malloc|free/.test(line) ||         // Memory management
-        /try\s*\{|catch\s*\(/.test(line)) { // Exception handling
-      importantLines.push({ line, lineNumber: i + 1 });
+    // Identify different code elements
+    if (/^#include|^import\s+|^from\s+/.test(line)) {
+      imports.push({ line, lineNumber });
+    } else if (/def\s+\w+|function\s+\w+|class\s+\w+/.test(line)) {
+      functions.push({ line, lineNumber });
+    } else if (/^\s*(int|char|float|double|string|var|let|const)\s+\w+/.test(line)) {
+      variables.push({ line, lineNumber });
+    } else if (line.includes("if") || line.includes("for") || line.includes("while") || 
+               line.includes("return") || line.includes("print") || line.includes("printf")) {
+      mainLogic.push({ line, lineNumber });
     }
   }
 
-  if (importantLines.length === 0) {
-    return `**Code Analysis:** This code contains basic programming statements. The logic is straightforward and follows standard ${language} patterns.`;
+  // Build comprehensive explanation
+  explanation += `**Code Overview:**\n`;
+  explanation += `This ${language} code demonstrates key programming concepts and functionality.\n\n`;
+
+  if (imports.length > 0) {
+    explanation += `**Imports and Dependencies:**\n`;
+    imports.forEach(({ line, lineNumber }) => {
+      explanation += `• Line ${lineNumber}: \`${line}\` - ${explainImport(line, language)}\n`;
+    });
+    explanation += `\n`;
   }
 
-  explanation += `**Key Code Analysis:**\n\n`;
-  
-  for (const { line, lineNumber } of importantLines) {
-    explanation += `**Line ${lineNumber}: \`${line}\`**\n`;
-    explanation += `• ${explainLine(line, language)}\n\n`;
+  if (functions.length > 0) {
+    explanation += `**Functions and Classes:**\n`;
+    functions.forEach(({ line, lineNumber }) => {
+      explanation += `• Line ${lineNumber}: \`${line}\` - ${explainFunction(line, language)}\n`;
+    });
+    explanation += `\n`;
   }
+
+  if (variables.length > 0) {
+    explanation += `**Variables and Data:**\n`;
+    variables.forEach(({ line, lineNumber }) => {
+      explanation += `• Line ${lineNumber}: \`${line}\` - ${explainVariable(line, language)}\n`;
+    });
+    explanation += `\n`;
+  }
+
+  explanation += `**Step-by-Step Execution:**\n`;
+  let stepNumber = 1;
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (line && !line.startsWith("//")) {
+      explanation += `${stepNumber}. Line ${i + 1}: \`${line}\`\n`;
+      explanation += `   → ${explainLine(line, language)}\n\n`;
+      stepNumber++;
+    }
+  }
+
+  explanation += `**Key Concepts:**\n`;
+  explanation += `• ${getLanguageConcepts(language)}\n\n`;
+
+  explanation += `**How It Works:**\n`;
+  explanation += `The code executes from top to bottom, following the logical flow defined by the programming constructs. Each statement contributes to the overall functionality.\n\n`;
 
   return explanation;
+}
+
+// Helper function to explain imports
+function explainImport(line, language) {
+  const lang = language.toLowerCase();
+  if (line.includes("#include")) {
+    return "Includes a C/C++ header file for additional functionality";
+  } else if (line.includes("import")) {
+    return "Imports a module or library for use in the program";
+  } else if (line.includes("from")) {
+    return "Imports specific functions or classes from a module";
+  }
+  return "Brings in external code for use in this program";
+}
+
+// Helper function to explain functions
+function explainFunction(line, language) {
+  const lang = language.toLowerCase();
+  if (line.includes("def ")) {
+    return "Defines a Python function that can be called later";
+  } else if (line.includes("function ")) {
+    return "Defines a JavaScript function that can be called later";
+  } else if (line.includes("class ")) {
+    return "Defines a class (object blueprint) for creating objects";
+  } else if (line.includes("int main")) {
+    return "Main function - the entry point where program execution begins";
+  }
+  return "Defines a reusable block of code";
+}
+
+// Helper function to explain variables
+function explainVariable(line, language) {
+  const lang = language.toLowerCase();
+  if (line.includes("int ")) {
+    return "Declares an integer variable to store whole numbers";
+  } else if (line.includes("char ")) {
+    return "Declares a character variable to store single characters";
+  } else if (line.includes("float ") || line.includes("double ")) {
+    return "Declares a floating-point variable to store decimal numbers";
+  } else if (line.includes("string ")) {
+    return "Declares a string variable to store text";
+  } else if (line.includes("var ") || line.includes("let ") || line.includes("const ")) {
+    return "Declares a JavaScript variable with different scoping rules";
+  }
+  return "Declares a variable to store data";
+}
+
+// Helper function to get language-specific concepts
+function getLanguageConcepts(language) {
+  const lang = language.toLowerCase();
+  if (lang.includes("python")) {
+    return "Python uses indentation for code blocks, dynamic typing, and has a rich standard library";
+  } else if (lang.includes("javascript")) {
+    return "JavaScript is dynamically typed, supports both functional and object-oriented programming";
+  } else if (lang.includes("c")) {
+    return "C is a compiled language with manual memory management and direct hardware access";
+  } else if (lang.includes("c++")) {
+    return "C++ extends C with object-oriented programming, templates, and modern features";
+  } else if (lang.includes("java")) {
+    return "Java is object-oriented, platform-independent, and uses automatic memory management";
+  } else if (lang.includes("html")) {
+    return "HTML structures web content using tags and elements to create web pages";
+  } else if (lang.includes("css")) {
+    return "CSS styles HTML elements to control appearance, layout, and visual design";
+  }
+  return "This language follows standard programming principles and syntax";
 }
 
 // Function to generate example usage
@@ -1339,37 +1433,34 @@ async function getGeminiExplanation(code, language) {
       throw new Error("Gemini API key not available");
     }
 
-    const prompt = `You are a coding assistant. Your task is to analyze the user's ${language} code and provide a CONCISE explanation focusing ONLY on the most important and complex parts. Do NOT explain every single line - only explain:
-
-1. Main functions and their purpose
-2. Complex algorithms or logic
-3. Important variables that affect the program's behavior
-4. Key concepts specific to ${language}
-5. Non-obvious code patterns
-
-SKIP explaining:
-- Simple variable declarations (int x = 5;)
-- Basic print/console statements
-- Simple loops with obvious purposes
-- Standard library function calls
-- Comments that are already clear
+    const prompt = `You are an expert coding instructor. Your task is to analyze the user's ${language} code and provide a comprehensive, educational explanation that helps them understand how the code works step-by-step.
 
 Original ${language} code:
 \`\`\`${language.toLowerCase()}
 ${code}
 \`\`\`
 
-Provide a brief, focused explanation that highlights only the important parts. Format as:
+Please provide a detailed explanation in this format:
 
-**Key Code Analysis:**
-[Focus on main functions, complex logic, and important concepts only]
+**Code Overview:**
+[Brief summary of what this code does overall]
 
-**Important Parts:**
-- [List only the most significant functions/variables]
-- [Explain complex algorithms or patterns]
-- [Highlight ${language}-specific concepts if relevant]
+**Step-by-Step Breakdown:**
+[Go through the code line by line or section by section, explaining what each part does and why it's needed]
 
-Keep it concise and educational - explain the "why" and "how" of important parts, not the "what" of every line.`;
+**Key Concepts Explained:**
+[Explain important programming concepts used in this code, specific to ${language}]
+
+**How It Works (Functionally):**
+[Explain the flow of execution and how different parts interact]
+
+**Example Usage:**
+[Show how this code would be used with sample input/output if applicable]
+
+**Learning Points:**
+[Highlight what the user should learn from this code]
+
+Focus on making it educational and easy to understand. Explain both the "what" and the "why" behind the code. Use clear, beginner-friendly language while being thorough.`;
 
     const response = await fetch(
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
