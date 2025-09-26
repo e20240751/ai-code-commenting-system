@@ -183,7 +183,19 @@ Make the explanation beginner-friendly, clear, and educational. Focus on helping
 
 // Function to generate comprehensive fallback explanations
 function generateFallbackExplanation(code, language) {
-  const lines = code.split('\n');
+  const lang = language.toLowerCase().trim();
+  
+  // Use different explanation methods based on language
+  if (lang === "html") {
+    return generateStepByStepExplanation(code, language);
+  } else {
+    return generateNormalExplanation(code, language);
+  }
+}
+
+// Function to generate step-by-step explanation for HTML
+function generateStepByStepExplanation(code, language) {
+  const lines = code.split("\n");
   let explanation = "";
 
   // Analyze code structure
@@ -194,16 +206,24 @@ function generateFallbackExplanation(code, language) {
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
-    if (line === "" || line.startsWith('//')) continue;
+    if (line === "" || line.startsWith("//")) continue;
 
     if (/^#include|^import\s+|^from\s+/.test(line)) {
       imports.push({ line, lineNumber: i + 1 });
     } else if (/def\s+\w+|function\s+\w+|class\s+\w+/.test(line)) {
       functions.push({ line, lineNumber: i + 1 });
-    } else if (/^\s*(int|char|float|double|string|var|let|const)\s+\w+/.test(line)) {
+    } else if (
+      /^\s*(int|char|float|double|string|var|let|const)\s+\w+/.test(line)
+    ) {
       variables.push({ line, lineNumber: i + 1 });
-    } else if (line.includes('if') || line.includes('for') || line.includes('while') || 
-               line.includes('return') || line.includes('print') || line.includes('printf')) {
+    } else if (
+      line.includes("if") ||
+      line.includes("for") ||
+      line.includes("while") ||
+      line.includes("return") ||
+      line.includes("print") ||
+      line.includes("printf")
+    ) {
       logic.push({ line, lineNumber: i + 1 });
     }
   }
@@ -240,7 +260,7 @@ function generateFallbackExplanation(code, language) {
   let stepNumber = 1;
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
-    if (line && !line.startsWith('//')) {
+    if (line && !line.startsWith("//")) {
       explanation += `${stepNumber}. Line ${i + 1}: \`${line}\`\n`;
       explanation += `   → ${getLineExplanation(line, language)}\n\n`;
       stepNumber++;
@@ -259,8 +279,8 @@ function generateFallbackExplanation(code, language) {
 // Helper function to explain individual lines
 function getLineExplanation(line, language) {
   const lang = language.toLowerCase();
-  
-  if (lang.includes('html')) {
+
+  if (lang.includes("html")) {
     if (/<!DOCTYPE\s+html/i.test(line)) {
       return "Declares the document type as HTML5";
     } else if (/<html/.test(line)) {
@@ -300,7 +320,7 @@ function getLineExplanation(line, language) {
     } else if (/<!--/.test(line)) {
       return "HTML comment (not displayed)";
     }
-  } else if (lang.includes('css')) {
+  } else if (lang.includes("css")) {
     if (/\.[\w-]+\s*\{/.test(line)) {
       return "CSS rule for elements with a specific class";
     } else if (/#[\w-]+\s*\{/.test(line)) {
@@ -308,44 +328,108 @@ function getLineExplanation(line, language) {
     } else if (/\w+\s*:\s*[^;]+;/.test(line)) {
       return "CSS property setting a style value";
     }
-  } else if (line.includes('if')) {
+  } else if (line.includes("if")) {
     return "Conditional statement - executes code only if condition is true";
-  } else if (line.includes('for') || line.includes('while')) {
+  } else if (line.includes("for") || line.includes("while")) {
     return "Loop statement - repeats code multiple times";
-  } else if (line.includes('return')) {
+  } else if (line.includes("return")) {
     return "Returns a value from a function";
-  } else if (line.includes('print') || line.includes('printf') || line.includes('cout')) {
+  } else if (
+    line.includes("print") ||
+    line.includes("printf") ||
+    line.includes("cout")
+  ) {
     return "Outputs text or data to the console/screen";
-  } else if (line.includes('=')) {
+  } else if (line.includes("=")) {
     return "Assignment - stores a value in a variable";
-  } else if (line.includes('def ') || line.includes('function ')) {
+  } else if (line.includes("def ") || line.includes("function ")) {
     return "Function definition - creates a reusable code block";
-  } else if (line.includes('class ')) {
+  } else if (line.includes("class ")) {
     return "Class definition - creates a blueprint for objects";
   }
-  
+
   return "Executes a programming instruction";
 }
 
 // Helper function for language-specific concepts
 function getLanguageSpecificConcepts(language) {
   const lang = language.toLowerCase();
-  if (lang.includes('python')) {
+  if (lang.includes("python")) {
     return "Python uses indentation, dynamic typing, and has extensive libraries";
-  } else if (lang.includes('javascript')) {
+  } else if (lang.includes("javascript")) {
     return "JavaScript is versatile, supports multiple programming paradigms";
-  } else if (lang.includes('c')) {
+  } else if (lang.includes("c")) {
     return "C provides low-level control and direct memory management";
-  } else if (lang.includes('c++')) {
+  } else if (lang.includes("c++")) {
     return "C++ combines C's efficiency with object-oriented features";
-  } else if (lang.includes('java')) {
+  } else if (lang.includes("java")) {
     return "Java is platform-independent and strongly object-oriented";
-  } else if (lang.includes('html')) {
+  } else if (lang.includes("html")) {
     return "HTML structures content using semantic tags and elements";
-  } else if (lang.includes('css')) {
+  } else if (lang.includes("css")) {
     return "CSS controls visual presentation and layout of web content";
   }
   return "Follows standard programming principles and best practices";
+}
+
+// Function to generate normal explanation for non-HTML languages
+function generateNormalExplanation(code, language) {
+  const lang = language.toLowerCase();
+  let explanation = `# ${language.toUpperCase()} Code Explanation\n\n`;
+
+  // Analyze the main purpose
+  explanation += `## 🎯 What This Code Does\n`;
+  explanation += `This ${language} code performs specific programming tasks. `;
+  
+  // Add language-specific overview
+  if (lang.includes("python")) {
+    explanation += `Python is known for its readability and extensive libraries. This code likely uses Python's clean syntax to solve a problem efficiently.\n\n`;
+  } else if (lang.includes("javascript")) {
+    explanation += `JavaScript is versatile and can run in browsers and servers. This code demonstrates JavaScript's dynamic nature and modern features.\n\n`;
+  } else if (lang.includes("c")) {
+    explanation += `C provides low-level control and direct memory management. This code showcases C's efficiency and system-level programming capabilities.\n\n`;
+  } else if (lang.includes("c++")) {
+    explanation += `C++ combines C's efficiency with object-oriented programming. This code demonstrates C++'s powerful features for complex applications.\n\n`;
+  } else if (lang.includes("java")) {
+    explanation += `Java is platform-independent and strongly object-oriented. This code showcases Java's robust architecture and cross-platform capabilities.\n\n`;
+  } else if (lang.includes("css")) {
+    explanation += `CSS controls the visual presentation of web content. This code defines how elements should look and behave on a webpage.\n\n`;
+  } else {
+    explanation += `This code demonstrates key programming concepts and best practices.\n\n`;
+  }
+
+  // Add key concepts
+  explanation += `## 💡 Key Programming Concepts\n`;
+  explanation += `• **Syntax**: The rules and structure of ${language} code\n`;
+  explanation += `• **Logic**: How the code processes data and makes decisions\n`;
+  explanation += `• **Functions**: Reusable blocks of code that perform specific tasks\n`;
+  explanation += `• **Variables**: Containers that store data for processing\n`;
+  explanation += `• **Control Flow**: How the program decides which code to execute\n\n`;
+
+  // Add how it works
+  explanation += `## 🔍 How It Works\n`;
+  explanation += `The code follows a logical sequence:\n`;
+  explanation += `1. **Initialization**: Sets up variables and initial values\n`;
+  explanation += `2. **Processing**: Performs calculations or operations on data\n`;
+  explanation += `3. **Output**: Displays results or returns values\n`;
+  explanation += `4. **Control**: Uses conditions and loops to control program flow\n\n`;
+
+  // Add example usage
+  explanation += `## 💡 Example Usage\n`;
+  explanation += `To use this code:\n`;
+  explanation += `1. Copy the code into a ${language} development environment\n`;
+  explanation += `2. Run the code to see the output\n`;
+  explanation += `3. Modify variables to test different scenarios\n`;
+  explanation += `4. Study the output to understand the behavior\n\n`;
+
+  // Add learning points
+  explanation += `## 📚 Learning Points\n`;
+  explanation += `• Understanding ${language} syntax and structure\n`;
+  explanation += `• Learning programming logic and problem-solving\n`;
+  explanation += `• Practicing code analysis and debugging\n`;
+  explanation += `• Building foundation for more complex programs\n`;
+
+  return explanation;
 }
 
 // Start the server

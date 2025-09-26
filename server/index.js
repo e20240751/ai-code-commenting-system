@@ -556,6 +556,66 @@ function generateStepByStepExplanation(code, language) {
   return explanation;
 }
 
+// Function to generate normal explanation for non-HTML languages
+function generateNormalExplanation(code, language) {
+  const lang = language.toLowerCase();
+  let explanation = `# ${language.toUpperCase()} Code Explanation\n\n`;
+
+  // Analyze the main purpose
+  explanation += `## 🎯 What This Code Does\n`;
+  explanation += `This ${language} code performs specific programming tasks. `;
+  
+  // Add language-specific overview
+  if (lang.includes("python")) {
+    explanation += `Python is known for its readability and extensive libraries. This code likely uses Python's clean syntax to solve a problem efficiently.\n\n`;
+  } else if (lang.includes("javascript")) {
+    explanation += `JavaScript is versatile and can run in browsers and servers. This code demonstrates JavaScript's dynamic nature and modern features.\n\n`;
+  } else if (lang.includes("c")) {
+    explanation += `C provides low-level control and direct memory management. This code showcases C's efficiency and system-level programming capabilities.\n\n`;
+  } else if (lang.includes("c++")) {
+    explanation += `C++ combines C's efficiency with object-oriented programming. This code demonstrates C++'s powerful features for complex applications.\n\n`;
+  } else if (lang.includes("java")) {
+    explanation += `Java is platform-independent and strongly object-oriented. This code showcases Java's robust architecture and cross-platform capabilities.\n\n`;
+  } else if (lang.includes("css")) {
+    explanation += `CSS controls the visual presentation of web content. This code defines how elements should look and behave on a webpage.\n\n`;
+  } else {
+    explanation += `This code demonstrates key programming concepts and best practices.\n\n`;
+  }
+
+  // Add key concepts
+  explanation += `## 💡 Key Programming Concepts\n`;
+  explanation += `• **Syntax**: The rules and structure of ${language} code\n`;
+  explanation += `• **Logic**: How the code processes data and makes decisions\n`;
+  explanation += `• **Functions**: Reusable blocks of code that perform specific tasks\n`;
+  explanation += `• **Variables**: Containers that store data for processing\n`;
+  explanation += `• **Control Flow**: How the program decides which code to execute\n\n`;
+
+  // Add how it works
+  explanation += `## 🔍 How It Works\n`;
+  explanation += `The code follows a logical sequence:\n`;
+  explanation += `1. **Initialization**: Sets up variables and initial values\n`;
+  explanation += `2. **Processing**: Performs calculations or operations on data\n`;
+  explanation += `3. **Output**: Displays results or returns values\n`;
+  explanation += `4. **Control**: Uses conditions and loops to control program flow\n\n`;
+
+  // Add example usage
+  explanation += `## 💡 Example Usage\n`;
+  explanation += `To use this code:\n`;
+  explanation += `1. Copy the code into a ${language} development environment\n`;
+  explanation += `2. Run the code to see the output\n`;
+  explanation += `3. Modify variables to test different scenarios\n`;
+  explanation += `4. Study the output to understand the behavior\n\n`;
+
+  // Add learning points
+  explanation += `## 📚 Learning Points\n`;
+  explanation += `• Understanding ${language} syntax and structure\n`;
+  explanation += `• Learning programming logic and problem-solving\n`;
+  explanation += `• Practicing code analysis and debugging\n`;
+  explanation += `• Building foundation for more complex programs\n`;
+
+  return explanation;
+}
+
 // Helper function to explain imports
 function explainImport(line, language) {
   const lang = language.toLowerCase();
@@ -2320,9 +2380,15 @@ app.post("/api/explain-code", async (req, res) => {
         geminiError.message
       );
 
-      // Fall back to comprehensive explanation system
-      explanation = generateStepByStepExplanation(code, language);
-      source = "Comprehensive Code Analysis";
+      // Fall back to appropriate explanation system based on language
+      const lang = language.toLowerCase().trim();
+      if (lang === "html") {
+        explanation = generateStepByStepExplanation(code, language);
+        source = "Step-by-Step HTML Analysis";
+      } else {
+        explanation = generateNormalExplanation(code, language);
+        source = "Code Analysis";
+      }
       apiUsed = AVAILABLE_APIS.FALLBACK;
     }
 
