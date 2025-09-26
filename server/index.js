@@ -471,22 +471,30 @@ function generateStepByStepExplanation(code, language) {
   const variables = [];
   const imports = [];
   const mainLogic = [];
-  
+
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
     const lineNumber = i + 1;
-    
+
     if (line === "" || line.startsWith("//")) continue;
-    
+
     // Identify different code elements
     if (/^#include|^import\s+|^from\s+/.test(line)) {
       imports.push({ line, lineNumber });
     } else if (/def\s+\w+|function\s+\w+|class\s+\w+/.test(line)) {
       functions.push({ line, lineNumber });
-    } else if (/^\s*(int|char|float|double|string|var|let|const)\s+\w+/.test(line)) {
+    } else if (
+      /^\s*(int|char|float|double|string|var|let|const)\s+\w+/.test(line)
+    ) {
       variables.push({ line, lineNumber });
-    } else if (line.includes("if") || line.includes("for") || line.includes("while") || 
-               line.includes("return") || line.includes("print") || line.includes("printf")) {
+    } else if (
+      line.includes("if") ||
+      line.includes("for") ||
+      line.includes("while") ||
+      line.includes("return") ||
+      line.includes("print") ||
+      line.includes("printf")
+    ) {
       mainLogic.push({ line, lineNumber });
     }
   }
@@ -498,7 +506,10 @@ function generateStepByStepExplanation(code, language) {
   if (imports.length > 0) {
     explanation += `**Imports and Dependencies:**\n`;
     imports.forEach(({ line, lineNumber }) => {
-      explanation += `• Line ${lineNumber}: \`${line}\` - ${explainImport(line, language)}\n`;
+      explanation += `• Line ${lineNumber}: \`${line}\` - ${explainImport(
+        line,
+        language
+      )}\n`;
     });
     explanation += `\n`;
   }
@@ -506,7 +517,10 @@ function generateStepByStepExplanation(code, language) {
   if (functions.length > 0) {
     explanation += `**Functions and Classes:**\n`;
     functions.forEach(({ line, lineNumber }) => {
-      explanation += `• Line ${lineNumber}: \`${line}\` - ${explainFunction(line, language)}\n`;
+      explanation += `• Line ${lineNumber}: \`${line}\` - ${explainFunction(
+        line,
+        language
+      )}\n`;
     });
     explanation += `\n`;
   }
@@ -514,7 +528,10 @@ function generateStepByStepExplanation(code, language) {
   if (variables.length > 0) {
     explanation += `**Variables and Data:**\n`;
     variables.forEach(({ line, lineNumber }) => {
-      explanation += `• Line ${lineNumber}: \`${line}\` - ${explainVariable(line, language)}\n`;
+      explanation += `• Line ${lineNumber}: \`${line}\` - ${explainVariable(
+        line,
+        language
+      )}\n`;
     });
     explanation += `\n`;
   }
@@ -578,7 +595,11 @@ function explainVariable(line, language) {
     return "Declares a floating-point variable to store decimal numbers";
   } else if (line.includes("string ")) {
     return "Declares a string variable to store text";
-  } else if (line.includes("var ") || line.includes("let ") || line.includes("const ")) {
+  } else if (
+    line.includes("var ") ||
+    line.includes("let ") ||
+    line.includes("const ")
+  ) {
     return "Declares a JavaScript variable with different scoping rules";
   }
   return "Declares a variable to store data";
@@ -1205,7 +1226,7 @@ function explainLine(line, language) {
     // Text elements
     else if (/<h[1-6]/.test(line)) {
       const match = line.match(/<h([1-6])/);
-      const level = match ? match[1] : '1';
+      const level = match ? match[1] : "1";
       return `This creates a heading level ${level} that makes text larger and more prominent. It's like creating a title or subtitle for a section.`;
     } else if (/<\/h[1-6]/.test(line)) {
       return `This ends a heading, closing the title or subtitle section.`;
@@ -2299,10 +2320,9 @@ app.post("/api/explain-code", async (req, res) => {
         geminiError.message
       );
 
-      // Fall back to pattern-based explanation
-      const patterns = recognizeAndStorePattern(code, language);
-      explanation = generateExplanationFromPatterns(patterns, language, code);
-      source = "Pattern Analysis";
+      // Fall back to comprehensive explanation system
+      explanation = generateStepByStepExplanation(code, language);
+      source = "Comprehensive Code Analysis";
       apiUsed = AVAILABLE_APIS.FALLBACK;
     }
 

@@ -3145,13 +3145,13 @@ def fibonacci(n):
       function syncScroll() {
         const codeInput = document.getElementById("code-input");
         const codeHighlight = document.getElementById("code-highlight");
-        
+
         if (codeInput && codeHighlight) {
           // Remove any existing scroll listeners to prevent duplicates
-          codeInput.removeEventListener('scroll', handleScroll);
-          
+          codeInput.removeEventListener("scroll", handleScroll);
+
           // Add scroll synchronization
-          codeInput.addEventListener('scroll', handleScroll);
+          codeInput.addEventListener("scroll", handleScroll);
         }
       }
 
@@ -3159,7 +3159,7 @@ def fibonacci(n):
       function handleScroll() {
         const codeInput = document.getElementById("code-input");
         const codeHighlight = document.getElementById("code-highlight");
-        
+
         if (codeInput && codeHighlight) {
           codeHighlight.scrollTop = codeInput.scrollTop;
           codeHighlight.scrollLeft = codeInput.scrollLeft;
@@ -3301,7 +3301,7 @@ def fibonacci(n):
 
         // Set up initial syntax highlighting
         setTimeout(updateSyntaxHighlighting, 100);
-        
+
         // Set up scroll synchronization
         setTimeout(syncScroll, 200);
       });
@@ -3335,7 +3335,7 @@ def fibonacci(n):
         explanationContent.innerHTML = "";
 
         // Call real AI API
-        fetch("http://localhost:8080/api/explain-code", {
+        fetch("http://localhost:5001/api/explain-code", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
