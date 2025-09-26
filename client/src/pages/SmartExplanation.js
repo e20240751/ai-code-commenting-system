@@ -34,15 +34,23 @@ const SmartExplanation = () => {
       normalizedLanguage === "c" ||
       normalizedLanguage === "python" ||
       normalizedLanguage === "javascript" ||
-      normalizedLanguage === "react" ||
+      normalizedLanguage === "html" ||
+      normalizedLanguage === "css" ||
+      normalizedLanguage === "java" ||
+      normalizedLanguage === "c++" ||
+      normalizedLanguage === "cpp" ||
       normalizedLanguage.startsWith("c ") ||
       normalizedLanguage.startsWith("python ") ||
       normalizedLanguage.startsWith("javascript ") ||
-      normalizedLanguage.startsWith("react ");
+      normalizedLanguage.startsWith("html ") ||
+      normalizedLanguage.startsWith("css ") ||
+      normalizedLanguage.startsWith("java ") ||
+      normalizedLanguage.startsWith("c++ ") ||
+      normalizedLanguage.startsWith("cpp ");
 
     if (!language || !isValidLanguage) {
       setError(
-        "Please select C, Python, JavaScript, or React from the dropdown."
+        "Please select C, Python, JavaScript, HTML, CSS, Java, or C++ from the dropdown."
       );
       return;
     }
@@ -192,7 +200,7 @@ print(f"Sum: {sum}")`,
             AI Code Commenting Assistant
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Paste your C, Python, JavaScript, or React code below and get
+            Paste your Python, JavaScript, C, C++, Java, HTML, or CSS code below and get
             AI-generated beginner-friendly comments
           </p>
           <p className="text-sm text-gray-500 mt-2">
@@ -238,12 +246,15 @@ print(f"Sum: {sum}")`,
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               >
                 <option value="python">Python</option>
-                <option value="c">C</option>
                 <option value="javascript">JavaScript</option>
-                <option value="react">React</option>
+                <option value="c">C</option>
+                <option value="c++">C++</option>
+                <option value="java">Java</option>
+                <option value="html">HTML</option>
+                <option value="css">CSS</option>
               </select>
               <p className="text-xs text-gray-500 mt-1">
-                Currently supporting C, Python, JavaScript, and React
+                Currently supporting Python, JavaScript, C, C++, Java, HTML, and CSS
               </p>
             </div>
 
@@ -253,11 +264,19 @@ print(f"Sum: {sum}")`,
               placeholder={
                 language === "python"
                   ? "Paste your Python code here...\n\nExample:\ndef greet(name):\n    return f'Hello, {name}!'\n\nprint(greet('World'))"
-                  : language === "c"
-                  ? 'Paste your C code here...\n\nExample:\n#include <stdio.h>\n\nint main() {\n    printf("Hello, World!\\n");\n    return 0;\n}'
                   : language === "javascript"
                   ? "Paste your JavaScript code here...\n\nExample:\nfunction greet(name) {\n    return `Hello, ${name}!`;\n}\n\nconsole.log(greet('World'));"
-                  : "Paste your React code here...\n\nExample:\nimport React from 'react';\n\nfunction Greeting({ name }) {\n    return <h1>Hello, {name}!</h1>;\n}\n\nexport default Greeting;"
+                  : language === "c"
+                  ? 'Paste your C code here...\n\nExample:\n#include <stdio.h>\n\nint main() {\n    printf("Hello, World!\\n");\n    return 0;\n}'
+                  : language === "c++"
+                  ? 'Paste your C++ code here...\n\nExample:\n#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello, World!" << endl;\n    return 0;\n}'
+                  : language === "java"
+                  ? 'Paste your Java code here...\n\nExample:\npublic class HelloWorld {\n    public static void main(String[] args) {\n        System.out.println("Hello, World!");\n    }\n}'
+                  : language === "html"
+                  ? 'Paste your HTML code here...\n\nExample:\n<!DOCTYPE html>\n<html>\n<head>\n    <title>Hello World</title>\n</head>\n<body>\n    <h1>Hello, World!</h1>\n</body>\n</html>'
+                  : language === "css"
+                  ? 'Paste your CSS code here...\n\nExample:\nbody {\n    font-family: Arial, sans-serif;\n    background-color: #f0f0f0;\n}\n\nh1 {\n    color: #333;\n    text-align: center;\n}'
+                  : "Paste your code here..."
               }
               className="w-full h-96 p-4 border border-gray-300 rounded-lg font-mono text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
             />

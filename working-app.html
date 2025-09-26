@@ -3148,27 +3148,109 @@ def fibonacci(n):
         // Detect language based on code patterns
         let detectedLang = "Unknown";
 
+        // HTML detection
         if (
+          /<html[^>]*>/.test(code) ||
+          /<head[^>]*>/.test(code) ||
+          /<body[^>]*>/.test(code) ||
+          /<div[^>]*>/.test(code) ||
+          /<p[^>]*>/.test(code) ||
+          /<h[1-6][^>]*>/.test(code) ||
+          /<script[^>]*>/.test(code) ||
+          /<style[^>]*>/.test(code) ||
+          /<!DOCTYPE\s+html>/i.test(code)
+        ) {
+          detectedLang = "HTML";
+        }
+        // CSS detection
+        else if (
+          /\.\w+\s*\{/.test(code) ||
+          /#\w+\s*\{/.test(code) ||
+          /\w+\s*:\s*[^;]+;/.test(code) ||
+          /@media\s+/.test(code) ||
+          /@import\s+/.test(code) ||
+          /@keyframes\s+/.test(code) ||
+          /margin\s*:|padding\s*:|color\s*:|background\s*:/.test(code)
+        ) {
+          detectedLang = "CSS";
+        }
+        // Python detection
+        else if (
           /def\s+\w+\s*\(/.test(code) ||
           /import\s+\w+/.test(code) ||
+          /from\s+\w+\s+import/.test(code) ||
           /print\s*\(/.test(code) ||
           /if\s+.*:/.test(code) ||
-          /for\s+\w+\s+in/.test(code)
+          /for\s+\w+\s+in/.test(code) ||
+          /while\s+.*:/.test(code) ||
+          /class\s+\w+/.test(code) ||
+          /elif\s+.*:/.test(code) ||
+          /else\s*:/.test(code) ||
+          /try\s*:/.test(code) ||
+          /except\s+.*:/.test(code)
         ) {
           detectedLang = "Python";
-        } else if (
+        }
+        // JavaScript detection
+        else if (
           /function\s+\w+\s*\(/.test(code) ||
           /const\s+\w+\s*=/.test(code) ||
           /let\s+\w+\s*=/.test(code) ||
+          /var\s+\w+\s*=/.test(code) ||
           /console\.log\s*\(/.test(code) ||
-          /=>\s*/.test(code)
+          /=>\s*/.test(code) ||
+          /document\./.test(code) ||
+          /window\./.test(code) ||
+          /addEventListener\s*\(/.test(code) ||
+          /\.then\s*\(/.test(code) ||
+          /async\s+function/.test(code) ||
+          /await\s+/.test(code)
         ) {
           detectedLang = "JavaScript";
-        } else if (
+        }
+        // Java detection
+        else if (
+          /public\s+class\s+\w+/.test(code) ||
+          /public\s+static\s+void\s+main\s*\(/.test(code) ||
+          /System\.out\.print/.test(code) ||
+          /import\s+java\./.test(code) ||
+          /private\s+\w+\s+\w+/.test(code) ||
+          /protected\s+\w+\s+\w+/.test(code) ||
+          /extends\s+\w+/.test(code) ||
+          /implements\s+\w+/.test(code) ||
+          /new\s+\w+\s*\(/.test(code) ||
+          /\.length/.test(code) && /String/.test(code)
+        ) {
+          detectedLang = "Java";
+        }
+        // C++ detection
+        else if (
+          /#include\s*<iostream>/.test(code) ||
+          /#include\s*<vector>/.test(code) ||
+          /#include\s*<string>/.test(code) ||
+          /using\s+namespace\s+std/.test(code) ||
+          /std::/.test(code) ||
+          /cout\s*<</.test(code) ||
+          /cin\s*>>/.test(code) ||
+          /endl/.test(code) ||
+          /vector\s*</.test(code) ||
+          /string\s+\w+/.test(code) ||
+          /class\s+\w+\s*\{/.test(code) && /#include/.test(code)
+        ) {
+          detectedLang = "C++";
+        }
+        // C detection
+        else if (
           /int\s+main\s*\(/.test(code) ||
-          /#include\s*</.test(code) ||
+          /#include\s*<stdio\.h>/.test(code) ||
+          /#include\s*<stdlib\.h>/.test(code) ||
+          /#include\s*<string\.h>/.test(code) ||
           /printf\s*\(/.test(code) ||
-          /scanf\s*\(/.test(code)
+          /scanf\s*\(/.test(code) ||
+          /malloc\s*\(/.test(code) ||
+          /free\s*\(/.test(code) ||
+          /#define\s+\w+/.test(code) ||
+          /struct\s+\w+\s*\{/.test(code)
         ) {
           detectedLang = "C";
         }
